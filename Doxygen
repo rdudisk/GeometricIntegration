@@ -1,0 +1,9 @@
+FILE_PATTERNS = *.cpp *.hpp *.h
+RECURSIVE = YES
+EXCLUDE_PATTERNS = */headers/old/* */libs/*
+INPUT = headers/ main.cpp
+OUTPUT_DIRECTORY = doc/
+EXTRACT_PRIVATE = YES
+EXTRACT_STATIC = YES
+GENERATE_LATEX = NO
+USE_MATHJAX = YES
