@@ -110,6 +110,24 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>evolve_exact</b> ()</
 <tr class="memitem:ad83c45823e338d00b2ac9b4a667c5284 inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="ad83c45823e338d00b2ac9b4a667c5284"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>params</b> (<a class="el" href="structParams.html">Params</a>&lt; T &gt; _params)</td></tr>
 <tr class="separator:ad83c45823e338d00b2ac9b4a667c5284 inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affa33405b90299b0536fb08735c6cac6 inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="affa33405b90299b0536fb08735c6cac6"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_dLdq</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:affa33405b90299b0536fb08735c6cac6 inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dedde6d175714070fd5fe2f1382085f inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="a2dedde6d175714070fd5fe2f1382085f"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_dLdv</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:a2dedde6d175714070fd5fe2f1382085f inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a604f7bb6161f692b548313a671f6042c inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="a604f7bb6161f692b548313a671f6042c"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_JqdLdq</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:a604f7bb6161f692b548313a671f6042c inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad28d8b98b94210bd13925b48b935c618 inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="ad28d8b98b94210bd13925b48b935c618"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_JvdLdq</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:ad28d8b98b94210bd13925b48b935c618 inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af79a8997731b275ae8e4cbc0f2c9a65f inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="af79a8997731b275ae8e4cbc0f2c9a65f"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_JqdLdv</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:af79a8997731b275ae8e4cbc0f2c9a65f inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6288125ef143d827ec4c3dc7d1db3fe5 inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top"><a id="a6288125ef143d827ec4c3dc7d1db3fe5"></a>
+Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_JvdLdv</b> (const Group&lt; T &gt;, const Group&lt; T &gt;)</td></tr>
+<tr class="separator:a6288125ef143d827ec4c3dc7d1db3fe5 inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07d8e9398ac15845893ba96f98297b24 inherit pub_methods_classDiscLagSyst"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscLagSyst.html#a07d8e9398ac15845893ba96f98297b24">evolve</a> (void(*step)(const <a class="el" href="classJetSpace.html">JetSpace</a>&lt; M, Group&lt; T &gt;, Algebra&lt; T &gt; &gt; &amp;, <a class="el" href="classJetSpace.html">JetSpace</a>&lt; M, Group&lt; T &gt;, Algebra&lt; T &gt; &gt; &amp;))</td></tr>
 <tr class="separator:a07d8e9398ac15845893ba96f98297b24 inherit pub_methods_classDiscLagSyst"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classDiscJetSpace"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classDiscJetSpace')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classDiscJetSpace.html">DiscJetSpace&lt; M, Group&lt; T &gt;, Algebra&lt; T &gt; &gt;</a></td></tr>
@@ -140,6 +158,9 @@ Algebra&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vel</b>
 <tr class="memitem:a49dc998c564fe958c62e07b40ffcb35a inherit pub_methods_classDiscJetSpace"><td class="memItemLeft" align="right" valign="top"><a id="a49dc998c564fe958c62e07b40ffcb35a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>vel</b> (const size_t &amp;i, const Algebra&lt; T &gt; &amp;_vel)</td></tr>
 <tr class="separator:a49dc998c564fe958c62e07b40ffcb35a inherit pub_methods_classDiscJetSpace"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c53e8f323f4d9ed57872c98fa6180bf inherit pub_methods_classDiscJetSpace"><td class="memItemLeft" align="right" valign="top"><a id="a2c53e8f323f4d9ed57872c98fa6180bf"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>dof</b> ()</td></tr>
+<tr class="separator:a2c53e8f323f4d9ed57872c98fa6180bf inherit pub_methods_classDiscJetSpace"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f888fa8fb9ca569184dba57c5acae5 inherit pub_methods_classDiscJetSpace"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscJetSpace.html#a95f888fa8fb9ca569184dba57c5acae5">baselinspace</a> (const M &amp;inf_lim, const M &amp;sup_lim, const size_t &amp;n_steps)</td></tr>
 <tr class="separator:a95f888fa8fb9ca569184dba57c5acae5 inherit pub_methods_classDiscJetSpace"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a776fcbae00b944068aa0f0577702bf0e inherit pub_methods_classDiscJetSpace"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscJetSpace.html#a776fcbae00b944068aa0f0577702bf0e">baselinstep</a> (M inf_lim, M step_size, size_t n_steps)</td></tr>
@@ -236,7 +257,7 @@ std::vector&lt; <a class="el" href="classJetSpace.html">JetSpace</a>&lt; M, Grou
 <tr class="separator:a845e50f79b7ccc0a69c60de11c2d3d8c inherit pro_attribs_classDiscJetSpace"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>headers/<a class="el" href="se3__unconstrained_8hpp_source.html">se3_unconstrained.hpp</a></li>
+<li>headers/<a class="el" href="RigidBody_8hpp_source.html">RigidBody.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

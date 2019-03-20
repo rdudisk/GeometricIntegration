@@ -14,7 +14,8 @@
 #define minus_1_pow(n) ((n%2==1)?-1.0:1.0)
 
 template<typename T>
-struct Params {
+struct Params
+{
 	Eigen::Matrix<T,3,3> I;
 };
 
@@ -22,7 +23,9 @@ using namespace Lie;
 using namespace SO3;
 
 template<typename T, typename M>
-class DLS_temp : public DiscLagSyst<M,Group<T>,Algebra<T>,Params<T>> {
+class DLS_temp
+: public DiscLagSyst<M,Group<T>,Algebra<T>,Params<T>>
+{
 private:
 	int m_exact_initialized = 0;
 	int m_orderflag;
@@ -45,7 +48,9 @@ private:
 	Eigen::Matrix<T,3,3> m_P;
 	Eigen::Matrix<T,3,3> m_TU0;
 
-	void initialize () {
+	void
+	initialize ( )
+	{
 		
 		// First we need to make shure that I2 is the middle one, i.e. I1<=I2<=I3 or I1>=I2>=I3
 		
@@ -143,13 +148,17 @@ private:
 	}
 
 public:
-	virtual void step (const JetSpace<M,Group<T>,Algebra<T>>& js0, JetSpace<M,Group<T>,Algebra<T>>& js1) {
+	virtual void
+	step (const JetSpace<M,Group<T>,Algebra<T>>& js0, JetSpace<M,Group<T>,Algebra<T>>& js1)
+	{
 		M h = js1.base()-js0.base();
 		js1.pos(js0.pos());
 		js1.vel(js0.vel());
 	}
 	
-	JetSpace<M,Group<T>,Algebra<T>> exact_solution (M const& t) {
+	JetSpace<M,Group<T>,Algebra<T>>
+	exact_solution (M const& t)
+	{
 		if (!m_exact_initialized)
 			initialize();
 
@@ -202,7 +211,9 @@ public:
 		return js;
 	}
 
-	void evolve_exact () {
+	void
+	evolve_exact ( )
+	{
 		for (int i=1; i<this->m_node.size()-1; i++) {
 			this->m_node[i+1] = exact_solution(this->m_node[i+1].base());
 		}

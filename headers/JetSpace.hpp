@@ -13,57 +13,74 @@
  *  Bla.
  */
 template <typename M, typename Q, typename TQ>
-class JetSpace {
+class JetSpace
+{
 protected:
 	M m_base; /**< Base space variable */
 	Q m_pos; /**< Configuration space variable */
 	TQ m_vel; /**< Velocity space variable */
 
 public:
-	JetSpace<M,Q,TQ> ()
-	{}
+	JetSpace<M,Q,TQ> ( )
+	{ }
 
 	JetSpace<M,Q,TQ> (M base)
-		: m_base(base)
-	{}
+	: m_base(base)
+	{ }
 
 	JetSpace<M,Q,TQ> (M base, Q pos, TQ vel)
-		: m_base(base), m_pos(pos), m_vel(vel)
-	{}
+	: m_base(base), m_pos(pos), m_vel(vel)
+	{ }
 
-	~JetSpace<M,Q,TQ> ()
-	{}
+	~JetSpace<M,Q,TQ> ( )
+	{ }
 
-	M base () const {
+	M
+	base (void) const
+	{
 		return m_base;
 	}
 
-	void base(M _base) {
+	void
+	base(M _base)
+	{
 		m_base = _base;
 	}
 	
-	Q pos () const {
+	Q
+	pos ( ) const
+	{
 		return m_pos;
 	}
 	
-	void pos (Q _pos) {
+	void
+	pos (Q _pos)
+	{
 		m_pos = _pos;
 	}
 
-	TQ vel () const {
+	TQ
+	vel ( ) const
+	{
 		return m_vel;
 	}
 
-	void vel (TQ _vel) {
+	void
+	vel (TQ _vel)
+	{
 		m_vel = _vel;
 	}
 
-	friend std::ostream& operator<< (std::ostream& stream, const JetSpace<M,Q,TQ>& js) {
+	friend std::ostream&
+	operator<< (std::ostream& stream, const JetSpace<M,Q,TQ>& js)
+	{
 		stream << "(" << js.m_base << "," << js.m_pos << "," << js.m_vel << ")";
 		return stream;
 	}
 
-	std::string csvString (const std::string sep) {
+	std::string
+	csvString (const std::string sep)
+	{
 		std::ostringstream ss;
 		/*if (std::is_fundamental<M>::value) {
 			ss << m_base;

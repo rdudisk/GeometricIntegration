@@ -66,6 +66,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classVec-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Vec&lt; T, N &gt; Class Template Reference</div>  </div>
@@ -84,12 +85,29 @@ Collaboration diagram for Vec&lt; T, N &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2f154a91ba120703c2d75c615d41757a"><td class="memItemLeft" align="right" valign="top"><a id="a2f154a91ba120703c2d75c615d41757a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>osef</b> ()</td></tr>
-<tr class="separator:a2f154a91ba120703c2d75c615d41757a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d9480c6a6e5736976036db5c984284e"><td class="memTemplParams" colspan="2"><a id="a2d9480c6a6e5736976036db5c984284e"></a>
+template&lt;typename OtherDerived &gt; </td></tr>
+<tr class="memitem:a2d9480c6a6e5736976036db5c984284e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Vec</b> (const Eigen::MatrixBase&lt; OtherDerived &gt; &amp;other)</td></tr>
+<tr class="separator:a2d9480c6a6e5736976036db5c984284e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a832c95f03a05f24ffb87d0e2127702b4"><td class="memTemplParams" colspan="2"><a id="a832c95f03a05f24ffb87d0e2127702b4"></a>
+template&lt;typename OtherDerived &gt; </td></tr>
+<tr class="memitem:a832c95f03a05f24ffb87d0e2127702b4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classVec.html">Vec</a>&lt; T, N &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator=</b> (const Eigen::MatrixBase&lt; OtherDerived &gt; &amp;other)</td></tr>
+<tr class="separator:a832c95f03a05f24ffb87d0e2127702b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0b1d242552c39927f525142e154dde0"><td class="memItemLeft" align="right" valign="top"><a id="ae0b1d242552c39927f525142e154dde0"></a>
+gsl_vector *&#160;</td><td class="memItemRight" valign="bottom"><b>cast_gsl_vector</b> ()</td></tr>
+<tr class="separator:ae0b1d242552c39927f525142e154dde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a88a3207d27890741c006fcc49585eb97"><td class="memItemLeft" align="right" valign="top"><a id="a88a3207d27890741c006fcc49585eb97"></a>
+static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>dof</b> ()</td></tr>
+<tr class="separator:a88a3207d27890741c006fcc49585eb97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23366e5b00a0439921135e2f603d8935"><td class="memItemLeft" align="right" valign="top"><a id="a23366e5b00a0439921135e2f603d8935"></a>
+static <a class="el" href="classVec.html">Vec</a>&lt; T, N &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>cast_from_gsl_vector</b> (const gsl_vector *x)</td></tr>
+<tr class="separator:a23366e5b00a0439921135e2f603d8935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>headers/<a class="el" href="vec2_8hpp_source.html">vec2.hpp</a></li>
+<li>headers/<a class="el" href="Vec_8hpp_source.html">Vec.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
