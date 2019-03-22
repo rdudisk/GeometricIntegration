@@ -7,10 +7,13 @@
 
 #include <typeinfo>
 
+#include "VarIntegratorDefs.hpp"
 #include "DiscLagSyst.hpp"
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_multiroots.h>
+
+#include "Galerkin.hpp"
 
 int
 print_state (size_t iter, gsl_multiroot_fsolver *s)
@@ -36,37 +39,28 @@ print_state_fdf (size_t iter, gsl_multiroot_fdfsolver *s)
 			gsl_vector_get(s->f,1));
 }
 
-template<typename M, typename Q, typename TQ, typename P>
-struct var_integrator_params
-{
-	M h;
-	Q x0;
-	Q x1;
-	DiscLagSyst<M,Q,TQ,P> *syst;
-};
-
 template <typename M, typename Q, typename TQ, typename P>
 class VarIntegrator
 {
 private:
+	/* WARNING: there seems to be something wrong with gsl_vector_set when the vector representing the DEL is not an Eigen::...<double>
+	 * This is also the case when computing m_dLdq and m_dLdv internally with Q of scalar type other than double (at least float tested)
+	 * and casting it with Eigen::...::cast<double> beofre the return.
+	 * Couldn't find the cause of the problem after hours of search, so for now the recommandation is to use double type for scalar representation
+	 * within Q (and M).*/
 
-/* WARNING: there seems to be something wrong with gsl_vector_set when the vector representing the DEL is not an Eigen::...<double>
- * This is also the case when computing m_dLdq and m_dLdv internally with Q of scalar type other than double (at least float tested)
- * and casting it with Eigen::...::cast<double> beofre the return.
- * Couldn't find the cause of the problem after hours of search, so for now the recommandation is to use double type for scalar representation
- * within Q (and M).*/
-
-	/* Euler internal functions for solving DEL */
+	/* Euler internal functions for solving DEL
+	 */
 	static int
 	f_del_euler (const gsl_vector* x_vec, void* pp, gsl_vector* f)
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
@@ -75,7 +69,7 @@ private:
 			+ h * syst->m_dLdq( x1, (x-x1)/h )
 			    - syst->m_dLdv( x1, (x-x1)/h );
 		
-		for (int i=0; i<dof; i++)
+		for (size_t i=0; i<dof; i++)
 			gsl_vector_set(f,i,del(i));
 
 		return GSL_SUCCESS;
@@ -86,11 +80,11 @@ private:
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
@@ -98,7 +92,7 @@ private:
 			  syst->m_JvdLdq( x1, (x-x1)/h )
 			- syst->m_JvdLdv( x1, (x-x1)/h )/h;
 	
-		int i, j;
+		size_t i, j;
 		for (i=0; i<dof; i++) {
 			for (j=0; j<dof; j++)
 				gsl_matrix_set(J,i,j,Jdel(i,j));
@@ -112,11 +106,11 @@ private:
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
@@ -128,7 +122,7 @@ private:
 			  syst->m_JvdLdq( x1, (x-x1)/h )
 			- syst->m_JvdLdv( x1, (x-x1)/h )/h;
 	
-		int i, j;
+		size_t i, j;
 		for (i=0; i<dof; i++) {
 			for (j=0; j<dof; j++)
 				gsl_matrix_set(J,i,j,Jdel(i,j));
@@ -144,25 +138,25 @@ private:
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
-		Q x01 = (x0+x1)/2.0;
-		Q dx01 = (x1-x0)/h;
-		Q x12 = (x1+x)/2.0;
-		Q dx12 = (x-x1)/h;
+		const Q x01 = (x0+x1)/2.0;
+		const Q dx01 = (x1-x0)/h;
+		const Q x12 = (x1+x)/2.0;
+		const Q dx12 = (x-x1)/h;
 		Eigen::Matrix<double,Eigen::Dynamic,1> del =
 			  h*syst->m_dLdq( x01, dx01 )/2.0
 			+   syst->m_dLdv( x01, dx01 )
 			+ h*syst->m_dLdq( x12, dx12 )/2.0
 			-	syst->m_dLdv( x12, dx12 );
 
-		for (int i=0; i<dof; i++)
+		for (size_t i=0; i<dof; i++)
 			gsl_vector_set(f,i,del(i));
 		 
 		return GSL_SUCCESS;
@@ -173,23 +167,23 @@ private:
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
-		Q x12 = (x1+x)/2.0;
-		Q dx12 = (x-x1)/h;
+		const Q x12 = (x1+x)/2.0;
+		const Q dx12 = (x-x1)/h;
 		Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> Jdel =
 			h*syst->m_JqdLdq( x12, dx12 )/4.0
 			+ syst->m_JvdLdq( x12, dx12 )/2.0
 			- syst->m_JqdLdv( x12, dx12 )/2.0
 			- syst->m_JvdLdv( x12, dx12 )/h;
 	
-		int i, j;
+		size_t i, j;
 		for (i=0; i<dof; i++) {
 			for (j=0; j<dof; j++)
 				gsl_matrix_set(J,i,j,Jdel(i,j));
@@ -202,18 +196,18 @@ private:
 	{
 		var_integrator_params<M,Q,TQ,P>* p = (struct var_integrator_params<M,Q,TQ,P>*) pp;
 		M h = p->h;
-		const Q x0 = p->x0;
-		const Q x1 = p->x1;
+		const Q x0 = p->pos[0];
+		const Q x1 = p->pos[1];
 		DiscLagSyst<M,Q,TQ,P>* syst = p->syst;
 
-		size_t dof = syst->dof();
+		const size_t dof = syst->dof();
 
 		Q x(Q::cast_from_gsl_vector(x_vec));
 
-		Q x01 = (x0+x1)/2.0;
-		Q dx01 = (x1-x0)/h;
-		Q x12 = (x1+x)/2.0;
-		Q dx12 = (x-x1)/h;
+		const Q x01 = (x0+x1)/2.0;
+		const Q dx01 = (x1-x0)/h;
+		const Q x12 = (x1+x)/2.0;
+		const Q dx12 = (x-x1)/h;
 		Eigen::Matrix<double,Eigen::Dynamic,1> del =
 			  h*syst->m_dLdq( x01, dx01 )/2.0
 			+   syst->m_dLdv( x01, dx01 )
@@ -225,7 +219,7 @@ private:
 			- syst->m_JqdLdv( x12, dx12 )/2.0
 			- syst->m_JvdLdv( x12, dx12 )/h;
 
-		int i, j;
+		size_t i, j;
 		for (i=0; i<dof; i++) {
 			for (j=0; j<dof; j++)
 				gsl_matrix_set(J,i,j,Jdel(i,j));
@@ -238,7 +232,7 @@ public:
 	DiscLagSyst<M,Q,TQ,P> *m_syst;
 
 	void
-	onestep_method_f (   int (*f_del) (const gsl_vector*, void*, gsl_vector*)   )
+	onestep_method_f (  int (*f_del) (const gsl_vector*, void*, gsl_vector*)  )
 	{
 		const size_t dof = this->m_syst->dof();
 
@@ -266,7 +260,10 @@ public:
 			q1  = this->m_syst->pos(i);
 			h   = this->m_syst->base(i) - this->m_syst->base(i-1);
 
-			pp  = { h, q0, q1, this->m_syst };
+			std::vector<Q> pos;
+			pos.push_back (q0);
+			pos.push_back (q1);
+			pp  = { h, pos, this->m_syst };
 			f   = { f_del , dof , &pp };
 
 			gsl_vector_set(x,0,q1(0));
@@ -326,7 +323,10 @@ public:
 			q1  = this->m_syst->pos(i);
 			h   = this->m_syst->base(i)-this->m_syst->base(i-1);
 
-			pp  = { h, q0, q1, this->m_syst };
+			std::vector<Q> pos;
+			pos.push_back (q0);
+			pos.push_back (q1);
+			pp  = { h, pos, this->m_syst };
 			f   = { f_del, df_del, fdf_del, dof , &pp };
 
 			gsl_vector_set(x,0,q1(0));
@@ -358,22 +358,25 @@ public:
 	void
 	midpoint ( )
 	{
-		onestep_method_f(this->f_del_midpoint);
+		onestep_method_f (this->f_del_midpoint);
 	}
 
-	void midpoint_fdf ( )
+	void
+	midpoint_fdf ( )
 	{
-		onestep_method_fdf(this->f_del_midpoint,this->df_del_midpoint,this->fdf_del_midpoint);
+		onestep_method_fdf (this->f_del_midpoint, this->df_del_midpoint, this->fdf_del_midpoint);
 	}
 
-	void euler ( )
+	void
+	euler ( )
 	{
-		onestep_method_f(this->f_del_euler);
+		onestep_method_f (this->f_del_euler);
 	}
 
-	void euler_fdf ( )
+	void
+	euler_fdf ( )
 	{
-		onestep_method_fdf(this->f_del_euler,this->df_del_euler,this->fdf_del_euler);
+		onestep_method_fdf (this->f_del_euler, this->df_del_euler, this->fdf_del_euler);
 	}
 };
 
