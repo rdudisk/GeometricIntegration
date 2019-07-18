@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['params',['Params',['../structParams.html',1,'']]]
+  ['explicitrkmkstep',['ExplicitRKMKStep',['../classExplicitRKMKStep.html',1,'']]]
 ];

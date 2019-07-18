@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classLie_1_1SO3_1_1Algebra.html" title="Lie::SO3::Algebra\&lt; T \&gt;" alt="" coords="5,5,163,32"/>
+<area shape="rect" id="node1" href="$classAbstract_1_1RKMKStep.html" title="Abstract::RKMKStep\l\&lt; T_M, T_Q, T_LIE_ALGEBRA,\l T_N_INTERNAL_STAGES \&gt;" alt="" coords="5,45,216,101"/>
+<area shape="rect" id="node2" href="$classDIRKMKStep.html" title="DIRKMKStep\&lt; T_M, T\l_Q, T_LIE_ALGEBRA, T\l_N_INTERNAL_STAGES \&gt;" alt="" coords="270,5,457,61"/>
+<area shape="rect" id="node3" href="$classExplicitRKMKStep.html" title="ExplicitRKMKStep\&lt; T\l_M, T_Q, T_LIE_ALGEBRA,\l T_N_INTERNAL_STAGES \&gt;" alt="" coords="264,85,463,141"/>
 </map>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: Lie::SO3::Group&lt; T &gt; Class Template Reference</title>
+<title>My Project: Lie::SO3::Group&lt; T_SCALAR_TYPE &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,10 +71,11 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classLie_1_1SO3_1_1Group-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Lie::SO3::Group&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">Lie::SO3::Group&lt; T_SCALAR_TYPE &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,117 +83,126 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a25de063d89861fc43d24b4585a5801f6"><td class="memItemLeft" align="right" valign="top"><a id="a25de063d89861fc43d24b4585a5801f6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt; &amp;g)</td></tr>
-<tr class="separator:a25de063d89861fc43d24b4585a5801f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07fc3567196b01e20e0a0ff7f082235d"><td class="memItemLeft" align="right" valign="top"><a id="a07fc3567196b01e20e0a0ff7f082235d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const Eigen::Quaternion&lt; T &gt; &amp;q_)</td></tr>
-<tr class="separator:a07fc3567196b01e20e0a0ff7f082235d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cb828611048198df4f79af0c937a0ee"><td class="memItemLeft" align="right" valign="top"><a id="a0cb828611048198df4f79af0c937a0ee"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const T &amp;w, const T &amp;x, const T &amp;y, const T &amp;z)</td></tr>
-<tr class="separator:a0cb828611048198df4f79af0c937a0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b1b6ec940276b55211e35871c290ec0"><td class="memItemLeft" align="right" valign="top"><a id="a7b1b6ec940276b55211e35871c290ec0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const T *data)</td></tr>
-<tr class="separator:a7b1b6ec940276b55211e35871c290ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad37e7e20a5d2da9249ed9a33aee23a74"><td class="memTemplParams" colspan="2"><a id="ad37e7e20a5d2da9249ed9a33aee23a74"></a>
+<tr class="memitem:a5a62ae5ac68a9a75d632b6188b369b96"><td class="memItemLeft" align="right" valign="top"><a id="a5a62ae5ac68a9a75d632b6188b369b96"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt; &amp;g)</td></tr>
+<tr class="separator:a5a62ae5ac68a9a75d632b6188b369b96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e429c381ff79247a927f2eaf9c5724a"><td class="memItemLeft" align="right" valign="top"><a id="a8e429c381ff79247a927f2eaf9c5724a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const Eigen::Quaternion&lt; T_SCALAR_TYPE &gt; &amp;q_)</td></tr>
+<tr class="separator:a8e429c381ff79247a927f2eaf9c5724a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d3f4b2aadecead334fac04cd736ffcc"><td class="memItemLeft" align="right" valign="top"><a id="a2d3f4b2aadecead334fac04cd736ffcc"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const T_SCALAR_TYPE &amp;w, const T_SCALAR_TYPE &amp;x, const T_SCALAR_TYPE &amp;y, const T_SCALAR_TYPE &amp;z)</td></tr>
+<tr class="separator:a2d3f4b2aadecead334fac04cd736ffcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2066470f573cdb0802486ccbf40e3a7"><td class="memItemLeft" align="right" valign="top"><a id="ab2066470f573cdb0802486ccbf40e3a7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const T_SCALAR_TYPE *data)</td></tr>
+<tr class="separator:ab2066470f573cdb0802486ccbf40e3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a092f2de90712b9a6df94a46ecfe03c37"><td class="memTemplParams" colspan="2"><a id="a092f2de90712b9a6df94a46ecfe03c37"></a>
 template&lt;class Derived &gt; </td></tr>
-<tr class="memitem:ad37e7e20a5d2da9249ed9a33aee23a74"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::QuaternionBase&lt; Derived &gt; &amp;other)</td></tr>
-<tr class="separator:ad37e7e20a5d2da9249ed9a33aee23a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9cd94827d49da60e706e6ad5f133c01"><td class="memItemLeft" align="right" valign="top"><a id="aa9cd94827d49da60e706e6ad5f133c01"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const Eigen::AngleAxis&lt; T &gt; &amp;aa)</td></tr>
-<tr class="separator:aa9cd94827d49da60e706e6ad5f133c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2ad418db8928ff2dc0498b1a64139d5"><td class="memTemplParams" colspan="2"><a id="ab2ad418db8928ff2dc0498b1a64139d5"></a>
+<tr class="memitem:a092f2de90712b9a6df94a46ecfe03c37"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::QuaternionBase&lt; Derived &gt; &amp;other)</td></tr>
+<tr class="separator:a092f2de90712b9a6df94a46ecfe03c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab05c81597c8b7beb3dbbd4cdfd973a6"><td class="memItemLeft" align="right" valign="top"><a id="aab05c81597c8b7beb3dbbd4cdfd973a6"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Group</b> (const Eigen::AngleAxis&lt; T_SCALAR_TYPE &gt; &amp;aa)</td></tr>
+<tr class="separator:aab05c81597c8b7beb3dbbd4cdfd973a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7e9a6cdaf9279c5680683df8e87cb33"><td class="memTemplParams" colspan="2"><a id="ab7e9a6cdaf9279c5680683df8e87cb33"></a>
 template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:ab2ad418db8928ff2dc0498b1a64139d5"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;other)</td></tr>
-<tr class="separator:ab2ad418db8928ff2dc0498b1a64139d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea861c461e27731986be3a16f9a069a1"><td class="memTemplParams" colspan="2"><a id="aea861c461e27731986be3a16f9a069a1"></a>
+<tr class="memitem:ab7e9a6cdaf9279c5680683df8e87cb33"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;other)</td></tr>
+<tr class="separator:ab7e9a6cdaf9279c5680683df8e87cb33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37227664ad5eba93075954614ca3636a"><td class="memTemplParams" colspan="2"><a id="a37227664ad5eba93075954614ca3636a"></a>
 template&lt;class OtherScalar , int OtherOptions&gt; </td></tr>
-<tr class="memitem:aea861c461e27731986be3a16f9a069a1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::Quaternion&lt; OtherScalar, OtherOptions &gt; &amp;other)</td></tr>
-<tr class="separator:aea861c461e27731986be3a16f9a069a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdd70de137296ec3c99cb3fdd5201fd1"><td class="memItemLeft" align="right" valign="top">Eigen::Quaternion&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#acdd70de137296ec3c99cb3fdd5201fd1">q</a> () const</td></tr>
-<tr class="separator:acdd70de137296ec3c99cb3fdd5201fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ac1b48d7d3599bd306a6773c55af8e0"><td class="memItemLeft" align="right" valign="top"><a id="a4ac1b48d7d3599bd306a6773c55af8e0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const Eigen::Quaternion&lt; T &gt; &amp;q_)</td></tr>
-<tr class="separator:a4ac1b48d7d3599bd306a6773c55af8e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a671334ea72e1cc60139fea8af40fc7bd"><td class="memItemLeft" align="right" valign="top"><a id="a671334ea72e1cc60139fea8af40fc7bd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const T &amp;w, const T &amp;x, const T &amp;y, const T &amp;z)</td></tr>
-<tr class="separator:a671334ea72e1cc60139fea8af40fc7bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a252268b23f927a4da0c81eed8fef2cfd"><td class="memItemLeft" align="right" valign="top"><a id="a252268b23f927a4da0c81eed8fef2cfd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const T *data)</td></tr>
-<tr class="separator:a252268b23f927a4da0c81eed8fef2cfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0ec90b962541c09387c26d51d79db45"><td class="memTemplParams" colspan="2"><a id="af0ec90b962541c09387c26d51d79db45"></a>
+<tr class="memitem:a37227664ad5eba93075954614ca3636a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Group</b> (const Eigen::Quaternion&lt; OtherScalar, OtherOptions &gt; &amp;other)</td></tr>
+<tr class="separator:a37227664ad5eba93075954614ca3636a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e17304a82e37904af7f2f6da5b7aa07"><td class="memItemLeft" align="right" valign="top">Eigen::Quaternion&lt; T_SCALAR_TYPE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a8e17304a82e37904af7f2f6da5b7aa07">q</a> () const</td></tr>
+<tr class="separator:a8e17304a82e37904af7f2f6da5b7aa07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cb16b731b7138d8aa800010c6b2bb08"><td class="memItemLeft" align="right" valign="top"><a id="a9cb16b731b7138d8aa800010c6b2bb08"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const Eigen::Quaternion&lt; T_SCALAR_TYPE &gt; &amp;q_)</td></tr>
+<tr class="separator:a9cb16b731b7138d8aa800010c6b2bb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30cb0a23ffab73e61d4b503b8805708e"><td class="memItemLeft" align="right" valign="top"><a id="a30cb0a23ffab73e61d4b503b8805708e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const T_SCALAR_TYPE &amp;w, const T_SCALAR_TYPE &amp;x, const T_SCALAR_TYPE &amp;y, const T_SCALAR_TYPE &amp;z)</td></tr>
+<tr class="separator:a30cb0a23ffab73e61d4b503b8805708e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace1ab03d80e6c1b4c434f2eefd3fbdda"><td class="memItemLeft" align="right" valign="top"><a id="ace1ab03d80e6c1b4c434f2eefd3fbdda"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const T_SCALAR_TYPE *data)</td></tr>
+<tr class="separator:ace1ab03d80e6c1b4c434f2eefd3fbdda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8487aadcd87523404f37e806a699b300"><td class="memTemplParams" colspan="2"><a id="a8487aadcd87523404f37e806a699b300"></a>
 template&lt;class Derived &gt; </td></tr>
-<tr class="memitem:af0ec90b962541c09387c26d51d79db45"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::QuaternionBase&lt; Derived &gt; &amp;other)</td></tr>
-<tr class="separator:af0ec90b962541c09387c26d51d79db45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82ab63fa209faa5d3666b0d197fde315"><td class="memItemLeft" align="right" valign="top"><a id="a82ab63fa209faa5d3666b0d197fde315"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const Eigen::AngleAxis&lt; T &gt; &amp;aa)</td></tr>
-<tr class="separator:a82ab63fa209faa5d3666b0d197fde315"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a369af131b1f48c17ba5d40e6d26be81a"><td class="memTemplParams" colspan="2"><a id="a369af131b1f48c17ba5d40e6d26be81a"></a>
+<tr class="memitem:a8487aadcd87523404f37e806a699b300"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::QuaternionBase&lt; Derived &gt; &amp;other)</td></tr>
+<tr class="separator:a8487aadcd87523404f37e806a699b300"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad40511f0d25a3d448f3ef27128eebfc9"><td class="memItemLeft" align="right" valign="top"><a id="ad40511f0d25a3d448f3ef27128eebfc9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>q</b> (const Eigen::AngleAxis&lt; T_SCALAR_TYPE &gt; &amp;aa)</td></tr>
+<tr class="separator:ad40511f0d25a3d448f3ef27128eebfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fba7ad672d9d5b24c767ed060b989c7"><td class="memTemplParams" colspan="2"><a id="a3fba7ad672d9d5b24c767ed060b989c7"></a>
 template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:a369af131b1f48c17ba5d40e6d26be81a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;other)</td></tr>
-<tr class="separator:a369af131b1f48c17ba5d40e6d26be81a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b2520983c7f6d3d9a570c864ad5c234"><td class="memTemplParams" colspan="2"><a id="a6b2520983c7f6d3d9a570c864ad5c234"></a>
+<tr class="memitem:a3fba7ad672d9d5b24c767ed060b989c7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;other)</td></tr>
+<tr class="separator:a3fba7ad672d9d5b24c767ed060b989c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad82e16bf861c198c2bc8ec6d2f427add"><td class="memTemplParams" colspan="2"><a id="ad82e16bf861c198c2bc8ec6d2f427add"></a>
 template&lt;class OtherScalar , int OtherOptions&gt; </td></tr>
-<tr class="memitem:a6b2520983c7f6d3d9a570c864ad5c234"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::Quaternion&lt; OtherScalar, OtherOptions &gt; &amp;other)</td></tr>
-<tr class="separator:a6b2520983c7f6d3d9a570c864ad5c234"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a63e56b63ce07607d76b259d7aeb8a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a4a63e56b63ce07607d76b259d7aeb8a5">inverse</a> () const</td></tr>
-<tr class="separator:a4a63e56b63ce07607d76b259d7aeb8a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abeff72c397a20d1eb6cc14d382820d7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#abeff72c397a20d1eb6cc14d382820d7b">inverted</a> ()</td></tr>
-<tr class="separator:abeff72c397a20d1eb6cc14d382820d7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4262be070ab0ce2b7df071ee6dbb1032"><td class="memItemLeft" align="right" valign="top"><a id="a4262be070ab0ce2b7df071ee6dbb1032"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>operator*=</b> (<a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt; const &amp;g)</td></tr>
-<tr class="separator:a4262be070ab0ce2b7df071ee6dbb1032"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5988d8ea63a1455b7e02279c35e8af9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#af5988d8ea63a1455b7e02279c35e8af9">operator*</a> (<a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt; const &amp;g) const</td></tr>
-<tr class="separator:af5988d8ea63a1455b7e02279c35e8af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a692034cbfe66f21ffbe530a489ad60d2"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a692034cbfe66f21ffbe530a489ad60d2">transformVector</a> (const Eigen::Matrix&lt; T, 3, 1 &gt; &amp;v) const</td></tr>
-<tr class="separator:a692034cbfe66f21ffbe530a489ad60d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af849fcc3f3d7c6cbff9e1aba78a82dc8"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#af849fcc3f3d7c6cbff9e1aba78a82dc8">operator*</a> (Eigen::Matrix&lt; T, 3, 1 &gt; const &amp;v) const</td></tr>
-<tr class="separator:af849fcc3f3d7c6cbff9e1aba78a82dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae140d432a3445a4e107b923d0f98c9ff"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T, 3, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#ae140d432a3445a4e107b923d0f98c9ff">toRotationMatrix</a> () const</td></tr>
-<tr class="separator:ae140d432a3445a4e107b923d0f98c9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56f93da4147d35cd8032749eafcf034b"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T, 3, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a56f93da4147d35cd8032749eafcf034b">toAxisAngle</a> () const</td></tr>
-<tr class="separator:a56f93da4147d35cd8032749eafcf034b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa426ca7bc8d66817afa249c52e265f9d"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#aa426ca7bc8d66817afa249c52e265f9d">toVector</a> () const</td></tr>
-<tr class="separator:aa426ca7bc8d66817afa249c52e265f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad82e16bf861c198c2bc8ec6d2f427add"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>q</b> (const Eigen::Quaternion&lt; OtherScalar, OtherOptions &gt; &amp;other)</td></tr>
+<tr class="separator:ad82e16bf861c198c2bc8ec6d2f427add"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f4ce9aa8b2f2dda4026530136b9b2aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a7f4ce9aa8b2f2dda4026530136b9b2aa">inverse</a> () const</td></tr>
+<tr class="separator:a7f4ce9aa8b2f2dda4026530136b9b2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4a2b9de221aabb1f38ca304faad8822"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#ae4a2b9de221aabb1f38ca304faad8822">inverted</a> ()</td></tr>
+<tr class="separator:ae4a2b9de221aabb1f38ca304faad8822"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a525baecdeba08a004d3274d318d2754a"><td class="memItemLeft" align="right" valign="top"><a id="a525baecdeba08a004d3274d318d2754a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>operator*=</b> (<a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt; const &amp;g)</td></tr>
+<tr class="separator:a525baecdeba08a004d3274d318d2754a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38e5724dc6cb31aea4ae8e5eabfa73fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a38e5724dc6cb31aea4ae8e5eabfa73fa">operator*</a> (<a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt; const &amp;g) const</td></tr>
+<tr class="separator:a38e5724dc6cb31aea4ae8e5eabfa73fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a103314229ec1309a13a0c56d9fc9c86e"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a103314229ec1309a13a0c56d9fc9c86e">transformVector</a> (const Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; &amp;v) const</td></tr>
+<tr class="separator:a103314229ec1309a13a0c56d9fc9c86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af85e23f3eeac7b64f74c8231f7cdc013"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#af85e23f3eeac7b64f74c8231f7cdc013">operator*</a> (Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; const &amp;v) const</td></tr>
+<tr class="separator:af85e23f3eeac7b64f74c8231f7cdc013"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acacbe6050274ba3a9f7a917b09723051"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#acacbe6050274ba3a9f7a917b09723051">toRotationMatrix</a> () const</td></tr>
+<tr class="separator:acacbe6050274ba3a9f7a917b09723051"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02c1af9d3609c466fe35a840996d6e88"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a02c1af9d3609c466fe35a840996d6e88">toAxisAngle</a> () const</td></tr>
+<tr class="separator:a02c1af9d3609c466fe35a840996d6e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d39663156e321d2cba59d325f1febd5"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a6d39663156e321d2cba59d325f1febd5">toVector</a> () const</td></tr>
+<tr class="separator:a6d39663156e321d2cba59d325f1febd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25b9a23a0235462972aa54a4e2508f56"><td class="memItemLeft" align="right" valign="top"><a id="a25b9a23a0235462972aa54a4e2508f56"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isApprox</b> (<a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt; const &amp;g) const</td></tr>
+<tr class="separator:a25b9a23a0235462972aa54a4e2508f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3dd2246f2380272dc191936ce1c25453"><td class="memItemLeft" align="right" valign="top"><a id="a3dd2246f2380272dc191936ce1c25453"></a>
-static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>dof</b> ()</td></tr>
-<tr class="separator:a3dd2246f2380272dc191936ce1c25453"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a405f674445dbc797a9e0d12a91dcc5fc"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#a405f674445dbc797a9e0d12a91dcc5fc">Identity</a> ()</td></tr>
-<tr class="separator:a405f674445dbc797a9e0d12a91dcc5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3cb6c88acc63fedcd0cf553d298ecf6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLie_1_1SO3_1_1Group.html#af3cb6c88acc63fedcd0cf553d298ecf6">Identity</a> ()</td></tr>
+<tr class="separator:af3cb6c88acc63fedcd0cf553d298ecf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72ccb6e1d98873edd9d1a9d49c23dd5e"><td class="memItemLeft" align="right" valign="top"><a id="a72ccb6e1d98873edd9d1a9d49c23dd5e"></a>
+static const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>dof</b> ()</td></tr>
+<tr class="separator:a72ccb6e1d98873edd9d1a9d49c23dd5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a5d79040947950035a755d224e39fc325"><td class="memItemLeft" align="right" valign="top"><a id="a5d79040947950035a755d224e39fc325"></a>
+static const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>DOF</b> = 3</td></tr>
+<tr class="separator:a5d79040947950035a755d224e39fc325"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a0dbed26a8b7e82864788a97539111adc"><td class="memItemLeft" align="right" valign="top"><a id="a0dbed26a8b7e82864788a97539111adc"></a>
-Eigen::Quaternion&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_q</b></td></tr>
-<tr class="separator:a0dbed26a8b7e82864788a97539111adc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8b5a174cdcd8bd75913a62d686ff426"><td class="memItemLeft" align="right" valign="top"><a id="ab8b5a174cdcd8bd75913a62d686ff426"></a>
+Eigen::Quaternion&lt; T_SCALAR_TYPE &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_q</b></td></tr>
+<tr class="separator:ab8b5a174cdcd8bd75913a62d686ff426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T&gt;<br />
-class Lie::SO3::Group&lt; T &gt;</h3>
+<div class="textblock"><h3>template&lt;typename T_SCALAR_TYPE&gt;<br />
+class Lie::SO3::Group&lt; T_SCALAR_TYPE &gt;</h3>
 
 <p>Class for Lie group \(SO(3)\) implementation. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Floating point type used for internal representation of coefficients. </td></tr>
+    <tr><td class="paramname">T_SCALAR_TYPE</td><td>Floating point type used for internal representation of coefficients. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a405f674445dbc797a9e0d12a91dcc5fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a405f674445dbc797a9e0d12a91dcc5fc">&#9670;&nbsp;</a></span>Identity()</h2>
+<a id="af3cb6c88acc63fedcd0cf553d298ecf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3cb6c88acc63fedcd0cf553d298ecf6">&#9670;&nbsp;</a></span>Identity()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::Identity </td>
+          <td class="memname">static <a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T_SCALAR_TYPE&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::Identity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -208,19 +218,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a4a63e56b63ce07607d76b259d7aeb8a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a63e56b63ce07607d76b259d7aeb8a5">&#9670;&nbsp;</a></span>inverse()</h2>
+<a id="a7f4ce9aa8b2f2dda4026530136b9b2aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f4ce9aa8b2f2dda4026530136b9b2aa">&#9670;&nbsp;</a></span>inverse()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::inverse </td>
+          <td class="memname"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T_SCALAR_TYPE&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::inverse </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -236,19 +246,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="abeff72c397a20d1eb6cc14d382820d7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abeff72c397a20d1eb6cc14d382820d7b">&#9670;&nbsp;</a></span>inverted()</h2>
+<a id="ae4a2b9de221aabb1f38ca304faad8822"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4a2b9de221aabb1f38ca304faad8822">&#9670;&nbsp;</a></span>inverted()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::inverted </td>
+          <td class="memname">void <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::inverted </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -264,21 +274,21 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="af5988d8ea63a1455b7e02279c35e8af9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5988d8ea63a1455b7e02279c35e8af9">&#9670;&nbsp;</a></span>operator*() <span class="overload">[1/2]</span></h2>
+<a id="a38e5724dc6cb31aea4ae8e5eabfa73fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38e5724dc6cb31aea4ae8e5eabfa73fa">&#9670;&nbsp;</a></span>operator*() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::operator* </td>
+          <td class="memname"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt;T_SCALAR_TYPE&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::operator* </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T &gt; const &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classLie_1_1SO3_1_1Group.html">Group</a>&lt; T_SCALAR_TYPE &gt; const &amp;&#160;</td>
           <td class="paramname"><em>g</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -293,21 +303,21 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="af849fcc3f3d7c6cbff9e1aba78a82dc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af849fcc3f3d7c6cbff9e1aba78a82dc8">&#9670;&nbsp;</a></span>operator*() <span class="overload">[2/2]</span></h2>
+<a id="af85e23f3eeac7b64f74c8231f7cdc013"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af85e23f3eeac7b64f74c8231f7cdc013">&#9670;&nbsp;</a></span>operator*() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;T,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::operator* </td>
+          <td class="memname">Eigen::Matrix&lt;T_SCALAR_TYPE,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::operator* </td>
           <td>(</td>
-          <td class="paramtype">Eigen::Matrix&lt; T, 3, 1 &gt; const &amp;&#160;</td>
+          <td class="paramtype">Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; const &amp;&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -322,19 +332,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="acdd70de137296ec3c99cb3fdd5201fd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acdd70de137296ec3c99cb3fdd5201fd1">&#9670;&nbsp;</a></span>q()</h2>
+<a id="a8e17304a82e37904af7f2f6da5b7aa07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e17304a82e37904af7f2f6da5b7aa07">&#9670;&nbsp;</a></span>q()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Quaternion&lt;T&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::q </td>
+          <td class="memname">Eigen::Quaternion&lt;T_SCALAR_TYPE&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::q </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -350,19 +360,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a56f93da4147d35cd8032749eafcf034b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56f93da4147d35cd8032749eafcf034b">&#9670;&nbsp;</a></span>toAxisAngle()</h2>
+<a id="a02c1af9d3609c466fe35a840996d6e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02c1af9d3609c466fe35a840996d6e88">&#9670;&nbsp;</a></span>toAxisAngle()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;T,3,3&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::toAxisAngle </td>
+          <td class="memname">Eigen::Matrix&lt;T_SCALAR_TYPE,3,3&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::toAxisAngle </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -378,19 +388,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="ae140d432a3445a4e107b923d0f98c9ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae140d432a3445a4e107b923d0f98c9ff">&#9670;&nbsp;</a></span>toRotationMatrix()</h2>
+<a id="acacbe6050274ba3a9f7a917b09723051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acacbe6050274ba3a9f7a917b09723051">&#9670;&nbsp;</a></span>toRotationMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;T,3,3&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::toRotationMatrix </td>
+          <td class="memname">Eigen::Matrix&lt;T_SCALAR_TYPE,3,3&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::toRotationMatrix </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -406,19 +416,19 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="aa426ca7bc8d66817afa249c52e265f9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa426ca7bc8d66817afa249c52e265f9d">&#9670;&nbsp;</a></span>toVector()</h2>
+<a id="a6d39663156e321d2cba59d325f1febd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d39663156e321d2cba59d325f1febd5">&#9670;&nbsp;</a></span>toVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;T,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::toVector </td>
+          <td class="memname">Eigen::Matrix&lt;T_SCALAR_TYPE,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::toVector </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -434,21 +444,21 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a692034cbfe66f21ffbe530a489ad60d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a692034cbfe66f21ffbe530a489ad60d2">&#9670;&nbsp;</a></span>transformVector()</h2>
+<a id="a103314229ec1309a13a0c56d9fc9c86e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a103314229ec1309a13a0c56d9fc9c86e">&#9670;&nbsp;</a></span>transformVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;typename T_SCALAR_TYPE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;T,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T &gt;::transformVector </td>
+          <td class="memname">Eigen::Matrix&lt;T_SCALAR_TYPE,3,1&gt; <a class="el" href="classLie_1_1SO3_1_1Group.html">Lie::SO3::Group</a>&lt; T_SCALAR_TYPE &gt;::transformVector </td>
           <td>(</td>
-          <td class="paramtype">const Eigen::Matrix&lt; T, 3, 1 &gt; &amp;&#160;</td>
+          <td class="paramtype">const Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; &amp;&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -464,7 +474,7 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>headers/<a class="el" href="SO3Group_8hpp_source.html">SO3Group.hpp</a></li>
+<li>include/Space/<a class="el" href="SO3Group_8hpp_source.html">SO3Group.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

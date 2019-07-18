@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['identity',['Identity',['../classLie_1_1SO3_1_1Algebra.html#adfb47bfac6d28dcf669a8514cb7277ba',1,'Lie::SO3::Algebra::Identity()'],['../classLie_1_1SO3_1_1Group.html#a405f674445dbc797a9e0d12a91dcc5fc',1,'Lie::SO3::Group::Identity()']]],
-  ['inverse',['inverse',['../classLie_1_1SO3_1_1Algebra.html#ab5b2638875b8dbe62a53893b2a9ac5d9',1,'Lie::SO3::Algebra::inverse()'],['../classLie_1_1SO3_1_1Group.html#a4a63e56b63ce07607d76b259d7aeb8a5',1,'Lie::SO3::Group::inverse()']]],
-  ['inverted',['inverted',['../classLie_1_1SO3_1_1Algebra.html#ad2fb7fb110635474d4b5059ea121bb91',1,'Lie::SO3::Algebra::inverted()'],['../classLie_1_1SO3_1_1Group.html#abeff72c397a20d1eb6cc14d382820d7b',1,'Lie::SO3::Group::inverted()']]]
+  ['identity',['Identity',['../classLie_1_1SO3_1_1Algebra.html#a18ed3270757c61a2d4dc00c73dd97f3d',1,'Lie::SO3::Algebra::Identity()'],['../classLie_1_1SO3_1_1Group.html#af3cb6c88acc63fedcd0cf553d298ecf6',1,'Lie::SO3::Group::Identity()']]],
+  ['inverse',['inverse',['../classLie_1_1SO3_1_1Algebra.html#a68665617c83a36a927eae21a8377bc99',1,'Lie::SO3::Algebra::inverse()'],['../classLie_1_1SO3_1_1Group.html#a7f4ce9aa8b2f2dda4026530136b9b2aa',1,'Lie::SO3::Group::inverse()']]],
+  ['inverted',['inverted',['../classLie_1_1SO3_1_1Algebra.html#a082ae9ecd7edc20ebbcfbd2106a6933a',1,'Lie::SO3::Algebra::inverted()'],['../classLie_1_1SO3_1_1Group.html#ae4a2b9de221aabb1f38ca304faad8822',1,'Lie::SO3::Group::inverted()']]]
 ];

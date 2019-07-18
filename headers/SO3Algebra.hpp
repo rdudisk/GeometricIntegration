@@ -32,6 +32,10 @@ public:
 	: m_v(v)
 	{ }
 
+	Algebra<T> (const T a, const T b, const T c)
+	: m_v(Eigen::Matrix<T,3,1>(a,b,c))
+	{ }
+
 	/* Group operations */
 
 	/**
@@ -80,10 +84,18 @@ public:
 		return res;
 	}
 
+	Algebra<T>
+	operator- (const Algebra<T>& g) const
+	{
+		Algebra<T> res(*this);
+		res += g.inverse();
+		return res;
+	}
+
 	/* Vector space operations */
 
 	void
-	operator*= (const T& s)
+	operator*= (T s)
 	{
 		m_v *= s;
 	}
@@ -92,7 +104,7 @@ public:
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
 	Algebra<T>
-	operator* (const T& s) const
+	operator* (T s) const
 	{
 		Algebra<T> res(*this);
 		res *= s;
@@ -128,7 +140,7 @@ public:
 
 	/* Accessors */
 
-	Eigen::Quaternion<T>
+	Eigen::Matrix<T,3,1>
 	v ( ) const
 	{
 		return m_v;
@@ -144,6 +156,18 @@ public:
 	v (const Eigen::Matrix<T,3,1>& vec)
 	{
 		m_v = vec;
+	}
+
+	T const&
+	operator[] (size_t index) const
+	{
+		return m_v[index];
+	}
+
+	T&
+	operator[] (size_t index)
+	{
+		return m_v[index];
 	}
 	
 	// Les fonctions de normalisation sont-elles vraiment utiles ?
@@ -189,8 +213,9 @@ public:
 	{
 		T a = m_v.norm()/2.0;
 		Eigen::Matrix<T,4,1> V;
-		V << cos(a) << sin(a)*m_v.normalized();
-		return Group<T>(V);
+		//V << cos(a) << sin(a)*m_v.normalized();
+		//return Group<T>(V);
+		return Group<T>(Eigen::AngleAxis<T>(cos(a),sin(a)*m_v.normalized()));
 	}
 
 	/**
@@ -204,8 +229,9 @@ public:
 		T n =   m_v.norm(),
 		  den = 4.0+n*n;
 		Eigen::Matrix<T,4,1> V;
-		V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
-		return Group<T>(V);
+		//V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
+		//return Group<T>(V);
+		return Group<T>(Eigen::AngleAxis<T>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
 	}
 
 	/**
@@ -262,17 +288,29 @@ public:
 		res(i) = T(1);
 		return res;
 	}
+
+	static Algebra<T>
+	Generator (int const i)
+	{
+		return Algebra(Algebra::GeneratorVect(i));
+	}
 };
 
 } // namespace SO3
 } // namespace Lie
 
 template <typename T>
-std::ostream
+std::ostream&
 operator<< (std::ostream& stream, Lie::SO3::Algebra<T> const& g)
 {
-	stream << g.q();
+	stream << g.v();
 	return stream;
+}
+
+template <typename T>
+const Lie::SO3::Algebra<T>
+operator* (T s, const Lie::SO3::Algebra<T> g) {
+	return g*s;
 }
 
 #endif

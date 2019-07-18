@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classLie_1_1SO3_1_1Group.html" title="Lie::SO3::Group\&lt; T \&gt;" alt="" coords="5,5,153,32"/>
+<area shape="rect" id="node1" href="$classAbstract_1_1Step.html" title="Abstract::Step\&lt; T_Q \&gt;" alt="" coords="5,13,160,39"/>
+<area shape="rect" id="node2" href="$classLieMidpointStep.html" title="LieMidpointStep\&lt; T\l_M, T_Q, T_LIE_ALGEBRA \&gt;" alt="" coords="208,5,407,47"/>
 </map>

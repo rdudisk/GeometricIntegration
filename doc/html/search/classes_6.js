@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['vec',['Vec',['../classVec.html',1,'']]]
+  ['liealgebra',['LieAlgebra',['../classAbstract_1_1LieAlgebra.html',1,'Abstract']]],
+  ['liemidpointstep',['LieMidpointStep',['../classLieMidpointStep.html',1,'']]]
 ];

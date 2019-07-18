@@ -247,6 +247,12 @@ public:
 		Eigen::AngleAxis<T> aa(m_q);
 		return aa.angle()*aa.axis();
 	}
+
+	bool
+	isApprox (Group<T> const& g) const
+	{
+		return m_q.isApprox(g.q());
+	}
 };
 
 } // namespace SO3

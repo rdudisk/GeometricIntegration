@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['jetspace',['JetSpace',['../classJetSpace.html',1,'']]]
+  ['liealgebra',['LieAlgebra',['../classAbstract_1_1LieAlgebra.html',1,'Abstract']]],
+  ['liemidpointstep',['LieMidpointStep',['../classLieMidpointStep.html',1,'']]]
 ];
