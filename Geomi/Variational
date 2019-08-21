@@ -1,0 +1,21 @@
+#ifndef DEF_VARIATIONAL
+#define DEF_VARIATIONAL
+
+#include "Common"
+
+#include "src/Variational/Variational_Abstract_Problem.hpp"
+#include "src/Variational/Variational_Abstract_StepInternals.hpp"
+#include "src/Variational/Variational_Abstract_Step.hpp"
+#include "src/Variational/Variational_Step.hpp"
+#include "src/Variational/Variational_EulerStepInternals.hpp"
+#include "src/Variational/Variational_EulerStep.hpp"
+#include "src/Variational/Variational_ImplicitEulerStepInternals.hpp"
+#include "src/Variational/Variational_ImplicitEulerStep.hpp"
+#include "src/Variational/Variational_MidpointStepInternals.hpp"
+#include "src/Variational/Variational_MidpointStep.hpp"
+#include "src/Variational/Variational_Integrator.hpp"
+#include "src/Variational/Variational_Factory.hpp"
+
+#endif
+
+/* vim: set filetype=cpp et sw=2 ts=2 ai: */

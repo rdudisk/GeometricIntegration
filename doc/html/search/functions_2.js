@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['exp',['exp',['../classLie_1_1SO3_1_1Algebra.html#acead849b6636563d979fb5bbbe2f6d94',1,'Lie::SO3::Algebra']]]
+  ['dldq',['dLdq',['../classVariational_1_1Abstract_1_1Problem.html#a90314059ffb88161a916101db5a2669d',1,'Variational::Abstract::Problem']]]
 ];

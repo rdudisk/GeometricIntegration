@@ -76,23 +76,17 @@ $(function() {
 Inheritance diagram for LieMidpointStep&lt; T_M, T_Q, T_LIE_ALGEBRA &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classLieMidpointStep__inherit__graph.png" border="0" usemap="#LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_inherit__map" id="LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_inherit__map">
-<area shape="rect" id="node2" href="classAbstract_1_1Step.html" title="Abstract::Step\&lt; T_Q \&gt;" alt="" coords="27,5,182,32"/>
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for LieMidpointStep&lt; T_M, T_Q, T_LIE_ALGEBRA &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classLieMidpointStep__coll__graph.png" border="0" usemap="#LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_coll__map" id="LieMidpointStep_3_01T__M_00_01T__Q_00_01T__LIE__ALGEBRA_01_4_coll__map">
-<area shape="rect" id="node2" href="classAbstract_1_1Step.html" title="Abstract::Step\&lt; T_Q \&gt;" alt="" coords="27,5,182,32"/>
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9a102d89db469edd2b78a3daf6250052"><td class="memItemLeft" align="right" valign="top"><a id="a9a102d89db469edd2b78a3daf6250052"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>LieMidpointStep</b> (<a class="el" href="classAbstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; &amp;interface, T_M h_var, T_Q y0_var)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>LieMidpointStep</b> (Abstract::Problem&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; &amp;interface, T_M h_var, T_Q y0_var)</td></tr>
 <tr class="separator:a9a102d89db469edd2b78a3daf6250052"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d9fcae16a25d2f01856ed378eae76aa"><td class="memItemLeft" align="right" valign="top"><a id="a6d9fcae16a25d2f01856ed378eae76aa"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h_var, T_Q y0_var)</td></tr>
@@ -118,13 +112,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeF</b> (<a clas
 <tr class="memitem:a6210b4b4a4de6b0bb83b7cfc17e5a624"><td class="memItemLeft" align="right" valign="top"><a id="a6210b4b4a4de6b0bb83b7cfc17e5a624"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeJacobian</b> (Eigen::Matrix&lt; double, T_Q::DOF, T_Q::DOF &gt; &amp;J, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF &gt; &amp;x)</td></tr>
 <tr class="separator:a6210b4b4a4de6b0bb83b7cfc17e5a624"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classAbstract_1_1Step"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classAbstract_1_1Step')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classAbstract_1_1Step.html">Abstract::Step&lt; T_Q &gt;</a></td></tr>
-<tr class="memitem:a73a9c2f1e22d5a7e72c6ce3ec1f8aa7f inherit pub_methods_classAbstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a73a9c2f1e22d5a7e72c6ce3ec1f8aa7f"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeF</b> (<a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_EQUATIONS &gt; &amp;f, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_EQUATIONS &gt; &amp;x)=0</td></tr>
-<tr class="separator:a73a9c2f1e22d5a7e72c6ce3ec1f8aa7f inherit pub_methods_classAbstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ee11253888b750b65c15f045fb4333e inherit pub_methods_classAbstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a1ee11253888b750b65c15f045fb4333e"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeJacobian</b> (Eigen::Matrix&lt; double, T_Q::DOF *T_N_EQUATIONS, T_Q::DOF *T_N_EQUATIONS &gt; &amp;J, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_EQUATIONS &gt; &amp;x)=0</td></tr>
-<tr class="separator:a1ee11253888b750b65c15f045fb4333e inherit pub_methods_classAbstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -144,7 +131,7 @@ T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>y0</b></td></tr>
 T_M&#160;</td><td class="memItemRight" valign="bottom"><b>h</b></td></tr>
 <tr class="separator:acc112bc8b48f3847da2949aff19c805a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ac4bccdc9ba93f87be6607cea048c7a"><td class="memItemLeft" align="right" valign="top"><a id="a8ac4bccdc9ba93f87be6607cea048c7a"></a>
-<a class="el" href="classAbstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_interface</b></td></tr>
+Abstract::Problem&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_interface</b></td></tr>
 <tr class="separator:a8ac4bccdc9ba93f87be6607cea048c7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>

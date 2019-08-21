@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['q',['q',['../classLie_1_1SO3_1_1Group.html#a8e17304a82e37904af7f2f6da5b7aa07',1,'Lie::SO3::Group']]]
+  ['problem',['Problem',['../classRKMK_1_1Abstract_1_1Problem.html',1,'RKMK::Abstract::Problem&lt; T_M, T_Q, T_LIE_ALGEBRA &gt;'],['../classVariational_1_1Abstract_1_1Problem.html',1,'Variational::Abstract::Problem&lt; T_M, T_Q &gt;']]]
 ];

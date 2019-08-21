@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['exp',['exp',['../classLie_1_1SO3_1_1Algebra.html#acead849b6636563d979fb5bbbe2f6d94',1,'Lie::SO3::Algebra']]],
-  ['explicitrkmkstep',['ExplicitRKMKStep',['../classExplicitRKMKStep.html',1,'']]]
+  ['eulerstep',['EulerStep',['../classVariational_1_1EulerStep.html',1,'Variational']]],
+  ['eulerstepinternals',['EulerStepInternals',['../classVariational_1_1EulerStepInternals.html',1,'Variational']]],
+  ['exp',['exp',['../classSO3_1_1Algebra.html#aa69316158dad1289b85e0496231cf6e1',1,'SO3::Algebra']]],
+  ['explicitstep',['ExplicitStep',['../classRKMK_1_1ExplicitStep.html',1,'RKMK']]]
 ];

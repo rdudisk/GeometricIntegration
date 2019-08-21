@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['operator_2a',['operator*',['../classLie_1_1SO3_1_1Algebra.html#af6b509641efa5a6d985c57802ca4b78f',1,'Lie::SO3::Algebra::operator*(T_SCALAR_TYPE s) const'],['../classLie_1_1SO3_1_1Algebra.html#a7c16d373bb2c7a8748f66231d7968abf',1,'Lie::SO3::Algebra::operator*(const Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; &amp;vec) const'],['../classLie_1_1SO3_1_1Group.html#a38e5724dc6cb31aea4ae8e5eabfa73fa',1,'Lie::SO3::Group::operator*(Group&lt; T_SCALAR_TYPE &gt; const &amp;g) const'],['../classLie_1_1SO3_1_1Group.html#af85e23f3eeac7b64f74c8231f7cdc013',1,'Lie::SO3::Group::operator*(Eigen::Matrix&lt; T_SCALAR_TYPE, 3, 1 &gt; const &amp;v) const']]],
-  ['operator_2b',['operator+',['../classLie_1_1SO3_1_1Algebra.html#ad1bc25a809f6e78ce62f3cda57b88991',1,'Lie::SO3::Algebra']]]
+  ['noxgroup',['NOXGroup',['../classNOXGroup.html',1,'']]],
+  ['noxstep',['NOXStep',['../classAbstract_1_1NOXStep.html',1,'Abstract']]],
+  ['noxstep_3c_20t_5fq_2c_201_20_3e',['NOXStep&lt; T_Q, 1 &gt;',['../classAbstract_1_1NOXStep.html',1,'Abstract']]],
+  ['noxstep_3c_20t_5fq_2c_20t_5fn_5fsteps_20_3e',['NOXStep&lt; T_Q, T_N_STEPS &gt;',['../classAbstract_1_1NOXStep.html',1,'Abstract']]],
+  ['noxstep_3c_20t_5fq_2c_20t_5fsize_5fmultivect_20_3e',['NOXStep&lt; T_Q, T_SIZE_MULTIVECT &gt;',['../classAbstract_1_1NOXStep.html',1,'Abstract']]],
+  ['noxvector',['NOXVector',['../classNOXVector.html',1,'']]],
+  ['noxvector_3c_20t_5fq_3a_3adof_20_2at_5fsize_5fmultivect_20_3e',['NOXVector&lt; T_Q::DOF *T_SIZE_MULTIVECT &gt;',['../classNOXVector.html',1,'']]]
 ];
