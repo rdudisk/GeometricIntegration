@@ -40,3 +40,6 @@ midpoint: midpoint.cpp
 
 midpoint2: midpoint2.cpp
 	$(CXX) $(CXX_FLAGS) -g midpoint2.cpp -o midpoint2 $(LINK_FLAGS) $(INCLUDE_DIRS) -I./ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)
+
+midpoint3: midpoint3.cpp
+	$(CXX) $(CXX_FLAGS) -g midpoint3.cpp -o midpoint3 $(LINK_FLAGS) $(INCLUDE_DIRS) -I./ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)

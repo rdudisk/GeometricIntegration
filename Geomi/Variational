@@ -13,6 +13,7 @@
 #include "src/Variational/Variational_ImplicitEulerStep.hpp"
 #include "src/Variational/Variational_MidpointStepInternals.hpp"
 #include "src/Variational/Variational_MidpointStep.hpp"
+#include "src/Variational/Variational_GalerkinStepInternals.hpp"
 #include "src/Variational/Variational_Integrator.hpp"
 #include "src/Variational/Variational_Factory.hpp"
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 
+template <typename T_Q>
 class LagrangeInterpolation
 {
 private:
@@ -13,7 +14,7 @@ private:
 	std::vector<std::vector<double>> m_polynomials_derivatives;
 
 public:
-	LagrangeInterpolation ()
+	LagrangeInterpolation<T_Q> ()
 	{
 		m_degree = 0;
 		m_dates.clear();
@@ -26,7 +27,7 @@ public:
 	}
 
 	void
-	check_computed ()
+	check_computed (int s, std::vector<double> dates)
 	{
 		if (s!=m_degree) {
 			m_degree = s;
@@ -45,13 +46,15 @@ public:
 
 	std::vector<std::vector<double>>
 	polynomials (int s, std::vector<double> dates)
-		check_computed();
+	{
+		check_computed(s, dates);
 		return m_polynomials;
 	}
 
 	std::vector<std::vector<double>>
 	polynomials_derivatives (int s, std::vector<double> dates)
-		check_computed();
+	{
+		check_computed(s, dates);
 		return m_polynomials_derivatives;
 	}
 
@@ -75,14 +78,15 @@ public:
 		std::vector<double> tmp;
 		std::vector<double> coeffs = chebyshev(m_degree);
 		double prod;
+		double t;
 
 		m_polynomials.clear();
 		for (i=0; i<m_dates.size(); i++) {
-			t = m_date[i];
+			t = m_dates[i];
 			tmp.clear();
-			for (j=0; j<s; j++) {
+			for (j=0; j<m_degree; j++) {
 				prod = 1.0;
-				for (k=0; k<s; k++) {
+				for (k=0; k<m_degree; k++) {
 					if (j!=k)
 						prod *= (t-coeffs[k])/(coeffs[j]-coeffs[k]);
 				}
@@ -113,17 +117,18 @@ public:
 		std::vector<double> coeffs = chebyshev(m_degree);
 		double somme;
 		double prod;
+		double t;
 
 		m_polynomials_derivatives.clear();
 		for (i=0; i<m_dates.size(); i++) {
-			t = m_date[i];
+			t = m_dates[i];
 			tmp.clear();
-			for (j=0; j<s; j++) {
+			for (j=0; j<m_degree; j++) {
 				somme = 0.0;
-				for (k=0; k<s; k++) {
+				for (k=0; k<m_degree; k++) {
 					if (j!=k) {
 						prod = 1.0;
-						for (l=0; l<s; l++) {
+						for (l=0; l<m_degree; l++) {
 							if ((l!=k) && (l!=j))
 								prod *= (t-coeffs[l])/(coeffs[j]-coeffs[l]);
 						}
@@ -149,7 +154,7 @@ public:
 		for (j=0; j<m_dates.size(); j++) {
 			tmp = T_Q::Zero();
 			for (i=0;i<m_degree;i++) {
-				pos_tmp += m_polynomials[j][i]*configs[i];
+				tmp += m_polynomials[j][i]*configs[i];
 			}
 			ret.push_back(tmp);
 		}
@@ -169,7 +174,7 @@ public:
 		for (j=0; j<m_dates.size(); j++) {
 			tmp = T_Q::Zero();
 			for (i=0;i<m_degree;i++) {
-				tmp += m_polynomials_derivative[j][i]*configs[i];
+				tmp += m_polynomials_derivatives[j][i]*configs[i];
 			}
 			ret.push_back(tmp/h);
 		}
@@ -257,13 +262,13 @@ protected:
 	std::vector<T_Q>		m_v_cur_q;
 	/** \f$\bar q_{n-1}\f$, de longueur T_N_STEPS+1 */
 	std::vector<T_Q>		m_v_prev_q;
-	LagrangeInterpolation	m_interp;
+	LagrangeInterpolation<T_Q>	m_interp;
 
 public:
 	GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS> (Abstract::Problem<T_M,T_Q>& problem)
 	:	Abstract::StepInternals<T_M,T_Q,T_TQ>(problem)
 	{
-		m_interp = LagrangeInterpolation();
+		m_interp = LagrangeInterpolation<T_Q>();
 	}
 
 	/*
@@ -296,7 +301,7 @@ public:
 		m_v_cur_q.clear();
 		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment<T_Q::DOF>(nu)));
+			m_v_cur_q.push_back(T_Q(q.segment<T_Q::DOF>(nu*T_Q::DOF)));
 		}
 
 		// TODO: initialiser quadrature
@@ -344,7 +349,7 @@ public:
 
 		// DEL
 		for (k=0; k<r; k++) {
-			f.head<T_Q::DOF>() += w[k]*(this->m_h*vv_lag[k][0]*v_cur_dLdq[k]+vv_lag_der[k][0]*v_cur_dLdv[k]+this->m_h*vv_lag[k][T_N_STEPS]*v_prev_dLdq[k]+vv_lag_der[k][T_N_STEPS]*v_prev_dLdv[k]);
+			f.head(T_Q::DOF) += w[k]*(this->m_h*vv_lag[k][0]*v_cur_dLdq[k]+vv_lag_der[k][0]*v_cur_dLdv[k]+this->m_h*vv_lag[k][T_N_STEPS]*v_prev_dLdq[k]+vv_lag_der[k][T_N_STEPS]*v_prev_dLdv[k]);
 		}
 
 		// Internal equations
@@ -352,7 +357,7 @@ public:
 			somme = T_Q::Zero();
 			for (k=0;k<r;k++) {
 				// les indices sont faux, corriger
-				somme += w[k]*(this->m_h*v_lag[k][nu]*v_cur_dLdq[k]+v_lag_der[k][nu]*v_cur_dLdv[k]);
+				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
 			}
 			f.segment<T_Q::DOF>(nu*T_Q::DOF) = somme;
 		}
@@ -434,7 +439,7 @@ public:
 			for (i=0; i<T_N_STEPS; i++) {
 				somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 				for (k=0; k<r; k++) {
-					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(v_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
+					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(vv_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
 				}
 				J.block<T_Q::DOF,T_Q::DOF>(i*T_Q::DOF,j*T_Q::DOF) = somme;
 			}

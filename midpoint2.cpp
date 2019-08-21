@@ -1,22 +1,10 @@
 #include <iostream>
 #include <cmath>
 
-#include "NOX.H"
-#include "NOX_Common.H"
-#include "NOX_Utils.H"
-#include "Teuchos_StandardCatchMacros.hpp"
+#include "include/RKMK"
 
-#include "include/Common/NOXVector.hpp"
-#include "include/Common/NOXGroup.hpp"
 #include "include/Space/SO3Group.hpp"
 #include "include/Space/SO3Algebra.hpp"
-#include "include/Problem/ProblemInterface.hpp"
-#include "include/Problem/DiscSystem.hpp"
-//#include "include/Step/LieMidpointStep.hpp"
-#include "include/Step/GenericRKMKStep.hpp"
-#include "include/Common/Utils.hpp"
-#include "include/misc/csv.hpp"
-#include "include/Integrator/GenericRKMKIntegrator.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -24,12 +12,11 @@
 typedef Lie::SO3::Algebra<double> Algebra;
 typedef Lie::SO3::Group<double> Group;
 
-//typedef Eigen::Matrix<double,3,1> Q;
 typedef NOXVector<3> Q;
 typedef NOXVector<3> NOXV;
 typedef NOXGroup<Q> NOXG;
 
-class MyProblem : public Abstract::Problem<double,Q,Algebra>
+class MyProblem : public RKMK::Abstract::Problem<double,Q,Algebra>
 {
 	private:
 		Eigen::Matrix<double,3,1> m_Iinv;
@@ -44,8 +31,6 @@ class MyProblem : public Abstract::Problem<double,Q,Algebra>
 		computeA (Algebra& A, const Q& x)
 		{
 			A = Algebra((-m_Iinv).asDiagonal()*x);
-			//std::cout << "ComputeA returned:\n" << A << std::endl;
-			//std::cout << "for the argument Y:\n" << x << std::endl;
 			return true;
 		}
 
@@ -167,7 +152,7 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,3,1> pos(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
 	myProblem.pos(0,pos);
 
-	Abstract::RKMKIntegrator& integrator = RKMKFactory<double,Q,Algebra>::createIntegrator(myProblem,"Implicit Euler");
+	RKMK::Abstract::Integrator& integrator = RKMK::Factory<double,Q,Algebra>::createIntegrator(myProblem,"Implicit Euler");
 
 	bool success = integrator.integrate();
 
