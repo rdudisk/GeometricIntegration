@@ -94,15 +94,14 @@ Collaboration diagram for Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ,
 <map name="Variational_1_1GalerkinStepInternals_3_01T__M_00_01T__Q_00_01T__TQ_00_01T__N__STEPS_01_4_coll__map" id="Variational_1_1GalerkinStepInternals_3_01T__M_00_01T__Q_00_01T__TQ_00_01T__N__STEPS_01_4_coll__map">
 <area shape="rect" id="node2" href="classVariational_1_1Abstract_1_1StepInternals.html" title="Variational::Abstract\l::StepInternals\&lt; T_M,\l T_Q, T_TQ \&gt;" alt="" coords="5,5,155,61"/>
 <area shape="rect" id="node3" href="classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l T_Q, T_N_STEPS \&gt;" alt="" coords="7,86,153,127"/>
-<area shape="rect" id="node4" href="classLagrangeInterpolation.html" title="LagrangeInterpolation" alt="" coords="7,152,153,179"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4bad1a1e941608f7b1e9163a52dd75bd"><td class="memItemLeft" align="right" valign="top"><a id="a4bad1a1e941608f7b1e9163a52dd75bd"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GalerkinStepInternals</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
-<tr class="separator:a4bad1a1e941608f7b1e9163a52dd75bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7131259b9e3c9f2eeda1a4578bc1b7e"><td class="memItemLeft" align="right" valign="top"><a id="ad7131259b9e3c9f2eeda1a4578bc1b7e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>GalerkinStepInternals</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem, int quad_deg)</td></tr>
+<tr class="separator:ad7131259b9e3c9f2eeda1a4578bc1b7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81351f589fd003b954b721a1171d3694"><td class="memItemLeft" align="right" valign="top"><a id="a81351f589fd003b954b721a1171d3694"></a>
 const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInitialGuess</b> ()</td></tr>
 <tr class="separator:a81351f589fd003b954b721a1171d3694"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +131,12 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a51bf6bf47e6f275f468882d4a444bfa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed7a1c31eb37b2a22f76ea972ad50af4"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T_Q &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVariational_1_1GalerkinStepInternals.html#aed7a1c31eb37b2a22f76ea972ad50af4">m_v_prev_q</a></td></tr>
 <tr class="separator:aed7a1c31eb37b2a22f76ea972ad50af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a162b887e6099f9affc0a1b0311fec6ae"><td class="memItemLeft" align="right" valign="top"><a id="a162b887e6099f9affc0a1b0311fec6ae"></a>
-<a class="el" href="classLagrangeInterpolation.html">LagrangeInterpolation</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_interp</b></td></tr>
-<tr class="separator:a162b887e6099f9affc0a1b0311fec6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e2756c4a656fc69119ca06b8477a618"><td class="memItemLeft" align="right" valign="top"><a id="a7e2756c4a656fc69119ca06b8477a618"></a>
+<a class="el" href="classLagrangeInterpolation.html">LagrangeInterpolation</a>&lt; T_Q &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_interp</b></td></tr>
+<tr class="separator:a7e2756c4a656fc69119ca06b8477a618"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2514f652a887bf9559e67ae36e991fe1"><td class="memItemLeft" align="right" valign="top"><a id="a2514f652a887bf9559e67ae36e991fe1"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_quad_deg</b></td></tr>
+<tr class="separator:a2514f652a887bf9559e67ae36e991fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classVariational_1_1Abstract_1_1StepInternals"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classVariational_1_1Abstract_1_1StepInternals')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classVariational_1_1Abstract_1_1StepInternals.html">Variational::Abstract::StepInternals&lt; T_M, T_Q, T_TQ &gt;</a></td></tr>
 <tr class="memitem:a9bf82c8585dfa95923a6dc43dff1b3c7 inherit pro_attribs_classVariational_1_1Abstract_1_1StepInternals"><td class="memItemLeft" align="right" valign="top"><a id="a9bf82c8585dfa95923a6dc43dff1b3c7"></a>
 T_M&#160;</td><td class="memItemRight" valign="bottom"><b>m_h</b></td></tr>
@@ -191,7 +193,7 @@ class Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ, T_N_STEPS &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </div>
+template&lt;typename T_M, typename T_Q, typename T_TQ, int T_N_STEPS&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -221,7 +223,7 @@ template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </di
 </table>
 </div><div class="memdoc">
 <p class="formulaDsp">
-\[ J_{ij} = \frac{partial F_i}{\partial q_j} \]
+\[ J_{ij} = \frac{\partial F_i}{\partial q_j} \]
 </p>
  
 </div>
@@ -233,7 +235,7 @@ template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </di
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </div>
+template&lt;typename T_M, typename T_Q, typename T_TQ, int T_N_STEPS&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -258,7 +260,7 @@ template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </di
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T_M , typename T_Q , typename T_TQ , int T_N_STEPS&gt; </div>
+template&lt;typename T_M, typename T_Q, typename T_TQ, int T_N_STEPS&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

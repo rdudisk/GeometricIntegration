@@ -2,6 +2,7 @@
 #define DEF_VARIATIONAL
 
 #include "Common"
+#include "Interpolation"
 
 #include "src/Variational/Variational_Abstract_Problem.hpp"
 #include "src/Variational/Variational_Abstract_StepInternals.hpp"

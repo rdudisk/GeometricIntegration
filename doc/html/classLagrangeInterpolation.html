@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: LagrangeInterpolation Class Reference</title>
+<title>My Project: LagrangeInterpolation&lt; T_Q &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -66,50 +66,119 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classLagrangeInterpolation-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">LagrangeInterpolation Class Reference</div>  </div>
+<div class="title">LagrangeInterpolation&lt; T_Q &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad90b4d4b2c1558323f67db3fd4e2d191"><td class="memItemLeft" align="right" valign="top"><a id="ad90b4d4b2c1558323f67db3fd4e2d191"></a>
-std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev</b> ()</td></tr>
-<tr class="separator:ad90b4d4b2c1558323f67db3fd4e2d191"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60850d4b66c12ff54d63ec904b717c8d"><td class="memItemLeft" align="right" valign="top"><a id="a60850d4b66c12ff54d63ec904b717c8d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>check_computed</b> ()</td></tr>
-<tr class="separator:a60850d4b66c12ff54d63ec904b717c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60be4e7600aa4441c348404db0d2a157"><td class="memItemLeft" align="right" valign="top"><a id="a60be4e7600aa4441c348404db0d2a157"></a>
-std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>polynomials</b> (int s, std::vector&lt; double &gt; dates) check_computed()</td></tr>
-<tr class="separator:a60be4e7600aa4441c348404db0d2a157"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a48b849ebbb97f08f05e65a1dcfc4a360"><td class="memItemLeft" align="right" valign="top"><a id="a48b849ebbb97f08f05e65a1dcfc4a360"></a>
-return&#160;</td><td class="memItemRight" valign="bottom"><b>m_polynomials</b></td></tr>
-<tr class="separator:a48b849ebbb97f08f05e65a1dcfc4a360"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae10435cd20fb4c6eef855a63047f3b0c"><td class="memItemLeft" align="right" valign="top"><a id="ae10435cd20fb4c6eef855a63047f3b0c"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev</b> (int degree)</td></tr>
+<tr class="separator:ae10435cd20fb4c6eef855a63047f3b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ceed6079b35c89f293bbdcae25d1ab8"><td class="memItemLeft" align="right" valign="top"><a id="a3ceed6079b35c89f293bbdcae25d1ab8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>check_computed</b> (int s, std::vector&lt; double &gt; dates)</td></tr>
+<tr class="separator:a3ceed6079b35c89f293bbdcae25d1ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5c0f1a978a784ec7ff82c41ce5e8ac4"><td class="memItemLeft" align="right" valign="top"><a id="af5c0f1a978a784ec7ff82c41ce5e8ac4"></a>
+std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>polynomials</b> (int s, std::vector&lt; double &gt; dates)</td></tr>
+<tr class="separator:af5c0f1a978a784ec7ff82c41ce5e8ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a095bfcff4f185cc1fd8c59a25a8eb079"><td class="memItemLeft" align="right" valign="top"><a id="a095bfcff4f185cc1fd8c59a25a8eb079"></a>
+std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>polynomials_derivatives</b> (int s, std::vector&lt; double &gt; dates)</td></tr>
+<tr class="separator:a095bfcff4f185cc1fd8c59a25a8eb079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ebae00bd00a51f9e315a019006d2819"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangeInterpolation.html#a6ebae00bd00a51f9e315a019006d2819">compute_polynomials</a> ()</td></tr>
+<tr class="separator:a6ebae00bd00a51f9e315a019006d2819"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adda3e108df959f7d46066f770786b607"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLagrangeInterpolation.html#adda3e108df959f7d46066f770786b607">compute_polynomials_derivatives</a> ()</td></tr>
+<tr class="separator:adda3e108df959f7d46066f770786b607"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e406b41da80e07b0864f21504543d1f"><td class="memItemLeft" align="right" valign="top"><a id="a4e406b41da80e07b0864f21504543d1f"></a>
+std::vector&lt; T_Q &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pos_interp</b> (int s, std::vector&lt; double &gt; dates, std::vector&lt; T_Q &gt; configs)</td></tr>
+<tr class="separator:a4e406b41da80e07b0864f21504543d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a751792e32a87888dd59bf897c22acbf1"><td class="memItemLeft" align="right" valign="top"><a id="a751792e32a87888dd59bf897c22acbf1"></a>
+std::vector&lt; T_Q &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vel_interp</b> (int s, std::vector&lt; double &gt; dates, std::vector&lt; T_Q &gt; configs, double h)</td></tr>
+<tr class="separator:a751792e32a87888dd59bf897c22acbf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a0b29339925e1f1572d1af70a3038e930"><td class="memItemLeft" align="right" valign="top"><a id="a0b29339925e1f1572d1af70a3038e930"></a>
+<tr class="memitem:a54cadf39d6584af48bc1e0360d3fa250"><td class="memItemLeft" align="right" valign="top"><a id="a54cadf39d6584af48bc1e0360d3fa250"></a>
 std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_dates</b></td></tr>
-<tr class="separator:a0b29339925e1f1572d1af70a3038e930"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac91f9b111be951c77562e20aaf5d153c"><td class="memItemLeft" align="right" valign="top"><a id="ac91f9b111be951c77562e20aaf5d153c"></a>
+<tr class="separator:a54cadf39d6584af48bc1e0360d3fa250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48c9f2a5dc61e05e34cb8ff28b52772a"><td class="memItemLeft" align="right" valign="top"><a id="a48c9f2a5dc61e05e34cb8ff28b52772a"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>m_degree</b></td></tr>
-<tr class="separator:ac91f9b111be951c77562e20aaf5d153c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99e0a3b51098979087bb68a8d24527d0"><td class="memItemLeft" align="right" valign="top"><a id="a99e0a3b51098979087bb68a8d24527d0"></a>
+<tr class="separator:a48c9f2a5dc61e05e34cb8ff28b52772a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abae529cf297f7c70b13ae110c18dde12"><td class="memItemLeft" align="right" valign="top"><a id="abae529cf297f7c70b13ae110c18dde12"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_computed</b></td></tr>
-<tr class="separator:a99e0a3b51098979087bb68a8d24527d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf5b333fa698d6f212e7ab8189d88c6d"><td class="memItemLeft" align="right" valign="top"><a id="abf5b333fa698d6f212e7ab8189d88c6d"></a>
+<tr class="separator:abae529cf297f7c70b13ae110c18dde12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81cdd92c5cbf045fb08516edce73cf4a"><td class="memItemLeft" align="right" valign="top"><a id="a81cdd92c5cbf045fb08516edce73cf4a"></a>
 std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_polynomials</b></td></tr>
-<tr class="separator:abf5b333fa698d6f212e7ab8189d88c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac74ee6fde5a4a1db71f52f8d6c403ec6"><td class="memItemLeft" align="right" valign="top"><a id="ac74ee6fde5a4a1db71f52f8d6c403ec6"></a>
+<tr class="separator:a81cdd92c5cbf045fb08516edce73cf4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e2ba4e10a7246ef4efa6638ebdfefd5"><td class="memItemLeft" align="right" valign="top"><a id="a8e2ba4e10a7246ef4efa6638ebdfefd5"></a>
 std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_polynomials_derivatives</b></td></tr>
-<tr class="separator:ac74ee6fde5a4a1db71f52f8d6c403ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a8e2ba4e10a7246ef4efa6638ebdfefd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6ebae00bd00a51f9e315a019006d2819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ebae00bd00a51f9e315a019006d2819">&#9670;&nbsp;</a></span>compute_polynomials()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T_Q&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classLagrangeInterpolation.html">LagrangeInterpolation</a>&lt; T_Q &gt;::compute_polynomials </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Calcul les polynomes de Lagrange </p><p class="formulaDsp">
+\[ \phi_j(d_i)=\prod_{0\leq k\leq s,\;k\neq j}\frac{d_i-\alpha_k}{\alpha_j-\alpha_k} \]
+</p>
+<p> Le résultat est un vecteur de taille m_dates.size() (typiquement le degré d'interpolation) contenant pour chaque date un vecteur des valeurs des m_degree polynomes de Lagrange (typiquement s=m_degree=T_N_STEPS). Plus concrètement, vec[i][j]= \(\phi_j(d_i)\). </p>
+
+</div>
+</div>
+<a id="adda3e108df959f7d46066f770786b607"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adda3e108df959f7d46066f770786b607">&#9670;&nbsp;</a></span>compute_polynomials_derivatives()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T_Q&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classLagrangeInterpolation.html">LagrangeInterpolation</a>&lt; T_Q &gt;::compute_polynomials_derivatives </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Calcul de la dérivée première des polynomes de Lagrange </p><p class="formulaDsp">
+\[ \dot\phi_j(d_i)=\sum_{0\leq k\leq s,\;k\neq j}\left(\frac{1}{\alpha_j-\alpha_k}\times\prod_{0\leq l\leq s,\;l\neq k,\;l\neq j}\frac{d_i-\alpha_l}{\alpha_j-\alpha_l}\right) \]
+</p>
+<p> Le résultat est un vecteur de taille dates.size() contenant pour chaque date un vecteur des valeurs des dérivées des s polynomes de Lagrange. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>Geomi/src/Variational/<a class="el" href="Variational__GalerkinStepInternals_8hpp_source.html">Variational_GalerkinStepInternals.hpp</a></li>
 </ul>

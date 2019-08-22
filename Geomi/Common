@@ -1,16 +1,18 @@
 #ifndef DEF_COMMON
 #define DEF_COMMON
 
-#include "src/Common/Common_utils.hpp"
+#include "src/Common/utils.hpp"
 
-#include "src/Common/Common_NOXVector.hpp"
-#include "src/Common/Common_Abstract_NOXStep.hpp"
-#include "src/Common/Common_NOXGroup.hpp"
-#include "src/Common/Common_SO3_Group.hpp"
-#include "src/Common/Common_SO3_Algebra.hpp"
-#include "src/Common/Common_csv.hpp"
-#include "src/Common/Common_Syst.hpp"
-#include "src/Common/Common_DiscSyst.hpp"
+#include "src/Common/NOXVector.hpp"
+#include "src/Common/Abstract_NOXStep.hpp"
+#include "src/Common/NOXGroup.hpp"
+#include "src/Common/SO3_Group.hpp"
+#include "src/Common/SO3_Algebra.hpp"
+#include "src/Common/csv.hpp"
+#include "src/Common/Syst.hpp"
+#include "src/Common/DiscSyst.hpp"
+#include "src/Common/GaussLegendre.hpp"
+#include "src/Common/LagrangeInterpolation.hpp"
 
 #endif
 
