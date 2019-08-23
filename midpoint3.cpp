@@ -196,7 +196,10 @@ main (int argc, char* argv[])
 	// TODO !!
 	myProblem.pos(1,pos+h*vel);
 
-	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Midpoint");
+	//Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Midpoint");
+	
+	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Galerkin P2N2Gau");
+
 
 	/*
 	MyProblem myProblem;

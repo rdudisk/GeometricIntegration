@@ -14,6 +14,7 @@
 #include "src/Variational/MidpointStepInternals.hpp"
 #include "src/Variational/MidpointStep.hpp"
 #include "src/Variational/GalerkinStepInternals.hpp"
+#include "src/Variational/GalerkinStep.hpp"
 #include "src/Variational/Integrator.hpp"
 #include "src/Variational/Factory.hpp"
 

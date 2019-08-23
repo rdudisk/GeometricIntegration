@@ -11,7 +11,7 @@ namespace Variational {
 template <typename T_M,
 		  typename T_Q,
 		  typename T_TQ,
-		  T_N_STEPS>
+		  int T_N_STEPS>
 class GalerkinStep : public Abstract::Step<T_M,T_Q,T_TQ>
 {
 private:
@@ -58,12 +58,13 @@ public:
 			m_solver->reset(static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals)->getInitialGuess());
 			NOX::StatusTest::StatusType status = m_solver->solve();
 			const NOXGroup<T_Q,T_N_STEPS>& solnGrp = dynamic_cast<const NOXGroup<T_Q,T_N_STEPS>&>(m_solver->getSolutionGroup());
-			const NOXVector<T_Q::DOF>& solnVec = dynamic_cast<const NOXVector<T_Q::DOF>&>(solnGrp.getX());
+			const NOXVector<T_Q::DOF*T_N_STEPS>& solnVec = dynamic_cast<const NOXVector<T_Q::DOF*T_N_STEPS>&>(solnGrp.getX());
+			static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals)->updatePosition(solnVec);
 
 			if (status != NOX::StatusTest::Converged)
 				success = false;
 
-			T_Q solution(solnVec);
+			T_Q solution(solnVec.segment<T_Q::DOF>((T_N_STEPS-1)*T_Q::DOF));
 
 			return solution;
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
