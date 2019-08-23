@@ -1,32 +1,16 @@
 #ifndef DEF_RKMK
 #define DEF_RKMK
 
-//#include "include/Common/NOXVector.hpp"
-//#include "include/Common/NOXGroup.hpp"
-//#include "include/Space/SO3Group.hpp"
-//#include "include/Space/SO3Algebra.hpp"
-
-
-//#include "include/Integrator/GenericRKMKIntegrator.hpp"
-
-/*
-#include "include/Problem/ProblemInterface.hpp"
-#include "include/Problem/DiscSystem.hpp"
-#include "include/Integrator/Factory.hpp"
-
-#include "include/misc/csv.hpp"
-*/
-
 #include "Common"
 
-#include "src/RKMK/RKMK_Abstract_Problem.hpp"
-#include "src/RKMK/RKMK_StepInternals.hpp"
-#include "src/RKMK/RKMK_Abstract_Step.hpp"
-#include "src/RKMK/RKMK_Abstract_Integrator.hpp"
-#include "src/RKMK/RKMK_ExplicitStep.hpp"
-#include "src/RKMK/RKMK_DiagonalStepInternals.hpp"
-#include "src/RKMK/RKMK_DiagonalStep.hpp"
-#include "src/RKMK/RKMK_Factory.hpp"
+#include "src/RKMK/Abstract_Problem.hpp"
+#include "src/RKMK/StepInternals.hpp"
+#include "src/RKMK/Abstract_Step.hpp"
+#include "src/RKMK/Abstract_Integrator.hpp"
+#include "src/RKMK/ExplicitStep.hpp"
+#include "src/RKMK/DiagonalStepInternals.hpp"
+#include "src/RKMK/DiagonalStep.hpp"
+#include "src/RKMK/Factory.hpp"
 
 #endif
 

@@ -2,21 +2,20 @@
 #define DEF_VARIATIONAL
 
 #include "Common"
-#include "Interpolation"
 
-#include "src/Variational/Variational_Abstract_Problem.hpp"
-#include "src/Variational/Variational_Abstract_StepInternals.hpp"
-#include "src/Variational/Variational_Abstract_Step.hpp"
-#include "src/Variational/Variational_Step.hpp"
-#include "src/Variational/Variational_EulerStepInternals.hpp"
-#include "src/Variational/Variational_EulerStep.hpp"
-#include "src/Variational/Variational_ImplicitEulerStepInternals.hpp"
-#include "src/Variational/Variational_ImplicitEulerStep.hpp"
-#include "src/Variational/Variational_MidpointStepInternals.hpp"
-#include "src/Variational/Variational_MidpointStep.hpp"
-#include "src/Variational/Variational_GalerkinStepInternals.hpp"
-#include "src/Variational/Variational_Integrator.hpp"
-#include "src/Variational/Variational_Factory.hpp"
+#include "src/Variational/Abstract_Problem.hpp"
+#include "src/Variational/Abstract_StepInternals.hpp"
+#include "src/Variational/Abstract_Step.hpp"
+#include "src/Variational/Step.hpp"
+#include "src/Variational/EulerStepInternals.hpp"
+#include "src/Variational/EulerStep.hpp"
+#include "src/Variational/ImplicitEulerStepInternals.hpp"
+#include "src/Variational/ImplicitEulerStep.hpp"
+#include "src/Variational/MidpointStepInternals.hpp"
+#include "src/Variational/MidpointStep.hpp"
+#include "src/Variational/GalerkinStepInternals.hpp"
+#include "src/Variational/Integrator.hpp"
+#include "src/Variational/Factory.hpp"
 
 #endif
 

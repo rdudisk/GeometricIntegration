@@ -2,7 +2,6 @@
 #define DEF_COMMON
 
 #include "src/Common/utils.hpp"
-
 #include "src/Common/NOXVector.hpp"
 #include "src/Common/Abstract_NOXStep.hpp"
 #include "src/Common/NOXGroup.hpp"
