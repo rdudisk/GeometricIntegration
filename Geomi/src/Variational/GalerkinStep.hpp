@@ -17,7 +17,7 @@ class GalerkinStep : public Abstract::Step<T_M,T_Q,T_TQ>
 private:
 	Teuchos::RCP<Teuchos::ParameterList>			m_solverParametersPtr;
 	Teuchos::RCP<NOX::StatusTest::Combo>			m_statusTests;
-	Teuchos::RCP<NOXGroup<T_Q,1>>					m_grp;
+	Teuchos::RCP<NOXGroup<T_Q,T_N_STEPS>>			m_grp;
 	Teuchos::RCP<NOX::Solver::Generic>				m_solver;
 
 public:
@@ -40,8 +40,8 @@ public:
 		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(500));
 		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
-		GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* tmp = static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals);
-		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*tmp));
+		//GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* tmp = static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals);
+		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*internals)); // (*tmp)
 		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
