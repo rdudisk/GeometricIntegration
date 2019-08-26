@@ -5,7 +5,7 @@
 
 class LagrangePolynomials
 {
-private:
+protected:
 	std::vector<double> m_dates;
 	int m_degree;
 	bool m_computed;
@@ -156,7 +156,7 @@ public:
 	std::vector<T_Q>
 	pos_interp (int s, std::vector<double> dates, std::vector<T_Q> configs)
 	{
-		check_computed();
+		check_computed(s, dates);
 
 		int i,j;
 		std::vector<T_Q> ret;
@@ -176,7 +176,7 @@ public:
 	std::vector<T_Q>
 	vel_interp (int s, std::vector<double> dates, std::vector<T_Q> configs, double h)
 	{
-		check_computed();
+		check_computed(s, dates);
 
 		int i,j;
 		std::vector<T_Q> ret;
