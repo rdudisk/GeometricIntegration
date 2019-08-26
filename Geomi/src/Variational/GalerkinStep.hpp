@@ -25,7 +25,7 @@ public:
 	:	Abstract::Step<T_M,T_Q,T_TQ>(problem)
 	{
 		// m_internals is already initalized by base constructor, overriding
-		GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* internals = new GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>(problem);
+		GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* internals = new GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>(problem,T_N_STEPS);
 		this->m_internals = internals;
 
 		// NOX
@@ -41,7 +41,7 @@ public:
 		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
 		GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* tmp = static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals);
-		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,1>(*tmp));
+		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*tmp));
 		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
@@ -64,7 +64,7 @@ public:
 			if (status != NOX::StatusTest::Converged)
 				success = false;
 
-			T_Q solution(solnVec.segment<T_Q::DOF>((T_N_STEPS-1)*T_Q::DOF));
+			T_Q solution(solnVec.segment(T_Q::DOF,(T_N_STEPS-1)*T_Q::DOF));
 
 			return solution;
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);

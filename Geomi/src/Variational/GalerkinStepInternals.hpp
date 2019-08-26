@@ -110,7 +110,7 @@ public:
 		T_Q q1 = m_v_prev_q[T_N_STEPS];
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			ret->segment<T_Q::DOF>(T_N_STEPS) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0))
+			ret->segment(T_Q::DOF,T_N_STEPS) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
 		}
 		return *ret;
 	}
@@ -123,7 +123,7 @@ public:
 		m_v_prev_q.push_back(tmp);
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			m_v_prev_q.push_back(T_Q(q.segment<T_Q::DOF>(i*T_Q::DOF)));
+			m_v_prev_q.push_back(T_Q(q.segment(T_Q::DOF,i*T_Q::DOF)));
 		}
 	}
 
@@ -138,7 +138,7 @@ public:
 		m_v_cur_q.clear();
 		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment<T_Q::DOF>(nu*T_Q::DOF)));
+			m_v_cur_q.push_back(T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF)));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -164,7 +164,6 @@ public:
 		// idem pour les vitesses
 		std::vector<T_Q> v_prev_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
-		NOXVector<T_Q::DOF> somme();
 		// vecteur des r différentielles du lagrangien par rapport à q prises aux r dates c
 		std::vector<NOXVector<T_Q::DOF>> v_cur_dLdq;
 		// idem pour les différentielles par rapport à v
@@ -188,6 +187,7 @@ public:
 			f.head(T_Q::DOF) += w[k]*(this->m_h*vv_lag[k][0]*v_cur_dLdq[k]+vv_lag_der[k][0]*v_cur_dLdv[k]+this->m_h*vv_lag[k][T_N_STEPS]*v_prev_dLdq[k]+vv_lag_der[k][T_N_STEPS]*v_prev_dLdv[k]);
 		}
 
+		NOXVector<T_Q::DOF> somme;
 		// Internal equations
 		for (nu=1;nu<T_N_STEPS;nu++) {
 			somme = T_Q::Zero();
@@ -195,7 +195,7 @@ public:
 				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
 			}
-			f.segment<T_Q::DOF>(nu*T_Q::DOF) = somme;
+			f.segment(T_Q::DOF,nu*T_Q::DOF) = somme;
 		}
 
 		return true;
@@ -211,7 +211,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_cur_q[nu+1] = T_Q(q.segment<T_Q::DOF>(nu*T_Q::DOF));
+			m_v_cur_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -251,7 +251,7 @@ public:
 				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
 			}
-			f.segment<T_Q::DOF>((nu-1)*T_Q::DOF) = somme;
+			f.segment(T_Q::DOF,(nu-1)*T_Q::DOF) = somme;
 		}
 
 		return true;
@@ -275,7 +275,7 @@ public:
 		m_v_cur_q.clear();
 		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment<T_Q::DOF>(nu)));
+			m_v_cur_q.push_back(T_Q(q.segment(T_Q::DOF,nu)));
 		}
 
 
@@ -332,7 +332,7 @@ public:
 				for (k=0; k<r; k++) {
 					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(vv_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
 				}
-				J.block<T_Q::DOF,T_Q::DOF>(i*T_Q::DOF,j*T_Q::DOF) = somme;
+				J.block(T_Q::DOF,T_Q::DOF,i*T_Q::DOF,j*T_Q::DOF) = somme;
 			}
 		}
 
@@ -351,7 +351,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_cur_q[nu+1] = T_Q(q.segment<T_Q::DOF>(nu*T_Q::DOF));
+			m_v_cur_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
 		}
 
 
@@ -378,10 +378,14 @@ public:
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdq;
 		// idem pour qv
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdv;
+		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdq;
+		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdv;
 
 		for (k=0; k<r; k++) {
 			v_JqdLdq.push_back(this->m_problem.JqdLdq(v_pos_interp[k],v_vel_interp[k]));
 			v_JqdLdv.push_back(this->m_problem.JqdLdv(v_pos_interp[k],v_vel_interp[k]));
+			v_JvdLdq.push_back(this->m_problem.JvdLdq(v_pos_interp[k],v_vel_interp[k]));
+			v_JvdLdv.push_back(this->m_problem.JvdLdv(v_pos_interp[k],v_vel_interp[k]));
 		}
 
 		//J = Eigen::Matrix<double,T_Q::DOF*T_N_STEPS,T_Q::DOF*T_N_STEPS>::Zero();
