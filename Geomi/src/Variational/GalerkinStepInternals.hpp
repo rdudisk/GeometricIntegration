@@ -91,6 +91,8 @@ public:
 	{
 		m_interp = LagrangeInterpolation<T_Q>();
 		m_quad_deg = quad_deg;
+		m_v_cur_q = std::vector<T_Q>(T_N_STEPS+1);
+		m_v_prev_q = std::vector<T_Q>(T_N_STEPS+1);
 	}
 
 	// override
@@ -106,12 +108,12 @@ public:
 	const NOXVector<T_Q::DOF*T_N_STEPS>&
 	getInitialGuess ()
 	{
-		NOXVector<T_Q::DOF*T_N_STEPS>* ret;
+		NOXVector<T_Q::DOF*T_N_STEPS>* ret = new NOXVector<T_Q::DOF*T_N_STEPS>();
 		T_Q q0 = m_v_prev_q[0];
 		T_Q q1 = m_v_prev_q[T_N_STEPS];
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			ret->segment(T_Q::DOF,(i-1)*T_Q::DOF) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
+			ret->segment((i-1)*T_Q::DOF,T_Q::DOF) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
 		}
 		return *ret;
 	}
@@ -119,12 +121,12 @@ public:
 	const NOXVector<T_Q::DOF*T_N_STEPS>&
 	initGetInitialGuess ()
 	{
-		NOXVector<T_Q::DOF*(T_N_STEPS-1)>* ret;
+		NOXVector<T_Q::DOF*(T_N_STEPS-1)>* ret = new NOXVector<T_Q::DOF*(T_N_STEPS-1)>();
 		T_Q q0 = m_v_prev_q[0];
 		T_Q q1 = m_v_prev_q[T_N_STEPS];
 
 		for (int i=1; i<T_N_STEPS; i++) {
-			ret->segment(T_Q::DOF,(i-1)*T_Q::DOF) = NOXVector<T_Q::DOF>(q0+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
+			ret->segment((i-1)*T_Q::DOF,T_Q::DOF) = NOXVector<T_Q::DOF>(q0+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
 		}
 		return *ret;
 	}
@@ -137,7 +139,7 @@ public:
 		m_v_prev_q.push_back(tmp);
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			m_v_prev_q.push_back(T_Q(q.segment(T_Q::DOF,(i-1)*T_Q::DOF)));
+			m_v_prev_q.push_back(T_Q(q.segment((i-1)*T_Q::DOF,T_Q::DOF)));
 		}
 
 		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
@@ -147,7 +149,7 @@ public:
 	updateInitialPosition (const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& q)
 	{
 		for (int i=1; i<T_N_STEPS; i++) {
-			m_v_prev_q[i]= T_Q(q.segment(T_Q::DOF,(i-1)*T_Q::DOF));
+			m_v_prev_q[i]= T_Q(q.segment((i-1)*T_Q::DOF,T_Q::DOF));
 		}
 
 		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
@@ -164,7 +166,7 @@ public:
 		m_v_cur_q.clear();
 		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF)));
+			m_v_cur_q.push_back(T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF)));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -221,7 +223,7 @@ public:
 				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
 			}
-			f.segment(T_Q::DOF,nu*T_Q::DOF) = somme;
+			f.segment(nu*T_Q::DOF,T_Q::DOF) = somme;
 		}
 
 		return true;
@@ -237,7 +239,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_prev_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
+			m_v_prev_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -277,7 +279,7 @@ public:
 				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_prev_dLdq[k]+vv_lag_der[k][nu]*v_prev_dLdv[k]);
 			}
-			f.segment(T_Q::DOF,(nu-1)*T_Q::DOF) = somme;
+			f.segment((nu-1)*T_Q::DOF,T_Q::DOF) = somme;
 		}
 
 		return true;
@@ -301,7 +303,7 @@ public:
 		m_v_cur_q.clear();
 		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment(T_Q::DOF,nu)));
+			m_v_cur_q.push_back(T_Q(q.segment(nu,T_Q::DOF)));
 		}
 
 
@@ -358,7 +360,7 @@ public:
 				for (k=0; k<r; k++) {
 					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(vv_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
 				}
-				J.block(T_Q::DOF,T_Q::DOF,i*T_Q::DOF,j*T_Q::DOF) = somme;
+				J.block(i*T_Q::DOF,j*T_Q::DOF,T_Q::DOF,T_Q::DOF) = somme;
 			}
 		}
 
@@ -377,7 +379,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_prev_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
+			m_v_prev_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
 
@@ -428,7 +430,7 @@ public:
 				for (k=0; k<r; k++) {
 					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(vv_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
 				}
-				J.block<T_Q::DOF,T_Q::DOF>((i-1)*T_Q::DOF,(j-1)*T_Q::DOF) = somme;
+				J.block((i-1)*T_Q::DOF,(j-1)*T_Q::DOF,T_Q::DOF,T_Q::DOF) = somme;
 			}
 		}
 

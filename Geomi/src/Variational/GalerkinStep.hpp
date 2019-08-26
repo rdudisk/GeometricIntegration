@@ -25,6 +25,7 @@ public:
 	:	Abstract::Step<T_M,T_Q,T_TQ>(problem)
 	{
 		// m_internals is already initalized by base constructor, overriding
+		// since we use quad_deg = T_N_STEPS, only creates PsNsQ2sGau integrators
 		GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* internals = new GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>(problem,T_N_STEPS);
 		this->m_internals = internals;
 
@@ -42,11 +43,39 @@ public:
 
 		//GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* tmp = static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals);
 		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*internals)); // (*tmp)
-		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
+		//this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
 	~GalerkinStep<T_M,T_Q,T_TQ,T_N_STEPS> ()
 	{ }
+
+	// override
+	void
+	initialize ()
+	{
+		if (T_N_STEPS==1)
+			return;
+
+		bool success = true;
+		bool verbose = false;
+		
+		GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>* init = new GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>(this->m_internals);
+		Teuchos::RCP<NOXGroup<T_Q,T_N_STEPS-1>>	grp		= Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS-1>(*init));
+		Teuchos::RCP<NOX::Solver::Generic>		solver	= NOX::Solver::buildSolver(grp,this->m_statusTests,this->m_solverParametersPtr);
+
+		try {
+			solver->reset(init->getInitialGuess());
+			NOX::StatusTest::StatusType status = solver->solve();
+			const NOXGroup<T_Q,T_N_STEPS-1>& solnGrp = dynamic_cast<const NOXGroup<T_Q,T_N_STEPS-1>&>(m_solver->getSolutionGroup());
+			const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& solnVec = dynamic_cast<const NOXVector<T_Q::DOF*(T_N_STEPS-1)>&>(solnGrp.getX());
+			init->updateInitialPosition(solnVec);
+
+			if (status != NOX::StatusTest::Converged)
+				success = false;
+
+		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
+
+	}
 
 	const T_Q
 	makeStep (void)
@@ -64,7 +93,7 @@ public:
 			if (status != NOX::StatusTest::Converged)
 				success = false;
 
-			T_Q solution(solnVec.segment(T_Q::DOF,(T_N_STEPS-1)*T_Q::DOF));
+			T_Q solution(solnVec.segment((T_N_STEPS-1)*T_Q::DOF,T_Q::DOF));
 
 			return solution;
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
