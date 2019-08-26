@@ -78,9 +78,9 @@ template <typename T_M,
 class GalerkinStepInternals : public Abstract::StepInternals<T_M,T_Q,T_TQ>, public ::Abstract::NOXStep<T_Q,T_N_STEPS>
 {
 protected:
-	/** \f$\bar q_n\f$, de longueur T_N_STEPS+1 */
+	/** \f$\bar q_n\f$, de longueur T_N_STEPS+1. Used instead of m_q0 **WHICH IS IGNORED** */
 	std::vector<T_Q>		m_v_cur_q;
-	/** \f$\bar q_{n-1}\f$, de longueur T_N_STEPS+1 */
+	/** \f$\bar q_{n-1}\f$, de longueur T_N_STEPS+1. Used instead of m_q0 **WHICH IS IGNORED** */
 	std::vector<T_Q>		m_v_prev_q;
 	LagrangeInterpolation<T_Q>	m_interp;
 	int						m_quad_deg;
@@ -93,13 +93,14 @@ public:
 		m_quad_deg = quad_deg;
 	}
 
-	/*
-	 * T_Q
-	posFromVel (T_Q q0, T_TQ v0)
+	// override
+	void
+	setData (T_M h, T_Q q0, T_Q q1)
 	{
-		return q0+this->m_h*v0;
+		m_v_prev_q[0] = q0;
+		m_v_prev_q[T_N_STEPS] = q1;
+		this->m_h = h;
 	}
-	*/
 
 	// TODO
 	const NOXVector<T_Q::DOF*T_N_STEPS>&
@@ -110,7 +111,20 @@ public:
 		T_Q q1 = m_v_prev_q[T_N_STEPS];
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			ret->segment(T_Q::DOF,T_N_STEPS) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
+			ret->segment(T_Q::DOF,(i-1)*T_Q::DOF) = NOXVector<T_Q::DOF>(q1+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
+		}
+		return *ret;
+	}
+
+	const NOXVector<T_Q::DOF*T_N_STEPS>&
+	initGetInitialGuess ()
+	{
+		NOXVector<T_Q::DOF*(T_N_STEPS-1)>* ret;
+		T_Q q0 = m_v_prev_q[0];
+		T_Q q1 = m_v_prev_q[T_N_STEPS];
+
+		for (int i=1; i<T_N_STEPS; i++) {
+			ret->segment(T_Q::DOF,(i-1)*T_Q::DOF) = NOXVector<T_Q::DOF>(q0+(float(i)/(T_N_STEPS*this->m_h))*(q1-q0));
 		}
 		return *ret;
 	}
@@ -123,8 +137,20 @@ public:
 		m_v_prev_q.push_back(tmp);
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			m_v_prev_q.push_back(T_Q(q.segment(T_Q::DOF,i*T_Q::DOF)));
+			m_v_prev_q.push_back(T_Q(q.segment(T_Q::DOF,(i-1)*T_Q::DOF)));
 		}
+
+		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
+	}
+
+	void
+	updateInitialPosition (const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& q)
+	{
+		for (int i=1; i<T_N_STEPS; i++) {
+			m_v_prev_q[i]= T_Q(q.segment(T_Q::DOF,(i-1)*T_Q::DOF));
+		}
+
+		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
 	}
 
 	bool
@@ -211,7 +237,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_cur_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
+			m_v_prev_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -229,19 +255,19 @@ public:
 
 
 		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
-		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_cur_q);
+		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
 		// idem pour les vitesses
-		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_cur_q,this->m_h);
+		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
 		NOXVector<T_Q::DOF> somme();
 		// vecteur des r différentielles du lagrangien par rapport à q prises aux r dates c
-		std::vector<NOXVector<T_Q::DOF>> v_cur_dLdq;
+		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdq;
 		// idem pour les différentielles par rapport à v
-		std::vector<NOXVector<T_Q::DOF>> v_cur_dLdv;
+		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdv;
 
 		for (k=0; k<r; k++) {
-			v_cur_dLdq.push_back(this->m_problem.dLdq(v_pos_interp[k],v_vel_interp[k]));
-			v_cur_dLdv.push_back(this->m_problem.dLdv(v_pos_interp[k],v_vel_interp[k]));
+			v_prev_dLdq.push_back(this->m_problem.dLdq(v_pos_interp[k],v_vel_interp[k]));
+			v_prev_dLdv.push_back(this->m_problem.dLdv(v_pos_interp[k],v_vel_interp[k]));
 		}
 
 		// Internal equations
@@ -249,7 +275,7 @@ public:
 			somme = T_Q::Zero();
 			for (k=0;k<r;k++) {
 				// les indices sont faux, corriger
-				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
+				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_prev_dLdq[k]+vv_lag_der[k][nu]*v_prev_dLdv[k]);
 			}
 			f.segment(T_Q::DOF,(nu-1)*T_Q::DOF) = somme;
 		}
@@ -351,7 +377,7 @@ public:
 		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
-			m_v_cur_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
+			m_v_prev_q[nu+1] = T_Q(q.segment(T_Q::DOF,nu*T_Q::DOF));
 		}
 
 
@@ -370,9 +396,9 @@ public:
 
 
 		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
-		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_cur_q);
+		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
 		// idem pour les vitesses
-		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_cur_q,this->m_h);
+		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
 		// vecteur des r jacobiens du lagrangien par rapport à qq prises aux r dates c
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdq;
@@ -428,7 +454,7 @@ public:
 	const NOXVector<T_Q::DOF*(T_N_STEPS-1)>&
 	getInitialGuess ()
 	{
-		// TODO
+		return m_internals->initGetInitialGuess();
 	}
 
 	bool
