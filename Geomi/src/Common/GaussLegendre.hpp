@@ -21,7 +21,7 @@ public:
 		std::vector<double> ret;
 		// translate from [-1,1] to [0,1] interpolation
 		for (int i=0; i<degree; i++) {
-			ret.push_back(GL_WEIGHTS[((degree*(degree+1))/2)-1+i]/2.0);
+			ret.push_back(GL_WEIGHTS[((degree*(degree-1))/2)+i]/2.0);
 		}
 		return ret;
 	}
@@ -34,7 +34,7 @@ public:
 		std::vector<double> ret;
 		// translate from [-1,1] to [0,1] interpolation
 		for (int i=0; i<degree; i++) {
-			ret.push_back((GL_DATES[((degree*(degree+1))/2)-1+i]/2.0)+0.5);
+			ret.push_back((GL_DATES[((degree*(degree-1))/2)+i]/2.0)+0.5);
 		}
 		return ret;
 	}
