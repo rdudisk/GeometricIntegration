@@ -13,7 +13,7 @@ private:
 	static const int MAX_DEGREE = 5;
 
 public:
-	std::vector<double>
+	static std::vector<double>
 	weights (int degree)
 	{
 		if (degree>MAX_DEGREE)
@@ -26,7 +26,7 @@ public:
 		return ret;
 	}
 
-	std::vector<double>
+	static std::vector<double>
 	dates (int degree)
 	{
 		if (degree>MAX_DEGREE)
