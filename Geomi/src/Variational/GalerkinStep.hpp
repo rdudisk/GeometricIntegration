@@ -38,18 +38,20 @@ public:
 		lineSearchParameters.set("Method","Full Step");
 
 		Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-8,NOX::StatusTest::NormF::Unscaled));
-		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(500));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(10));
 		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
-		//GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* tmp = static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals);
-		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*internals)); // (*tmp)
-		//this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
+		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS>(*internals));
+		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
 	~GalerkinStep<T_M,T_Q,T_TQ,T_N_STEPS> ()
 	{ }
 
-	// override
+	void
+	setData (T_M h_var, T_Q q0_var, T_Q q1_var)
+	{ static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals)->setData(h_var,q0_var,q1_var); }
+	
 	void
 	initialize ()
 	{
@@ -59,7 +61,8 @@ public:
 		bool success = true;
 		bool verbose = false;
 		
-		GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>* init = new GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>(this->m_internals);
+		GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>* init =
+			new GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS>(static_cast<GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>*>(this->m_internals));
 		Teuchos::RCP<NOXGroup<T_Q,T_N_STEPS-1>>	grp		= Teuchos::rcp(new NOXGroup<T_Q,T_N_STEPS-1>(*init));
 		Teuchos::RCP<NOX::Solver::Generic>		solver	= NOX::Solver::buildSolver(grp,this->m_statusTests,this->m_solverParametersPtr);
 

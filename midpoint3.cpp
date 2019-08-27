@@ -213,8 +213,10 @@ main (int argc, char* argv[])
 	Variational::Abstract::Integrator& integrator = Variational::Factory<double,N2,N2>::createIntegrator(myProblem,"Explicit Euler");
 	*/
 
+	integrator.initialize();
 	integrator.integrate();
-	myProblem.write2csv("res_midpoint2.csv");
+	
+	//myProblem.write2csv("res_midpoint2.csv");
 
 	return 0;
 }
