@@ -47,6 +47,14 @@ public:
 	~ImplicitEulerStep<T_M,T_Q,T_TQ> ()
 	{ }
 
+	void
+	setData (T_M h_var, T_Q q0_var, T_Q q1_var)
+	{ this->m_internals->setData(h_var,q0_var,q1_var); }
+	
+	void
+	initialize (void)
+	{ }
+
 	const T_Q
 	makeStep (void)
 	{
