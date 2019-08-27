@@ -12,7 +12,7 @@ template <typename T_Q, int T_N_EQUATIONS>
 class NOXStep
 {
 public:
-	virtual const NOXVector<T_Q::DOF*T_N_EQUATIONS>&
+	virtual const NOXVector<T_Q::DOF*T_N_EQUATIONS>
 	getInitialGuess () = 0;
 
 	virtual bool

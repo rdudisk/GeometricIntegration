@@ -23,11 +23,11 @@ public:
 	}
 	*/
 
-	const NOXVector<T_Q::DOF>&
+	const NOXVector<T_Q::DOF>
 	getInitialGuess ()
 	{
-		NOXVector<T_Q::DOF>* ret = new NOXVector<T_Q::DOF>((1.0+1.0/this->m_h)*this->m_q1-(1.0/this->m_h)*this->m_q0);
-		return *ret;
+		NOXVector<T_Q::DOF> ret((1.0+1.0/this->m_h)*this->m_q1-(1.0/this->m_h)*this->m_q0);
+		return ret;
 	}
 
 	bool
