@@ -29,7 +29,6 @@ public:
 			ret.push_back(double(i)*den);
 		}
 		return ret;
-		//TODO
 	}
 
 	void
@@ -138,7 +137,7 @@ public:
 							if ((l!=k) && (l!=j))
 								prod *= (t-coeffs[l])/(coeffs[j]-coeffs[l]);
 						}
-						prod = prod/(coeffs[j]-coeffs[l]);
+						prod = prod/(coeffs[j]-coeffs[k]);
 						somme += prod;
 					}
 				}
