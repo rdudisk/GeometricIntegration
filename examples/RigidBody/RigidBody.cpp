@@ -4,7 +4,7 @@
  * The test problem is the free rigid body problem.
  * Reference can be found in ...
  *
- * \autor Pierre Carr&eacute;
+ * \autor Pierre Carré
  */
 
 #include <iostream>
@@ -69,7 +69,7 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,3,1> pos(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
 	myProblem.pos(0,pos);
 
-	RKMK::Abstract::Integrator& integrator = RKMK::Factory<double,Q,Algebra>::createIntegrator(myProblem,"Implicit Euler");
+	RKMK::Abstract::Integrator& integrator = RKMK::Factory<double,Q,Algebra>::createIntegrator(myProblem,"RK 4");
 
 	bool success = integrator.integrate();
 
