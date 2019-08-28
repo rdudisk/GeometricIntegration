@@ -77,7 +77,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="Variational__GalerkinStepInternals_8hpp_source.html">Variational_GalerkinStepInternals.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="GalerkinStepInternals_8hpp_source.html">GalerkinStepInternals.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ, T_N_STEPS &gt;:</div>
 <div class="dyncontent">
@@ -102,14 +102,32 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad7131259b9e3c9f2eeda1a4578bc1b7e"><td class="memItemLeft" align="right" valign="top"><a id="ad7131259b9e3c9f2eeda1a4578bc1b7e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GalerkinStepInternals</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem, int quad_deg)</td></tr>
 <tr class="separator:ad7131259b9e3c9f2eeda1a4578bc1b7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81351f589fd003b954b721a1171d3694"><td class="memItemLeft" align="right" valign="top"><a id="a81351f589fd003b954b721a1171d3694"></a>
-const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInitialGuess</b> ()</td></tr>
-<tr class="separator:a81351f589fd003b954b721a1171d3694"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f138bd1ec400856229dfbf229faf994"><td class="memItemLeft" align="right" valign="top"><a id="a1f138bd1ec400856229dfbf229faf994"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h, T_Q q0, T_Q q1)</td></tr>
+<tr class="separator:a1f138bd1ec400856229dfbf229faf994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebeb02d6e87606d914962e7160f5d64b"><td class="memItemLeft" align="right" valign="top"><a id="aebeb02d6e87606d914962e7160f5d64b"></a>
+const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getInitialGuess</b> ()</td></tr>
+<tr class="separator:aebeb02d6e87606d914962e7160f5d64b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc7c8e90864d4fd6404b00cfb151eb5a"><td class="memItemLeft" align="right" valign="top"><a id="afc7c8e90864d4fd6404b00cfb151eb5a"></a>
+const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *(T_N_STEPS-1)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>initGetInitialGuess</b> ()</td></tr>
+<tr class="separator:afc7c8e90864d4fd6404b00cfb151eb5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d1f18efdf9f7a280c151d86d8beee9d"><td class="memItemLeft" align="right" valign="top"><a id="a4d1f18efdf9f7a280c151d86d8beee9d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>updatePosition</b> (const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;q)</td></tr>
+<tr class="separator:a4d1f18efdf9f7a280c151d86d8beee9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a629e27d13cbf4ab85122b0f4099361ed"><td class="memItemLeft" align="right" valign="top"><a id="a629e27d13cbf4ab85122b0f4099361ed"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>updateInitialPosition</b> (const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *(T_N_STEPS-1)&gt; &amp;q)</td></tr>
+<tr class="separator:a629e27d13cbf4ab85122b0f4099361ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a63da09e0ee440a8b3c8256b63615e8"><td class="memItemLeft" align="right" valign="top"><a id="a3a63da09e0ee440a8b3c8256b63615e8"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeF</b> (<a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;f, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;q)</td></tr>
 <tr class="separator:a3a63da09e0ee440a8b3c8256b63615e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a512c08e325ebdd1e1a63bea536a103f2"><td class="memItemLeft" align="right" valign="top"><a id="a512c08e325ebdd1e1a63bea536a103f2"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeInitF</b> (<a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *(T_N_STEPS-1)&gt; &amp;f, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *(T_N_STEPS-1)&gt; &amp;q)</td></tr>
+<tr class="separator:a512c08e325ebdd1e1a63bea536a103f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28c932d9e85fb209fa341b5af5c5dd28"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVariational_1_1GalerkinStepInternals.html#a28c932d9e85fb209fa341b5af5c5dd28">computeJacobian</a> (Eigen::Matrix&lt; double, T_Q::DOF *T_N_STEPS, T_Q::DOF *T_N_STEPS &gt; &amp;J, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *T_N_STEPS &gt; &amp;q)</td></tr>
 <tr class="separator:a28c932d9e85fb209fa341b5af5c5dd28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a811b3df42682e22e37548a272c44e2fb"><td class="memItemLeft" align="right" valign="top"><a id="a811b3df42682e22e37548a272c44e2fb"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeInitJacobian</b> (Eigen::Matrix&lt; double, T_Q::DOF *(T_N_STEPS-1), T_Q::DOF *(T_N_STEPS-1)&gt; &amp;J, const <a class="el" href="classNOXVector.html">NOXVector</a>&lt; T_Q::DOF *(T_N_STEPS-1)&gt; &amp;q)</td></tr>
+<tr class="separator:a811b3df42682e22e37548a272c44e2fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classVariational_1_1Abstract_1_1StepInternals"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classVariational_1_1Abstract_1_1StepInternals')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classVariational_1_1Abstract_1_1StepInternals.html">Variational::Abstract::StepInternals&lt; T_M, T_Q, T_TQ &gt;</a></td></tr>
 <tr class="memitem:abc597fbbe7c140e538d9e550f4cd2a81 inherit pub_methods_classVariational_1_1Abstract_1_1StepInternals"><td class="memItemLeft" align="right" valign="top"><a id="abc597fbbe7c140e538d9e550f4cd2a81"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>StepInternals</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
@@ -180,10 +198,10 @@ class Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ, T_N_STEPS &gt;</h3>
 <p>Le jacobien de \(F\) est donné par </p><p class="formulaDsp">
 \[ J(\bar q^*)=\left(\frac{\partial F_i}{\partial q_{j+1}}(\bar q^*)\right)_{ij}. \]
 </p>
-<p> Pour \(0\leq i\leq S-1\), \(1\leq j\leq S\), et \(\bar q=\bar q_n\), on calcule </p><p class="formulaDsp">
-\[ \frac{\partial F_i}{\partial q_j}(\bar q^*) = \sum_{0\leq k&lt;r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q} +\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}\right) +\dot\phi_i(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v} +\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}\right)\right) \]
+<p> Pour \(1\leq i\leq S-1\), \(1\leq j\leq S\), et \(\bar q=\bar q_n\), on calcule </p><p class="formulaDsp">
+\[ \frac{\partial F_i}{\partial q_j}(\bar q^*_n) = \sum_{0\leq k&lt;r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q}(c_kh;\bar q_n) +\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}(c_kh;\bar q_n)\right) +\dot\phi_i(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v}(c_kh;\bar q_n) +\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}(c_kh;\bar q_n)\right)\right). \]
 </p>
-<p> où toutes les dérivées secondes du lagrangien sont prises en \((c_k;\bar q_n)\). On vérifie en particulier que la différentielle de DEL donne bien </p><p class="formulaDsp">
+<p> La différentielle de DEL est donnée pour \(i=0\) et \(1\leq j\leq S\) par </p><p class="formulaDsp">
 \[ \frac{\partial F_0}{\partial q_j}(\bar q^*) = \sum_{0\leq k&lt;r}w_k\left(\phi_0(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q} +\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}\right) +\dot\phi_0(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v} +\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}\right)\right) \]
 </p>
  </div><h2 class="groupheader">Member Function Documentation</h2>
@@ -250,7 +268,7 @@ template&lt;typename T_M, typename T_Q, typename T_TQ, int T_N_STEPS&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>\(\bar q_n\), de longueur T_N_STEPS+1 </p>
+<p>\(\bar q_n\), de longueur T_N_STEPS+1. Used instead of m_q0 <b>WHICH IS IGNORED</b> </p>
 
 </div>
 </div>
@@ -275,12 +293,12 @@ template&lt;typename T_M, typename T_Q, typename T_TQ, int T_N_STEPS&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>\(\bar q_{n-1}\), de longueur T_N_STEPS+1 </p>
+<p>\(\bar q_{n-1}\), de longueur T_N_STEPS+1. Used instead of m_q0 <b>WHICH IS IGNORED</b> </p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>Geomi/src/Variational/<a class="el" href="Variational__GalerkinStepInternals_8hpp_source.html">Variational_GalerkinStepInternals.hpp</a></li>
+<li>Geomi/src/Variational/<a class="el" href="GalerkinStepInternals_8hpp_source.html">GalerkinStepInternals.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

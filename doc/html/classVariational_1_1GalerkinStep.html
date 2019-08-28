@@ -98,6 +98,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3e65d0a5ca4f9ef210ba0649f15c4bbf"><td class="memItemLeft" align="right" valign="top"><a id="a3e65d0a5ca4f9ef210ba0649f15c4bbf"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GalerkinStep</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
 <tr class="separator:a3e65d0a5ca4f9ef210ba0649f15c4bbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4c4c749bb69480493a2a9a8bcd9cf9b"><td class="memItemLeft" align="right" valign="top"><a id="ae4c4c749bb69480493a2a9a8bcd9cf9b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h_var, T_Q q0_var, T_Q q1_var)</td></tr>
+<tr class="separator:ae4c4c749bb69480493a2a9a8bcd9cf9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ec6a65ca2629f59791a15eac76af535"><td class="memItemLeft" align="right" valign="top"><a id="a5ec6a65ca2629f59791a15eac76af535"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td></tr>
+<tr class="separator:a5ec6a65ca2629f59791a15eac76af535"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fa8885fe71857571e11437d03a6cc21"><td class="memItemLeft" align="right" valign="top"><a id="a4fa8885fe71857571e11437d03a6cc21"></a>
 const T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>makeStep</b> (void)</td></tr>
 <tr class="separator:a4fa8885fe71857571e11437d03a6cc21"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,9 +111,6 @@ const T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>makeStep</b> (vo
 <tr class="memitem:ad8fa86f94ecbf78f917d039e4e868067 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="ad8fa86f94ecbf78f917d039e4e868067"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Step</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Variational::Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
 <tr class="separator:ad8fa86f94ecbf78f917d039e4e868067 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca9fa3f6664b9a6a9423441fa5ec1984 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="aca9fa3f6664b9a6a9423441fa5ec1984"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h_var, T_Q q0_var, T_Q q1_var)</td></tr>
-<tr class="separator:aca9fa3f6664b9a6a9423441fa5ec1984 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93413f6064cfd2313b129f058f679c10 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a93413f6064cfd2313b129f058f679c10"></a>
 T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>posFromVel</b> (T_Q q0, T_TQ v0)</td></tr>
 <tr class="separator:a93413f6064cfd2313b129f058f679c10 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,9 +123,9 @@ Teuchos::RCP&lt; Teuchos::ParameterList &gt;&#160;</td><td class="memItemRight" 
 <tr class="memitem:aa97fb29e07c3d549fd9640a8e82e0243"><td class="memItemLeft" align="right" valign="top"><a id="aa97fb29e07c3d549fd9640a8e82e0243"></a>
 Teuchos::RCP&lt; NOX::StatusTest::Combo &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_statusTests</b></td></tr>
 <tr class="separator:aa97fb29e07c3d549fd9640a8e82e0243"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88ae36682ec67ab1a70548150bf8ba91"><td class="memItemLeft" align="right" valign="top"><a id="a88ae36682ec67ab1a70548150bf8ba91"></a>
-Teuchos::RCP&lt; <a class="el" href="classNOXGroup.html">NOXGroup</a>&lt; T_Q, 1 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_grp</b></td></tr>
-<tr class="separator:a88ae36682ec67ab1a70548150bf8ba91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbb1e75bb83a84e64327e74e77ad45d3"><td class="memItemLeft" align="right" valign="top"><a id="abbb1e75bb83a84e64327e74e77ad45d3"></a>
+Teuchos::RCP&lt; <a class="el" href="classNOXGroup.html">NOXGroup</a>&lt; T_Q, T_N_STEPS &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_grp</b></td></tr>
+<tr class="separator:abbb1e75bb83a84e64327e74e77ad45d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bc859038d19fcdcd7e10cbfdbdadb5b"><td class="memItemLeft" align="right" valign="top"><a id="a3bc859038d19fcdcd7e10cbfdbdadb5b"></a>
 Teuchos::RCP&lt; NOX::Solver::Generic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_solver</b></td></tr>
 <tr class="separator:a3bc859038d19fcdcd7e10cbfdbdadb5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,7 +141,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a22a5baa95f0173f32488183a00de2304 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>Geomi/src/Variational/<a class="el" href="Variational__GalerkinStep_8hpp_source.html">Variational_GalerkinStep.hpp</a></li>
+<li>Geomi/src/Variational/<a class="el" href="GalerkinStep_8hpp_source.html">GalerkinStep.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
