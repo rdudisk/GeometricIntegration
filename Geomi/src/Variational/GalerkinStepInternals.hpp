@@ -57,13 +57,12 @@ namespace Variational {
  * \f]
  * Pour \f$0\leq i\leq S-1\f$, \f$1\leq j\leq S\f$, et \f$\bar q=\bar q_n\f$, on calcule
  * \f[
- *		\frac{\partial F_i}{\partial q_j}(\bar q^*) = \sum_{0\leq k<r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q}
- *																									+\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}\right)
- *																				+\dot\phi_i(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v}
- *																									+\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}\right)\right)
+ *		\frac{\partial F_i}{\partial q_j}(\bar q^*_n) = \sum_{0\leq k<r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q}(c_kh;\bar q_n)
+ *																									+\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}(c_kh;\bar q_n)\right)
+ *																				+\dot\phi_i(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v}(c_kh;\bar q_n)
+ *																									+\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}(c_kh;\bar q_n)\right)\right).
  * \f]
- * où toutes les dérivées secondes du lagrangien sont prises en \f$(c_k;\bar q_n)\f$.
- * On vérifie en particulier que la différentielle de DEL donne bien
+ * On vérifie en particulier que la différentielle de la DEL est donnée par
  * \f[
  *		\frac{\partial F_0}{\partial q_j}(\bar q^*) = \sum_{0\leq k<r}w_k\left(\phi_0(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q}
  *																									+\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}\right)
@@ -133,12 +132,10 @@ public:
 	void
 	updatePosition (const NOXVector<T_Q::DOF*T_N_STEPS>& q)
 	{
-		T_Q tmp = m_v_prev_q[T_N_STEPS];
-		m_v_prev_q.clear();
-		m_v_prev_q.push_back(tmp);
+		m_v_prev_q[0] = m_v_prev_q[T_N_STEPS];
 
 		for (int i=1; i<=T_N_STEPS; i++) {
-			m_v_prev_q.push_back(T_Q(q.segment((i-1)*T_Q::DOF,T_Q::DOF)));
+			m_v_prev_q[i] = T_Q(q.segment((i-1)*T_Q::DOF,T_Q::DOF));
 		}
 
 		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
@@ -162,10 +159,9 @@ public:
 
 
 		// update current position set
-		m_v_cur_q.clear();
-		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
+		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF)));
+			m_v_cur_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
 		int r = m_quad_deg;		// degré quadrature
@@ -206,21 +202,20 @@ public:
 			v_prev_dLdv.push_back(this->m_problem.dLdv(v_prev_pos_interp[k],v_prev_vel_interp[k]));
 		}
 
-		f = NOXVector<T_Q::DOF*T_N_STEPS>::Zero();
 
+		NOXVector<T_Q::DOF> somme = NOXVector<T_Q::DOF>::Zero();
 		// DEL
 		for (k=0; k<r; k++) {
-			f.head(T_Q::DOF) +=
+			somme +=
 				w[k]*(this->m_h*vv_lag[k][0]*v_cur_dLdq[k]+vv_lag_der[k][0]*v_cur_dLdv[k]
 						+this->m_h*vv_lag[k][T_N_STEPS]*v_prev_dLdq[k]+vv_lag_der[k][T_N_STEPS]*v_prev_dLdv[k]);
 		}
+		f.head(T_Q::DOF) = somme;
 
-		NOXVector<T_Q::DOF> somme;
 		// Internal equations
 		for (nu=1;nu<T_N_STEPS;nu++) {
-			somme = T_Q::Zero();
+			somme = NOXVector<T_Q::DOF>::Zero();
 			for (k=0;k<r;k++) {
-				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_cur_dLdq[k]+vv_lag_der[k][nu]*v_cur_dLdv[k]);
 			}
 			f.segment(nu*T_Q::DOF,T_Q::DOF) = somme;
@@ -302,7 +297,7 @@ public:
 		// Internal equations
 		NOXVector<T_Q::DOF> somme;
 		for (nu=1;nu<T_N_STEPS;nu++) {
-			somme = T_Q::Zero();
+			somme = NOXVector<T_Q::DOF>::Zero();
 			for (k=0;k<r;k++) {
 				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_prev_dLdq[k]+vv_lag_der[k][nu]*v_prev_dLdv[k]);
@@ -328,10 +323,10 @@ public:
 
 
 		// update current position set
-		m_v_cur_q.clear();
-		m_v_cur_q.push_back(m_v_prev_q[T_N_STEPS]);
+		// this one is not supposed to have changed, but just in case...
+		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
 		for (nu=0; nu<T_N_STEPS; nu++) {
-			m_v_cur_q.push_back(T_Q(q.segment(nu,T_Q::DOF)));
+			m_v_cur_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
 
@@ -377,7 +372,7 @@ public:
 		//J = Eigen::Matrix<double,T_Q::DOF*T_N_STEPS,T_Q::DOF*T_N_STEPS>::Zero();
 		Eigen::Matrix<double,T_Q::DOF,T_Q::DOF> somme = Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 
-		for (j=0; j<T_N_STEPS; j++) {
+		for (j=1; j<=T_N_STEPS; j++) {
 			/*somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 			for (k=0; k<r; k++) {
 				somme += w[k]*(vv_lag[k][0]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][0]*(v_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
@@ -388,7 +383,7 @@ public:
 				for (k=0; k<r; k++) {
 					somme += w[k]*(vv_lag[k][i]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][i]*(vv_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
 				}
-				J.block(i*T_Q::DOF,j*T_Q::DOF,T_Q::DOF,T_Q::DOF) = somme;
+				J.block(i*T_Q::DOF,(j-1)*T_Q::DOF,T_Q::DOF,T_Q::DOF) = somme;
 			}
 		}
 
