@@ -15,14 +15,6 @@ public:
 	:	Abstract::StepInternals<T_M,T_Q,T_TQ>(problem)
 	{ }
 
-	/*
-	 * T_Q
-	posFromVel (T_Q q0, T_TQ v0)
-	{
-		return q0+this->m_h*v0;
-	}
-	*/
-
 	const NOXVector<T_Q::DOF>
 	getInitialGuess ()
 	{
@@ -36,7 +28,6 @@ public:
 		f =					this->m_problem.dLdv(this->m_q0,(this->m_q1-this->m_q0)/this->m_h)
 			+ this->m_h *	this->m_problem.dLdq(this->m_q1,(q-this->m_q1)/this->m_h)
 						-	this->m_problem.dLdv(this->m_q1,(q-this->m_q1)/this->m_h);
-		//f = q - this->m_q0 - this->m_q1;
 		return true;
 	}
 
@@ -45,7 +36,6 @@ public:
 	{
 		J =		this->m_problem.JvdLdq(this->m_q1,(q-this->m_q1)/this->m_h )
 			-	this->m_problem.JvdLdv(this->m_q1,(q-this->m_q1)/this->m_h )/this->m_h;
-		//J = Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Identity();
 		return true;
 	}
 };

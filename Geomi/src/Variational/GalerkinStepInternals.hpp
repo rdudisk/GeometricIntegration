@@ -94,7 +94,6 @@ public:
 		m_v_prev_q = std::vector<T_Q>(T_N_STEPS+1);
 	}
 
-	// override
 	void
 	setData (T_M h, T_Q q0, T_Q q1)
 	{
@@ -158,41 +157,29 @@ public:
 		int k;	// index date
 
 
-		// update current position set
+		// this one is not supposed to have changed, but just in case...
 		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
 		for (nu=0; nu<T_N_STEPS; nu++) {
 			m_v_cur_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
-		int r = m_quad_deg;		// degré quadrature
-		std::vector<double> w = GaussLegendre::weights(r);	// poids quadrature, len = r
-		std::vector<double> c = GaussLegendre::dates(r);		// dates quadrature, len = r
+		int r = m_quad_deg;
+		std::vector<double> w = GaussLegendre::weights(r);
+		std::vector<double> c = GaussLegendre::dates(r);
 
 
-		//  pour chaque date d'indice k, contient le vecteur des T_N_STEPS polynomes de lagrange pris en ce point
-		std::vector<std::vector<double>> vv_lag;
-		// idem pour les dérivées
-		std::vector<std::vector<double>> vv_lag_der;
-		vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
-		vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
 
 
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
 		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_cur_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_cur_q,this->m_h);
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qPrevious;
 		std::vector<T_Q> v_prev_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_prev_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
-		// vecteur des r différentielles du lagrangien par rapport à q prises aux r dates c
 		std::vector<NOXVector<T_Q::DOF>> v_cur_dLdq;
-		// idem pour les différentielles par rapport à v
 		std::vector<NOXVector<T_Q::DOF>> v_cur_dLdv;
-		// idem pour le pas de temps précédent 
 		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdq;
-		// idem par rapport à v
 		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdv;
 
 		for (k=0; k<r; k++) {
@@ -231,75 +218,35 @@ public:
 		int k;	// index date
 
 
-		// update previous position set (on which we are working)
-		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
 			m_v_prev_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
-		int r = m_quad_deg;		// degré quadrature
-		std::vector<double> w = GaussLegendre::weights(r);	// poids quadrature, len = r
-		std::vector<double> c = GaussLegendre::dates(r);		// dates quadrature, len = r
-		std::cout << "w: ";
-		for (k=0; k<r; k++)
-			std::cout << w[k] << " ";
-		std::cout << std::endl;
-		std::cout << "c: ";
-		for (k=0; k<r; k++)
-			std::cout << c[k] << " ";
-		std::cout << std::endl;
+		int r = m_quad_deg;
+		std::vector<double> w = GaussLegendre::weights(r);
+		std::vector<double> c = GaussLegendre::dates(r);
 
-		//  pour chaque date d'indice k, contient le vecteur des T_N_STEPS polynomes de lagrange pris en ce point
-		std::vector<std::vector<double>> vv_lag;
-		// idem pour les dérivées
-		std::vector<std::vector<double>> vv_lag_der;
-
-		vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
-		vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
-		for (k=0; k<r; k++) {
-			std::cout << "k: " << k << std::endl;
-
-			std::cout << "lag: ";
-			for (nu=0; nu<=T_N_STEPS; nu++)
-				std::cout << vv_lag[k][nu] << " ";
-			std::cout << std::endl;
-			std::cout << "dlag: ";
-			for (nu=0; nu<=T_N_STEPS; nu++)
-				std::cout << vv_lag_der[k][nu] <<  " ";
-			std::cout << std::endl;
-		}
+		std::vector<std::vector<double>> vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
 
 
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
 		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 
-		std::cout << "Position interpolation" << std::endl;
-		for (k=0; k<r; k++) {
-			std::cout << "date " << k << ": ";
-			for (nu=0; nu<T_Q::DOF; nu++) {
-				std::cout  << v_pos_interp[k][nu] << " ";
-			}
-			std::cout << std::endl;
-		}
 		
-		// vecteur des r différentielles du lagrangien par rapport à q prises aux r dates c
 		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdq;
-		// idem pour les différentielles par rapport à v
 		std::vector<NOXVector<T_Q::DOF>> v_prev_dLdv;
+
 
 		for (k=0; k<r; k++) {
 			v_prev_dLdq.push_back(this->m_problem.dLdq(v_pos_interp[k],v_vel_interp[k]));
 			v_prev_dLdv.push_back(this->m_problem.dLdv(v_pos_interp[k],v_vel_interp[k]));
 		}
 
-		// Internal equations
 		NOXVector<T_Q::DOF> somme;
 		for (nu=1;nu<T_N_STEPS;nu++) {
 			somme = NOXVector<T_Q::DOF>::Zero();
 			for (k=0;k<r;k++) {
-				// les indices sont faux, corriger
 				somme += w[k]*(this->m_h*vv_lag[k][nu]*v_prev_dLdq[k]+vv_lag_der[k][nu]*v_prev_dLdv[k]);
 			}
 			f.segment((nu-1)*T_Q::DOF,T_Q::DOF) = somme;
@@ -322,7 +269,6 @@ public:
 		int j;	// jacobian column index
 
 
-		// update current position set
 		// this one is not supposed to have changed, but just in case...
 		m_v_cur_q[0] = m_v_prev_q[T_N_STEPS];
 		for (nu=0; nu<T_N_STEPS; nu++) {
@@ -330,36 +276,23 @@ public:
 		}
 
 
-		int r = m_quad_deg;		// degré quadrature
-		std::vector<double> w = GaussLegendre::weights(r);	// poids quadrature, len = r
-		std::vector<double> c = GaussLegendre::dates(r);		// dates quadrature, len = r
+		int r = m_quad_deg;
+		std::vector<double> w = GaussLegendre::weights(r);
+		std::vector<double> c = GaussLegendre::dates(r);
 
 
-		//  pour chaque date d'indice k, contient le vecteur des T_N_STEPS polynomes de lagrange pris en ce point
-		std::vector<std::vector<double>> vv_lag;
-		// idem pour les dérivées
-		std::vector<std::vector<double>> vv_lag_der;
-
-		vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
-		vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag	= this->m_interp.polynomials(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
 
 
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
 		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_cur_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_cur_q,this->m_h);
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qPrevious;
 		std::vector<T_Q> v_prev_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_prev_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
-		// vecteur des r jacobiens du lagrangien par rapport à qq prises aux r dates c
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdq;
-		// idem pour qv
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdv;
-		// idem pour vq
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdq;
-		// idem pour vv
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdv;
 
 		for (k=0; k<r; k++) {
@@ -369,15 +302,9 @@ public:
 			v_JvdLdv.push_back(this->m_problem.JvdLdv(v_pos_interp[k],v_vel_interp[k]));
 		}
 
-		//J = Eigen::Matrix<double,T_Q::DOF*T_N_STEPS,T_Q::DOF*T_N_STEPS>::Zero();
 		Eigen::Matrix<double,T_Q::DOF,T_Q::DOF> somme = Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 
 		for (j=1; j<=T_N_STEPS; j++) {
-			/*somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
-			for (k=0; k<r; k++) {
-				somme += w[k]*(vv_lag[k][0]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][0]*(v_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
-			}
-			J.block<T_Q::DOF,T_Q::DOF>(0,j*T_Q::DOF) = somme;*/
 			for (i=0; i<T_N_STEPS; i++) {
 				somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 				for (k=0; k<r; k++) {
@@ -399,35 +326,25 @@ public:
 		int j;	// jacobian column index
 
 
-		// update current position set
 		// don't touch q[0] and q[T_N_STEPS]
 		for (nu=0; nu<T_N_STEPS-1; nu++) {
 			m_v_prev_q[nu+1] = T_Q(q.segment(nu*T_Q::DOF,T_Q::DOF));
 		}
 
 
-		int r = m_quad_deg;		// degré quadrature
-		std::vector<double> w = GaussLegendre::weights(r);	// poids quadrature, len = r
-		std::vector<double> c = GaussLegendre::dates(r);		// dates quadrature, len = r
+		int r = m_quad_deg;
+		std::vector<double> w = GaussLegendre::weights(r);
+		std::vector<double> c = GaussLegendre::dates(r);
 
 
-		//  pour chaque date d'indice k, contient le vecteur des T_N_STEPS polynomes de lagrange pris en ce point
-		std::vector<std::vector<double>> vv_lag;
-		// idem pour les dérivées
-		std::vector<std::vector<double>> vv_lag_der;
-
-		vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
-		vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag = this->m_interp.polynomials(T_N_STEPS,c);
+		std::vector<std::vector<double>> vv_lag_der = this->m_interp.polynomials_derivatives(T_N_STEPS,c);
 
 
-		// vecteur des r positions correspondant aux dates c pour la paramétrisation m_qCurrent;
 		std::vector<T_Q> v_pos_interp = m_interp.pos_interp(T_N_STEPS,c,m_v_prev_q);
-		// idem pour les vitesses
 		std::vector<T_Q> v_vel_interp = m_interp.vel_interp(T_N_STEPS,c,m_v_prev_q,this->m_h);
 		
-		// vecteur des r jacobiens du lagrangien par rapport à qq prises aux r dates c
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdq;
-		// idem pour qv
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JqdLdv;
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdq;
 		std::vector<Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>> v_JvdLdv;
@@ -439,15 +356,9 @@ public:
 			v_JvdLdv.push_back(this->m_problem.JvdLdv(v_pos_interp[k],v_vel_interp[k]));
 		}
 
-		//J = Eigen::Matrix<double,T_Q::DOF*T_N_STEPS,T_Q::DOF*T_N_STEPS>::Zero();
 		Eigen::Matrix<double,T_Q::DOF,T_Q::DOF> somme = Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 
 		for (j=1; j<T_N_STEPS; j++) {
-			/*somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
-			for (k=0; k<r; k++) {
-				somme += w[k]*(vv_lag[k][0]*(this->m_h*vv_lag[k][j]*v_JqdLdq[k]+vv_lag_der[k][j]*v_JvdLdq[k]) + vv_lag_der[k][0]*(v_lag[k][j]*v_JqdLdv[k]+(vv_lag_der[k][j]/this->m_h)*v_JvdLdv[k]));
-			}
-			J.block<T_Q::DOF,T_Q::DOF>(0,j*T_Q::DOF) = somme;*/
 			for (i=1; i<T_N_STEPS; i++) {
 				somme =  Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>::Zero();
 				for (k=0; k<r; k++) {
@@ -472,33 +383,23 @@ private:
 
 public:
 	GalerkinStepInitWrapper<T_M,T_Q,T_TQ,T_N_STEPS> (GalerkinStepInternals<T_M,T_Q,T_TQ,T_N_STEPS>* internals)
-	{
-		m_internals = internals;
-	}
+	{ m_internals = internals; }
 
 	const NOXVector<T_Q::DOF*(T_N_STEPS-1)>
 	getInitialGuess ()
-	{
-		return m_internals->initGetInitialGuess();
-	}
+	{ return m_internals->initGetInitialGuess(); }
 
 	void
 	updateInitialPosition (const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& q)
-	{
-		m_internals->updateInitialPosition(q);
-	}
+	{ m_internals->updateInitialPosition(q); }
 
 	bool
 	computeF (NOXVector<T_Q::DOF*(T_N_STEPS-1)>& f, const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& q)
-	{
-		return m_internals->computeInitF(f,q);
-	}
+	{ return m_internals->computeInitF(f,q); }
 
 	bool
 	computeJacobian (Eigen::Matrix<double,T_Q::DOF*(T_N_STEPS-1),T_Q::DOF*(T_N_STEPS-1)>& J, const NOXVector<T_Q::DOF*(T_N_STEPS-1)>& q)
-	{
-		return m_internals->computeInitJacobian(J,q);
-	}
+	{ return m_internals->computeInitJacobian(J,q); }
 };
 
 } // namespace Variational
