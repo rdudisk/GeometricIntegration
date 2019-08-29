@@ -14,54 +14,6 @@ typedef double					M;
 typedef NOXVector<BODY_DOF*N_BODIES>	Q;
 typedef NOXVector<BODY_DOF*N_BODIES>	TQ;
 
-/*
- * Probleme tres simple : L(q,v)=1/2*m*v^2
- * Solution : q,v = cste
- */
-typedef NOXVector<2>	N2;
-
-class MyProblem : public Variational::Abstract::Problem<M,N2>
-{
-private:
-
-public:
-	Eigen::Matrix<double,N2::DOF,1>
-	dLdq (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,1>::Zero();
-	}
-
-	Eigen::Matrix<double,N2::DOF,1>
-	dLdv (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,1>(v);
-	}
-
-	Eigen::Matrix<double,N2::DOF,N2::DOF>
-	JqdLdq (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,N2::DOF>::Zero();
-	}
-
-	Eigen::Matrix<double,N2::DOF,N2::DOF>
-	JvdLdq (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,N2::DOF>::Zero();
-	}
-
-	Eigen::Matrix<double,N2::DOF,N2::DOF>
-	JqdLdv (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,N2::DOF>::Zero();
-	}
-
-	Eigen::Matrix<double,N2::DOF,N2::DOF>
-	JvdLdv (const N2 q, const N2 v)
-	{
-		return Eigen::Matrix<double,N2::DOF,N2::DOF>::Identity();
-	}
-};
-
 /**
  * 2 bodies problem
  * L(q,v) = (1/2)*(m1*v1**2+m2*v2**2) + G*m1*m2/||q1-q2||**2
@@ -77,21 +29,15 @@ private:
 public:
 	void
 	G (double _G)
-	{
-		m_G = _G;
-	}
+	{ m_G = _G; }
 
 	void
 	m1 (double _m1)
-	{
-		m_m1 = _m1;
-	}
+	{ m_m1 = _m1; }
 
 	void
 	m2 (double _m2)
-	{
-		m_m2 = _m2;
-	}
+	{ m_m2 = _m2; }
 
 	Eigen::Matrix<double,Q::DOF,1>
 	dLdq (const Q q, const Q v)
@@ -140,15 +86,11 @@ public:
 
 	Eigen::Matrix<double,Q::DOF,Q::DOF>
 	JvdLdq (const Q q, const Q v)
-	{
-		return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero();
-	}
+	{ return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero(); }
 
 	Eigen::Matrix<double,Q::DOF,Q::DOF>
 	JqdLdv (const Q q, const Q v)
-	{
-		return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero();
-	}
+	{ return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero(); }
 
 	Eigen::Matrix<double,Q::DOF,Q::DOF>
 	JvdLdv (const Q q, const Q v)
@@ -162,7 +104,6 @@ public:
 
 		return _JvdLdv;
 	}
-
 };
 
 int
@@ -184,39 +125,25 @@ main (int argc, char* argv[])
 	 */
 	KeplerProblem myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);
-	Q pos, vel;
+
 	myProblem.G(2.95912208286e-4);
 	myProblem.m1(1.00000597682);
 	myProblem.m2(0.0000954786104043);
+
+	Q pos, vel;
 	pos << 0.0, 0.0, 0.0, -3.5023653, -3.8169847, -1.5507963;
 	vel << 0.0, 0.0, 0.0, 0.00565429, -0.00412490, -0.00190589;
 	myProblem.pos(0,pos);
-
 	// for now this is the only way to initialize the 2nd position consistently with the step definition
 	// TODO !!
 	myProblem.pos(1,pos+h*vel);
 
-	//Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Midpoint");
-	
 	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Galerkin P2N2Gau");
-
-
-	/*
-	MyProblem myProblem;
-	myProblem.baselinstep(0.0,h,n_steps);
-	N2 pos, vel;
-	pos << 0, 0;
-	vel << 1, -1;
-	myProblem.pos(0,pos);
-	myProblem.pos(1,pos+h*vel);
-
-	Variational::Abstract::Integrator& integrator = Variational::Factory<double,N2,N2>::createIntegrator(myProblem,"Explicit Euler");
-	*/
 
 	integrator.initialize();
 	integrator.integrate();
 	
-	//myProblem.write2csv("res_midpoint2.csv");
+	myProblem.write2csv("res_midpoint2.csv");
 
 	return 0;
 }
