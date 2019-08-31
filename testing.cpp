@@ -106,11 +106,30 @@ public:
 	}
 };
 
+template<int NUMBER>
+class Test {
+public:
+	static void
+	print ()
+	{
+#ifdef NUMBER
+		std::cout << "NUMBER DEFINED" << std::endl;
+#else
+		std::cout << "NUMBER NOT DEFINED" << std::endl;
+#endif
+#if NUMBER == 2
+		std::cout << "NUMBER==2" << std::endl;
+#else
+		std::cout << "NUMBER!=2" << std::endl;
+#endif
+	}
+};
+
 int
 main (int argc, char* argv[])
 {
 	double h = 0.1;
-	int n_steps = 4;
+	int n_steps = 50;
 
 	/*
 	 * Initial data:
@@ -143,7 +162,7 @@ main (int argc, char* argv[])
 	integrator.initialize();
 	integrator.integrate();
 	
-	myProblem.write2csv("res_midpoint2.csv");
+	myProblem.write2csv("results.csv");
 
 	return 0;
 }

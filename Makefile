@@ -22,5 +22,5 @@ LINK_FLAGS=$(NOX_EXTRA_LD_FLAGS)
 #just assuming that epetra is turned on.
 DEFINES=-DMYAPP_EPETRA
 
-testing:
+testing: testing.cpp
 	$(CXX) $(CXX_FLAGS) -g testing.cpp -o testing $(LINK_FLAGS) $(INCLUDE_DIRS) -I./ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)

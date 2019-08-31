@@ -176,10 +176,10 @@ class Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ, T_N_STEPS &gt;</h3>
 <p>Cette implémentation est un peu touffue, alors tâchons d'être méthodique.</p>
 <p>Le nombre de points de contrôle est désigné par \(S+1\) dans les formules mathématiques. Dans le code, \(S\) est donné par T_N_STEPS. L'indice associé est \(\nu\in\{0,\ldots,S\}\) ou \(\mu\). Les points de contrôle sont les configurations \(q^\nu\in Q\) où l'espace \(Q\) possède T_Q::DOF degrés de liberté dénoté dans les formules par \(N\). L'ensemble des configurations associés à un pas de temps donné sont résumés par la "super"-configuration \(\bar q\) de T_Q::DOF*(T_N_STEPS+1) degrés de liberté. Il est représenté en mémoire par un std::vector&lt;T_Q&gt; et \(q_\nu\) est accédé par bar_q[nu].</p>
 <p>Les polynômes de Lagrange \(\phi_\nu\) associés aux points de contrôle \(q^\nu\) sont de degré \(S\) et définis pour \(\alpha\in[0,1]\) par </p><p class="formulaDsp">
-\[ \phi_\nu(\alpha)=\prod_{0\leq\mu\leq S,\;\mu\neq\nu}\frac{\alpha-\alpha_\mu}{\alpha_\nu-\alpha_\mu}. \]
+\[ \phi_\nu(\alpha)=\prod_{0\leq\mu\leq S,\;\mu\neq\nu} \frac{\alpha-\alpha_\mu}{\alpha_\nu-\alpha_\mu}. \]
 </p>
 <p> La courbe interpolée \(q_d\) et sa dérivée \(\dot q_d\) sont données en \(t\in[0,h]\) respectivement par </p><p class="formulaDsp">
-\[ q_d(t;\bar q) = \sum_{0\leq\nu\leq S} q^\nu\phi_\nu(t/h),\qquad \dot q_d(t;\bar q) = \frac{1}{h}\sum_{0\leq\nu\leq S} q^\nu\dot\phi_\nu(t/h). \]
+\[ q_d(t;\bar q) = \sum_{0\leq\nu\leq S} q^\nu\phi_\nu(t/h), \qquad \dot q_d(t;\bar q)=\frac{1}{h} \sum_{0\leq\nu\leq S} q^\nu\dot\phi_\nu(t/h). \]
 </p>
 <p>Soit une quadrature \((c_k,w_k)\) d'ordre \(r\) parcourue par l'indice \(k\in\{0,\ldots,r-1\}\). L'action est donnée pour \(\bar q\) par </p><p class="formulaDsp">
 \[ \mathcal A_d(\bar q) = h\sum_{0\leq k&lt;r}w_k L(c_kh;\bar q) \]
@@ -190,19 +190,19 @@ class Variational::GalerkinStepInternals&lt; T_M, T_Q, T_TQ, T_N_STEPS &gt;</h3>
 </p>
 <p> où chaque \(F_i(\bar q^*)\) est un vecteur colonne de taille \(N\).</p>
 <p>Soit \(\bar q_{n-1}\) et \(\bar q_n\) les ensembles de configurations de deux pas de temps consécutifs, la DEL est donnée par </p><p class="formulaDsp">
-\[ F_0(\bar q_n^*) = \sum_{0\leq k&lt;r}w_k\left(h\left(\phi_0(c_k)\frac{\partial L}{\partial q}(c_kh;\bar q_n)+\phi_s(c_k)\frac{\partial L}{\partial q}(c_kh;\bar q_{n-1})\right) +\left(\dot\phi_0(c_k)\frac{\partial L}{\partial\dot q}(c_kh;\bar q_n)+\dot \phi_s(c_k)\frac{\partial L}{\partial\dot q}(c_kh;\bar q_{n-1})\right)\right) = 0 \]
+\[ F_0(\bar q_n^*) = \sum_{0\leq k&lt;r}w_k\left(h\left( \phi_0(c_k)\frac{\partial L}{\partial q}(c_kh;\bar q_n) +\phi_s(c_k)\frac{\partial L}{\partial q}(c_kh;\bar q_{n-1})\right) +\left(\dot\phi_0(c_k)\frac{\partial L}{\partial\dot q}(c_kh;\bar q_n) +\dot \phi_s(c_k)\frac{\partial L}{\partial\dot q}(c_kh;\bar q_{n-1}) \right)\right) = 0 \]
 </p>
 <p> et les conditions internes d'extrémalisation d'action sont données pour tout \(\nu\in\{1,\ldots,S-1\}\) par </p><p class="formulaDsp">
-\[ F_\nu(\bar q_n^*)=\sum_{0\leq k&lt;r}w_k\left(h\phi_\nu(c_k)\frac{\partial L}{\partial q}(c_kh;\bar q_n)+\dot\phi_\nu(c_k)\frac{\partial L}{\partial \dot q}(c_kh;\bar q_n)\right)=0. \]
+\[ F_\nu(\bar q_n^*)=\sum_{0\leq k&lt;r}w_k\left(h\phi_\nu(c_k) \frac{\partial L}{\partial q}(c_kh;\bar q_n)+\dot\phi_\nu(c_k) \frac{\partial L}{\partial \dot q}(c_kh;\bar q_n)\right)=0. \]
 </p>
 <p>Le jacobien de \(F\) est donné par </p><p class="formulaDsp">
-\[ J(\bar q^*)=\left(\frac{\partial F_i}{\partial q_{j+1}}(\bar q^*)\right)_{ij}. \]
+\[ J(\bar q^*)=\left(\frac{\partial F_i}{\partial q_{j+1}} (\bar q^*)\right)_{ij}. \]
 </p>
-<p> Pour \(1\leq i\leq S-1\), \(1\leq j\leq S\), et \(\bar q=\bar q_n\), on calcule </p><p class="formulaDsp">
-\[ \frac{\partial F_i}{\partial q_j}(\bar q^*_n) = \sum_{0\leq k&lt;r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q}(c_kh;\bar q_n) +\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}(c_kh;\bar q_n)\right) +\dot\phi_i(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v}(c_kh;\bar q_n) +\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}(c_kh;\bar q_n)\right)\right). \]
+<p> Pour \(0\leq i\leq S-1\), \(1\leq j\leq S\), et \(\bar q=\bar q_n\), on calcule </p><p class="formulaDsp">
+\[ \frac{\partial F_i}{\partial q_j}(\bar q^*_n) = \sum_{0\leq k&lt;r}w_k\left(\phi_i(c_k)\left(h\phi_j(c_k) \frac{\partial}{\partial q}\frac{\partial L}{\partial q} +\dot\phi_j(c_k)\frac{\partial}{\partial v} \frac{\partial L}{\partial q}\right) +\dot\phi_i(c_k)\left(\phi_j(c_k) \frac{\partial}{\partial q}\frac{\partial L}{\partial v} +\frac{1}{h}\dot\phi_j(c_k) \frac{\partial}{\partial v}\frac{\partial L}{\partial v} \right)\right) \]
 </p>
-<p> La différentielle de DEL est donnée pour \(i=0\) et \(1\leq j\leq S\) par </p><p class="formulaDsp">
-\[ \frac{\partial F_0}{\partial q_j}(\bar q^*) = \sum_{0\leq k&lt;r}w_k\left(\phi_0(c_k)\left(h\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial q} +\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial q}\right) +\dot\phi_0(c_k)\left(\phi_j(c_k)\frac{\partial}{\partial q}\frac{\partial L}{\partial v} +\frac{1}{h}\dot\phi_j(c_k)\frac{\partial}{\partial v}\frac{\partial L}{\partial v}\right)\right) \]
+<p> où toutes les dérivées partielles du lagrangien sont prises en \((c_kh;\bar q_n)\). On vérifie en particulier que la différentielle de la DEL est donnée par </p><p class="formulaDsp">
+\[ \frac{\partial F_0}{\partial q_j}(\bar q^*) = \sum_{0\leq k&lt;r}w_k\left(\phi_0(c_k)\left(h\phi_j(c_k) \frac{\partial}{\partial q}\frac{\partial L}{\partial q} +\dot\phi_j(c_k)\frac{\partial}{\partial v} \frac{\partial L}{\partial q}\right) +\dot\phi_0(c_k)\left(\phi_j(c_k) \frac{\partial}{\partial q}\frac{\partial L}{\partial v} +\frac{1}{h}\dot\phi_j(c_k) \frac{\partial}{\partial v}\frac{\partial L}{\partial v} \right)\right). \]
 </p>
  </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a28c932d9e85fb209fa341b5af5c5dd28"></a>

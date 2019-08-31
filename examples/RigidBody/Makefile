@@ -20,4 +20,4 @@ LINK_FLAGS=$(NOX_EXTRA_LD_FLAGS)
 DEFINES=-DMYAPP_EPETRA
 
 RigidBody: RigidBody.cpp
-	$(CXX) $(CXX_FLAGS) -g RigidBody.cpp -o RigidBody $(LINK_FLAGS) $(INCLUDE_DIRS) -I./../../ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)
+	$(CXX) $(CXX_FLAGS) -g -O3 RigidBody.cpp -o RigidBody $(LINK_FLAGS) $(INCLUDE_DIRS) -I./../../ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)

@@ -20,6 +20,7 @@ namespace SO3
 
 template <typename T_SCALAR_TYPE>
 class Algebra
+	//public Abstract::LieAlgebra<T_SCALAR_TYPE>
 {
 protected:
 	Eigen::Matrix<T_SCALAR_TYPE,3,1> m_v;

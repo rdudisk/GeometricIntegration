@@ -59,7 +59,7 @@ int
 main (int argc, char* argv[])
 {
 	double h = 0.1;
-	int n_steps = 4;
+	int n_steps = 1000;
 	RigidBodyProblem myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);
 
@@ -73,7 +73,7 @@ main (int argc, char* argv[])
 
 	bool success = integrator.integrate();
 
-	myProblem.write2csv("results.csv");
+	//myProblem.write2csv("results.csv");
 
 	return (success ? EXIT_SUCCESS : EXIT_FAILURE);
 }
