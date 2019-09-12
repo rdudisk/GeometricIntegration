@@ -1,0 +1,50 @@
+\newcommand{\px}[3]{(-\sa* (#1)+\ca* (#2))} % pour les formules voir cahier II p.52--54
+\newcommand{\py}[3]{(\ca*\sb* (#1)+\sa*\sb* (#2)+\cb* (#3))}
+\newcommand{\pxy}[3]{ {\px{#1}{#2}{#3}},{\py{#1}{#2}{#3}} }
+\newcommand{\tikzPiOnSphere}[1]{
+	\begin{tikzpicture}[>=Stealth,scale=2.5]
+		% plot ball
+		\shade[ball color = black, opacity=0.3] (0,0) circle [radius=1cm];
+		% -- necessaire pour pxy
+		\def\thetaa{(7*180.0/32)}
+		\def\thetab{(-180.0/6)}
+		\def\ca{(cos(\thetaa))}
+		\def\sa{(sin(\thetaa))}
+		\def\cb{(cos(\thetab))}
+		\def\sb{(sin(\thetab))}
+		% -- end
+		% plot flow
+		\begin{axis}[hide axis,anchor=origin,x=1cm,y=1cm,unbounded coords=jump]
+			\addplot[gray,very thin] table [x=X,y=Y,col sep=comma] {exact-0.csv};
+			\addplot[black,very thin] table [x=X,y=Y,col sep=comma] {exact-1.csv};
+			\addplot[mark=*,mark size=0.1mm,only marks] table[x=px,y=py,col sep=comma] {#1};
+		\end{axis}
+		% plot flow orientation
+		\foreach \k in {1,...,9} {
+			\draw[->] (\pxy{(cos(\k*90.0/10.0))}{0}{(sin(\k*90.0/10.0))})
+				-- (\pxy{(cos(\k*90.0/10.0))}{0.01}{(sin(\k*90.0/10.0))});
+		}
+		\foreach \k in {11,12} {
+			\draw[->] (\pxy{(cos(\k*90.0/10.0))}{0}{(sin(\k*90.0/10.0))})
+				-- (\pxy{(cos(\k*90.0/10.0))}{-0.01}{(sin(\k*90.0/10.0))});
+		}
+		\foreach \k in {1,...,4} {
+			\draw[->] (\pxy{(cos(\k*90.0/10.0))}{0}{(-sin(\k*90.0/10.0))})
+				-- (\pxy{(cos(\k*90.0/10.0))}{-0.01}{(-sin(\k*90.0/10.0))});
+		}
+		\foreach \k in {1,...,4} {
+			\draw[->] (\pxy{(sin(90.0/10.0)*((-1)^\k)*cos(45))}{(cos(90.0/10.0))}{(sin(90.0/10.0)*((-1)^(floor(\k/2))*cos(45))})
+				-- (\pxy{((sin(90.0/10.0)-((-1)^(\k+floor(\k/2)))*0.01)*((-1)^\k)*cos(45))}{(cos(90.0/10.0))}{((sin(90.0/10.0)-((-1)^(\k+floor(\k/2)))*0.01)*((-1)^(floor(\k/2)))*cos(45))});
+		}
+		% plot axes
+		\def\lambda{1.5}
+		\draw[thick,->] (0,0) -- (\pxy{\lambda}{0}{0}) node[anchor=east] {$\pi_1$};
+		\draw[thick,->] (0,0) -- (\pxy{0}{\lambda}{0}) node[anchor=west] {$\pi_2$};
+		\draw[thick,->] (0,0) -- (\pxy{0}{0}{\lambda}) node[anchor=west] {$\pi_3$};
+		% plot axes intersection with sphere
+		\filldraw[fill=black] (\pxy{1}{0}{0}) circle (0.12mm);
+		\filldraw[fill=black] (\pxy{0}{1}{0}) circle (0.12mm);
+		\filldraw[fill=black] (\pxy{0}{0}{1}) circle (0.12mm);
+		\draw[thin] (0,0) circle [radius=1cm];
+	\end{tikzpicture}
+}

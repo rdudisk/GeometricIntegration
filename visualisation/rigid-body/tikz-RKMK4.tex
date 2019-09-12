@@ -1,0 +1,12 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfmath}
+\usetikzlibrary{datavisualization,calc,arrows.meta}
+\pgfplotsset{compat=newest}
+
+\begin{document}
+	\input{template.tex}
+	\tikzPiOnSphere{projected-RKMK4.csv}
+\end{document}
