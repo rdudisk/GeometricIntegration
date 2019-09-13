@@ -1,44 +1,38 @@
-#ifndef DEF_COMMON_ABSTRACT_LIEALGEBRA
-#define DEF_COMMON_ABSTRACT_LIEALGEBRA
+#ifndef DEF_COMMON_LIEALGEBRABASE
+#define DEF_COMMON_LIEALGEBRABASE
 
-namespace Abstract
-{
-
-template <typename T_SCALAR_TYPE>
-class LieAlgebra
+template <typename T_DERIVED, typename T_GROUP, unsigned int T_DOF, typename T_SCALAR_TYPE>
+class LieAlgebraBase : CRTP<T_DERIVED>
 {
 public:
-	static const unsigned int DOF;
+	static const unsigned int DOF = T_DOF;
 
 public:
-	~LieAlgebra<T_SCALAR_TYPE> ( )
-	{ }
-
 	/* Group operations */
 
 	/**
 	 * \return the inverse of `*this` for the '+' group operation.
 	 */
-	virtual LieAlgebra<T_SCALAR_TYPE>
-	inverse ( ) const = 0;
+	T_DERIVED
+	inverse ( ) const;
 
 	/**
 	 * Inverts the element `*this` for the '+' group operation.
 	 */
 	void
 	inverted ( )
-	{ *this = this->inverse(); }
+	{ this->underlying() = this->underlying().inverse(); }
 
-	virtual void
-	operator+= (const LieAlgebra<T_SCALAR_TYPE>& g) = 0
+	void
+	operator+= (const T_DERIVED& g);
 	
 	/**
 	 * \return the group addition of `*this` and \p g.
 	 */
-	LieAlgebra<T_SCALAR_TYPE>
-	operator+ (const LieAlgebra<T_SCALAR_TYPE>& g) const
+	T_DERIVED
+	operator+ (const T_DERIVED& g) const
 	{
-		LieAlgebra<T_SCALAR_TYPE> res(*this);
+		T_DERIVED res(this->underlying());
 		res += g;
 		return res;
 	}
@@ -46,10 +40,10 @@ public:
 	/**
 	 * Performs `*this` + \p g.inverse().
 	 */
-	LieAlgebra<T_SCALAR_TYPE>
-	operator- (const LieAlgebra<T_SCALAR_TYPE>& g) const
+	T_DERIVED
+	operator- (const T_DERIVED& g) const
 	{
-		LieAlgebra<T_SCALAR_TYPE> res(*this);
+		T_DERIVED res(this->underlying());
 		res += g.inverse();
 		return res;
 	}
@@ -57,21 +51,20 @@ public:
 	/**
 	 * \return the element representing the group identity for operation `+`.
 	 */
-	virtual static Algebra<T_SCALAR_TYPE>
-	Zero ( ) = 0;
+	static T_DERIVED
+	Zero ( );
 
 	/* Vector space operations */
-
-	virtual void
-	operator*= (T_SCALAR_TYPE s) = 0;
+	void
+	operator*= (T_SCALAR_TYPE s);
 	
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
-	LieAlgebra<T_SCALAR_TYPE>
+	T_DERIVED
 	operator* (T_SCALAR_TYPE s) const
 	{
-		LieAlgebra<T_SCALAR_TYPE> res(*this);
+		T_DERIVED res(this->underlying());
 		res *= s;
 		return res;
 	}
@@ -83,24 +76,30 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
-	virtual Algebra<T_SCALAR_TYPE>
-	bracket (const Algebra<T_SCALAR_TYPE>& g) const = 0;
+	T_DERIVED
+	bracket (const T_DERIVED& g) const;
+
+	static T_DERIVED
+	bracket (const T_DERIVED& g1, const T_DERIVED& g2)
+	{
+		return g1.bracket(g2);
+	}
 
 	/* Other operations */
 
-	virtual T_SCALAR_TYPE
-	norm () const = 0;
+	T_SCALAR_TYPE
+	norm () const;
 
 	/**
 	 * Implements the exponential map \f$\exp:\mathfrak{so}(3)\rightarrow SO(3)\f$ evalutated at `*this`.
 	 * \return the \ref Lie::SO3::Group<T> implementation of the Lie group \f$SO(3)\f$ element
 	 * that represents the exponential of `*this`.
 	 */
-	virtual Abstract::LieGroup
-	exp ( ) const = 0;
+	T_GROUP
+	exp ( ) const;
 
-	virtual NOXVector<DOF>
-	toNOXVector ( ) const = 0;
+	NOXVector<T_DOF>
+	toNOXVector ( ) const;
 
 	static const unsigned int
 	dof ()
@@ -109,11 +108,9 @@ public:
 	}
 };
 
-} // namespace Abstract
-
-template <typename T_SCALAR_TYPE>
-const Abstract::LieAlgebra<T_SCALAR_TYPE>
-operator* (T_SCALAR_TYPE s, const Abstract::LieAlgebra<T_SCALAR_TYPE> g)
+template <typename T_DERIVED, typename T_GROUP, unsigned int T_DOF, typename T_SCALAR_TYPE>
+const LieAlgebraBase<T_DERIVED,T_GROUP,T_DOF,T_SCALAR_TYPE>
+operator* (T_SCALAR_TYPE s, const T_DERIVED g)
 {
 	return g*s;
 }

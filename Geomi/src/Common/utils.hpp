@@ -38,5 +38,12 @@ isZero (T_SCALAR_TYPE d)
 
 template bool isZero (double);
 
+template <typename T>
+class CRTP {
+public:
+	T& underlying() { return static_cast<T&>(*this); }
+	T const& underlying() const { return static_cast<T const&>(*this); }
+};
+
 
 #endif

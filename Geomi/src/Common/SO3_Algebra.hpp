@@ -19,14 +19,13 @@ namespace SO3
  */
 
 template <typename T_SCALAR_TYPE>
-class Algebra
-	//public Abstract::LieAlgebra<T_SCALAR_TYPE>
+class Algebra : LieAlgebraBase<	Algebra<T_SCALAR_TYPE>,
+								Group<T_SCALAR_TYPE>,
+								3,
+								T_SCALAR_TYPE>
 {
 protected:
 	Eigen::Matrix<T_SCALAR_TYPE,3,1> m_v;
-
-public:
-	static const unsigned int DOF = 3;
 
 public:
 	Algebra<T_SCALAR_TYPE> ( )
@@ -62,11 +61,11 @@ public:
 	/**
 	 * Inverts the group element `*this`.
 	 */
-	void
+	/*void
 	inverted ( )
 	{
 		*this = this->inverse();
-	}
+	}*/
 
 	void
 	operator+= (const Algebra<T_SCALAR_TYPE>& g)
@@ -114,25 +113,13 @@ public:
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
-	Algebra<T_SCALAR_TYPE>
+	/*Algebra<T_SCALAR_TYPE>
 	operator* (T_SCALAR_TYPE s) const
 	{
 		Algebra<T_SCALAR_TYPE> res(*this);
 		res *= s;
 		return res;
-	}
-
-	Algebra<T_SCALAR_TYPE>
-	ad (const Algebra<T_SCALAR_TYPE>& g) const
-	{
-		return this->m_v.cross(g.v());
-	}
-
-	static Algebra<T_SCALAR_TYPE>
-	ad (const Algebra<T_SCALAR_TYPE>& g1, const Algebra<T_SCALAR_TYPE>& g2)
-	{
-		return g1.ad(g2);
-	}
+	}*/
 
 	/* Lie algebra operations */
 
@@ -144,7 +131,7 @@ public:
 	Algebra<T_SCALAR_TYPE>
 	bracket (const Algebra<T_SCALAR_TYPE>& g) const
 	{
-		return Algebra<T_SCALAR_TYPE>(m_v.cross(g.v()));
+		return this->m_v.cross(g.v());
 	}
 
 	/* Other operations */
@@ -314,10 +301,10 @@ public:
 		return m_v;
 	}
 
-	NOXVector<DOF>
+	NOXVector<3>
 	toNOXVector ( ) const
 	{
-		return NOXVector<DOF>(m_v);
+		return NOXVector<3>(m_v);
 	}
 
 	/**
@@ -360,12 +347,6 @@ public:
 	Zero ( )
 	{
 		return Algebra(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero());
-	}
-
-	static const unsigned int
-	dof ()
-	{
-		return DOF;
 	}
 };
 

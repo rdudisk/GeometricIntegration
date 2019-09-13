@@ -14,12 +14,13 @@ namespace SO3
  * \tparam T_SCALAR_TYPE Floating point type used for internal representation of coefficients.
  */
 template <typename T_SCALAR_TYPE>
-class Group {
+class Group : LieGroupBase<Group<T_SCALAR_TYPE>,3>
+{
 protected:
 	Eigen::Quaternion<T_SCALAR_TYPE> m_q;
 
-public:
-	static const unsigned int DOF = 3;
+//public:
+	//static const unsigned int DOF = 3;
 
 public:
 	Group<T_SCALAR_TYPE> ( )
@@ -35,7 +36,11 @@ public:
 		q(q_);
 	}
 
-	Group<T_SCALAR_TYPE> (const T_SCALAR_TYPE& w, const T_SCALAR_TYPE& x, const T_SCALAR_TYPE& y, const T_SCALAR_TYPE& z)
+	Group<T_SCALAR_TYPE>
+		(	const T_SCALAR_TYPE& w,
+			const T_SCALAR_TYPE& x,
+			const T_SCALAR_TYPE& y,
+			const T_SCALAR_TYPE& z)
 	{
 		q(w,x,y,z);
 	}
@@ -88,7 +93,10 @@ public:
 
 	// see Eigen::Quaternion constructors
 	void
-	q (const T_SCALAR_TYPE& w, const T_SCALAR_TYPE& x, const T_SCALAR_TYPE& y, const T_SCALAR_TYPE& z)
+	q (	const T_SCALAR_TYPE& w,
+		const T_SCALAR_TYPE& x,
+		const T_SCALAR_TYPE& y,
+		const T_SCALAR_TYPE& z)
 	{
 		m_q = Eigen::Quaternion<T_SCALAR_TYPE>(w,x,y,z);
 		m_q.normalize();
@@ -152,11 +160,11 @@ public:
 	/**
 	 * Inverts the group element `*this`
 	 */
-	void
+	/*void
 	inverted ( )
 	{
 		*this=this->invert;
-	}
+	}*/
 
 	/**
 	 * \return the element representing the group identity for operation `*`.
@@ -249,11 +257,11 @@ public:
 		return m_q.isApprox(g.q());
 	}
 
-	static const unsigned int
+	/*static const unsigned int
 	dof ()
 	{
 		return DOF;
-	}
+	}*/
 };
 
 } // namespace SO3
