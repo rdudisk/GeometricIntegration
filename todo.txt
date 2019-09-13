@@ -1,8 +1,0 @@
- x DIRKMKStep
- x GeneralRKMKIntegrator
- x IntegratorFactory
- - Nettoyer code
- - Faire doc
- - Établir les classes abstraites (en particulier pour Lie Group et Algebra)
- - Nettoyer SO3
- - Faire des unit tests
