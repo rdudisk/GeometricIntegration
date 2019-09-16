@@ -19,10 +19,10 @@ namespace SO3
  */
 
 template <typename T_SCALAR_TYPE>
-class Algebra : LieAlgebraBase<	Algebra<T_SCALAR_TYPE>,
-								Group<T_SCALAR_TYPE>,
-								3,
-								T_SCALAR_TYPE>
+class Algebra : public LieAlgebraBase<	Algebra<T_SCALAR_TYPE>,
+										Group<T_SCALAR_TYPE>,
+										3,
+										T_SCALAR_TYPE>
 {
 protected:
 	Eigen::Matrix<T_SCALAR_TYPE,3,1> m_v;
@@ -86,6 +86,7 @@ public:
 	/**
 	 * \return the group addition of `*this` and \p g.
 	 */
+	/*
 	Algebra<T_SCALAR_TYPE> 
 	operator+ (const Algebra<T_SCALAR_TYPE>& g) const
 	{
@@ -93,7 +94,9 @@ public:
 		res += g;
 		return res;
 	}
+	*/
 
+	/*
 	Algebra<T_SCALAR_TYPE>
 	operator- (const Algebra<T_SCALAR_TYPE>& g) const
 	{
@@ -101,6 +104,7 @@ public:
 		res += g.inverse();
 		return res;
 	}
+	*/
 
 	/* Vector space operations */
 
@@ -113,13 +117,24 @@ public:
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
-	/*Algebra<T_SCALAR_TYPE>
+	/*
+	Algebra<T_SCALAR_TYPE>
 	operator* (T_SCALAR_TYPE s) const
 	{
 		Algebra<T_SCALAR_TYPE> res(*this);
 		res *= s;
 		return res;
-	}*/
+	}
+	*/
+	//using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*;
+	/*
+	 * TODO: is there a way to avoid that ?
+	 */
+	Algebra<T_SCALAR_TYPE>
+	operator* (const T_SCALAR_TYPE& s) const
+	{
+		return LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*(s);
+	}
 
 	/* Lie algebra operations */
 
@@ -253,7 +268,7 @@ public:
 		if (order_p>0) {
 			Algebra<T_SCALAR_TYPE> A = y;
 			for (int i=0; i<order_p; i++) {
-				A = this->ad(A);
+				A = this->bracket(A);
 				res += BERNOULLI_NUMBERS[i+1]*A;
 			}
 		}

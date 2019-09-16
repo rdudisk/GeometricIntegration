@@ -7,7 +7,7 @@
  * class Derived : LieGroupBase<Derived,DOF>
  */
 template <typename T_DERIVED, unsigned int T_DOF>
-class LieGroupBase : CRTP<T_DERIVED>
+class LieGroupBase : public CRTP<T_DERIVED>
 {
 public:
 	static const unsigned int DOF = T_DOF;

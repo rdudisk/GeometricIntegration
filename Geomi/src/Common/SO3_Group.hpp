@@ -14,7 +14,7 @@ namespace SO3
  * \tparam T_SCALAR_TYPE Floating point type used for internal representation of coefficients.
  */
 template <typename T_SCALAR_TYPE>
-class Group : LieGroupBase<Group<T_SCALAR_TYPE>,3>
+class Group : public LieGroupBase<Group<T_SCALAR_TYPE>,3>
 {
 protected:
 	Eigen::Quaternion<T_SCALAR_TYPE> m_q;

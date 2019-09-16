@@ -2,10 +2,17 @@
 #define DEF_COMMON_LIEALGEBRABASE
 
 template <typename T_DERIVED, typename T_GROUP, unsigned int T_DOF, typename T_SCALAR_TYPE>
-class LieAlgebraBase : CRTP<T_DERIVED>
+class LieAlgebraBase : public CRTP<T_DERIVED>
 {
 public:
 	static const unsigned int DOF = T_DOF;
+
+	void
+	thisWorks () const
+	{
+		T_SCALAR_TYPE s = 0.2;
+		std::cout << "This works: " << s << "\n";
+	}
 
 public:
 	/* Group operations */
@@ -62,7 +69,7 @@ public:
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
 	T_DERIVED
-	operator* (T_SCALAR_TYPE s) const
+	operator* (const T_SCALAR_TYPE& s) const
 	{
 		T_DERIVED res(this->underlying());
 		res *= s;
@@ -108,11 +115,15 @@ public:
 	}
 };
 
-template <typename T_DERIVED, typename T_GROUP, unsigned int T_DOF, typename T_SCALAR_TYPE>
-const LieAlgebraBase<T_DERIVED,T_GROUP,T_DOF,T_SCALAR_TYPE>
+/*
+ * Faire quelque chose à propos de ça (friend?)
+ *
+template <typename T_DERIVED, typename T_SCALAR_TYPE>
+const T_DERIVED
 operator* (T_SCALAR_TYPE s, const T_DERIVED g)
 {
 	return g*s;
 }
+*/
 
 #endif
