@@ -83,6 +83,8 @@ public:
 		return res;
 	}
 	
+	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator+;
+	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator-;
 	/**
 	 * \return the group addition of `*this` and \p g.
 	 */
@@ -126,15 +128,14 @@ public:
 		return res;
 	}
 	*/
-	//using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*;
+	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*;
 	/*
-	 * TODO: is there a way to avoid that ?
-	 */
 	Algebra<T_SCALAR_TYPE>
 	operator* (const T_SCALAR_TYPE& s) const
 	{
 		return LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*(s);
 	}
+	*/
 
 	/* Lie algebra operations */
 
@@ -143,7 +144,7 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
-	Algebra<T_SCALAR_TYPE>
+	inline Algebra<T_SCALAR_TYPE>
 	bracket (const Algebra<T_SCALAR_TYPE>& g) const
 	{
 		return this->m_v.cross(g.v());
