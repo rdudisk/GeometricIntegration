@@ -16,10 +16,12 @@ public:
 	getInitialGuess () = 0;
 
 	virtual bool
-	computeF (NOXVector<T_Q::DOF*T_N_EQUATIONS>& f, const NOXVector<T_Q::DOF*T_N_EQUATIONS>& x) = 0;
+	computeF (	NOXVector<T_Q::DOF*T_N_EQUATIONS>& f,
+				const NOXVector<T_Q::DOF*T_N_EQUATIONS>& x) = 0;
 	
 	virtual bool
-	computeJacobian (Eigen::Matrix<double,T_Q::DOF*T_N_EQUATIONS,T_Q::DOF*T_N_EQUATIONS>& J, const NOXVector<T_Q::DOF*T_N_EQUATIONS>& x) = 0;
+	computeJacobian (Eigen::Matrix<double,T_Q::DOF*T_N_EQUATIONS,T_Q::DOF*T_N_EQUATIONS>& J,
+					 const NOXVector<T_Q::DOF*T_N_EQUATIONS>& x) = 0;
 };
 
 } // namespace Step

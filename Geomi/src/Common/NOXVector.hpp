@@ -11,7 +11,9 @@
 #include <Eigen/Geometry>
 
 template <unsigned int T_DOF>
-class NOXVector : public virtual NOX::Abstract::Vector, public Eigen::Matrix<double,T_DOF,1> {
+class NOXVector :	public virtual NOX::Abstract::Vector,
+					public Eigen::Matrix<double,T_DOF,1>
+{
 public:
 	static const unsigned int DOF = T_DOF;
 
@@ -20,50 +22,38 @@ public:
 	{ }
 
 	/* See Eigen doc on why those functions exist */
-	NOXVector<T_DOF> () :
-		Eigen::Matrix<double,T_DOF,1>()
+	NOXVector<T_DOF> ()
+	: Eigen::Matrix<double,T_DOF,1>()
 	{ }
 
 	template <typename OtherDerived>
-	NOXVector<T_DOF> (const Eigen::MatrixBase<OtherDerived>& other) :
-		Eigen::Matrix<double,T_DOF,1>(other)
+	NOXVector<T_DOF> (const Eigen::MatrixBase<OtherDerived>& other)
+	: Eigen::Matrix<double,T_DOF,1>(other)
 	{ }
 
 	template <typename OtherDerived>
 	NOX::Abstract::Vector&
 	operator= (const Eigen::MatrixBase<OtherDerived>& other)
-	{
-		this->Eigen::Matrix<double,T_DOF,1>::operator=(other);
-		return *this;
-	}
+	{ this->Eigen::Matrix<double,T_DOF,1>::operator=(other); return *this; }
 	/* End 'See Eigen' */
 
 	template <typename OtherDerived>
 	NOX::Abstract::Vector&
 	operator+= (const Eigen::MatrixBase<OtherDerived>& other)
-	{
-		this->Eigen::Matrix<double,T_DOF,1>::operator+=(other);
-		return *this;
-	}
+	{ this->Eigen::Matrix<double,T_DOF,1>::operator+=(other); return *this; }
 
 	// Copy constructor with NOX::CopyType : just ignore type
-	NOXVector<T_DOF> (const NOXVector& source, NOX::CopyType type) :
-		NOXVector<T_DOF>(source)
+	NOXVector<T_DOF> (const NOXVector& source, NOX::CopyType type)
+	: NOXVector<T_DOF>(source)
 	{ }
 
 	NOX::Abstract::Vector&
 	abs (const NOXVector<T_DOF>& y)
-	{
-		//this = y.Eigen::Matrix<double,T_DOF,1>::cwiseAbs();
-		*this = y.cwiseAbs();
-		return *this;
-	}
+	{ *this = y.cwiseAbs(); return *this; }
 
 	NOX::Abstract::Vector&
 	abs (const NOX::Abstract::Vector& y)
-	{
-		return abs(dynamic_cast<const NOXVector<T_DOF>&>(y));
-	}
+	{ return abs(dynamic_cast<const NOXVector<T_DOF>&>(y)); }
 
 	Teuchos::RCP<NOX::Abstract::Vector>
 	clone (NOX::CopyType type=NOX::DeepCopy) const
@@ -79,28 +69,19 @@ public:
 
 	double
 	innerProduct (const NOXVector<T_DOF>& y) const
-	{
-		return this->dot(y);
-	}
+	{ return this->dot(y); }
 
 	double
 	innerProduct (const NOX::Abstract::Vector& y) const
-	{
-		return innerProduct(dynamic_cast<const NOXVector<T_DOF>&>(y));
-	}
+	{ return innerProduct(dynamic_cast<const NOXVector<T_DOF>&>(y)); }
 
 	NOX::Abstract::Vector&
 	init (double gamma)
-	{
-		this->setConstant(gamma);
-		return *this;
-	}
+	{ this->setConstant(gamma); return *this; }
 
 	NOX::size_type
 	length () const
-	{
-		return T_DOF;
-	}
+	{ return T_DOF; }
 
 	double
 	norm (NOX::Abstract::Vector::NormType type=NOX::Abstract::Vector::TwoNorm) const
@@ -112,6 +93,7 @@ public:
 				result = this->Eigen::Matrix<double,T_DOF,1>::maxCoeff();
 				break;
 			case NOX::Abstract::Vector::OneNorm:
+				// TODO norme 1
 				//result = this.lpNorm<1>();
 				//break;
 			case NOX::Abstract::Vector::TwoNorm:
@@ -127,15 +109,11 @@ public:
 
 	double
 	norm (const NOXVector& weights) const
-	{
-		return sqrt(((this->cwiseProduct(*this)).cwiseProduct(weights)).sum());
-	}
+	{ return sqrt(((this->cwiseProduct(*this)).cwiseProduct(weights)).sum()); }
 
 	double
 	norm (const NOX::Abstract::Vector& weights) const
-	{
-		return norm(dynamic_cast<const NOXVector<T_DOF>&>(weights));
-	}
+	{ return norm(dynamic_cast<const NOXVector<T_DOF>&>(weights)); }
 
 	void
 	print (std::ostream& stream) const
@@ -159,62 +137,39 @@ public:
 	// TODO: definir operator=(const NOXVector&), ou bien est-ce que c'est directement herite de Eigen ?
 	NOXVector<T_DOF>&
 	operator= (const NOXVector<T_DOF>& y)
-	{
-		this->Eigen::Matrix<double,T_DOF,1>::operator=(y);
-		return *this;
-	}
+	{ this->Eigen::Matrix<double,T_DOF,1>::operator=(y); return *this; }
 
 	NOX::Abstract::Vector&
 	operator= (const NOX::Abstract::Vector& y)
-	{
-		return operator=(dynamic_cast<const NOXVector<T_DOF>&>(y));
-	}
+	{ return operator=(dynamic_cast<const NOXVector<T_DOF>&>(y)); }
 
 	NOX::Abstract::Vector&
 	reciprocal (const NOXVector& y)
-	{
-		*this = this->cwiseInverse();
-		return *this;
-	}
+	{ *this = this->cwiseInverse(); return *this; }
 
 	NOX::Abstract::Vector&
 	reciprocal (const NOX::Abstract::Vector& y)
-	{
-		return reciprocal(dynamic_cast<const NOXVector<T_DOF>&>(y));
-	}
+	{ return reciprocal(dynamic_cast<const NOXVector<T_DOF>&>(y)); }
 
 	NOX::Abstract::Vector&
 	scale (double gamma)
-	{
-		*this = (*this)*gamma;
-		return *this;
-	}
+	{ *this = (*this)*gamma; return *this; }
 
 	NOX::Abstract::Vector&
 	scale (const NOXVector<T_DOF>& a)
-	{
-		*this = this->cwiseProduct(a);
-		return *this;
-	}
+	{ *this = this->cwiseProduct(a); return *this; }
 
 	NOX::Abstract::Vector&
 	scale (const NOX::Abstract::Vector& a)
-	{
-		return scale(dynamic_cast<const NOXVector<T_DOF>&>(a));
-	}
+	{ return scale(dynamic_cast<const NOXVector<T_DOF>&>(a)); }
 
 	NOX::Abstract::Vector&
 	update (double alpha, const NOXVector<T_DOF>& a, double gamma=0.0)
-	{
-		*this = alpha*a + (*this)*gamma;
-		return *this;
-	}
+	{ *this = alpha*a + (*this)*gamma; return *this; }
 
 	NOX::Abstract::Vector&
 	update (double alpha, const NOX::Abstract::Vector& a, double gamma=0.0)
-	{
-		return update(alpha,dynamic_cast<const NOXVector<T_DOF>&>(a),gamma);
-	}
+	{ return update(alpha,dynamic_cast<const NOXVector<T_DOF>&>(a),gamma); }
 
 	NOX::Abstract::Vector&
 	update (	double alpha,
@@ -222,10 +177,7 @@ public:
 				double beta,
 				const NOXVector<T_DOF>& b,
 				double gamma=0.0)
-	{
-		*this = alpha*a + beta*b + (*this)*gamma;
-		return *this;
-	}
+	{ *this = alpha*a + beta*b + (*this)*gamma; return *this; }
 
 	NOX::Abstract::Vector&
 	update (	double alpha,
@@ -233,21 +185,15 @@ public:
 				double beta,
 				const NOX::Abstract::Vector& b,
 				double gamma=0.0)
-	{
-		return update(alpha,dynamic_cast<const NOXVector<T_DOF>&>(a),beta,dynamic_cast<const NOXVector<T_DOF>&>(b),gamma);
-	}
+	{ return update(alpha,dynamic_cast<const NOXVector<T_DOF>&>(a),beta,dynamic_cast<const NOXVector<T_DOF>&>(b),gamma); }
 
 	static const unsigned int
 	dof ()
-	{
-		return DOF;
-	}
+	{ return DOF; }
 
 	NOXVector<DOF>
 	toNOXVector ( ) const
-	{
-		return *this;
-	}
+	{ return *this; }
 };
 
 #endif

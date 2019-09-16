@@ -58,20 +58,9 @@ public:
 		return a;
 	}
 
-	/**
-	 * Inverts the group element `*this`.
-	 */
-	/*void
-	inverted ( )
-	{
-		*this = this->inverse();
-	}*/
-
 	void
 	operator+= (const Algebra<T_SCALAR_TYPE>& g)
-	{
-		m_v += g.v();
-	}
+	{ m_v += g.v(); }
 
 	/**
 	 * \return the element representing the group identity for operation `+`.
@@ -85,49 +74,17 @@ public:
 	
 	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator+;
 	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator-;
-	/**
-	 * \return the group addition of `*this` and \p g.
-	 */
-	/*
-	Algebra<T_SCALAR_TYPE> 
-	operator+ (const Algebra<T_SCALAR_TYPE>& g) const
-	{
-		Algebra<T_SCALAR_TYPE> res(*this);
-		res += g;
-		return res;
-	}
-	*/
-
-	/*
-	Algebra<T_SCALAR_TYPE>
-	operator- (const Algebra<T_SCALAR_TYPE>& g) const
-	{
-		Algebra<T_SCALAR_TYPE> res(*this);
-		res += g.inverse();
-		return res;
-	}
-	*/
 
 	/* Vector space operations */
 
 	void
 	operator*= (T_SCALAR_TYPE s)
-	{
-		m_v *= s;
-	}
+	{ m_v *= s; }
 	
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
-	/*
-	Algebra<T_SCALAR_TYPE>
-	operator* (T_SCALAR_TYPE s) const
-	{
-		Algebra<T_SCALAR_TYPE> res(*this);
-		res *= s;
-		return res;
-	}
-	*/
+
 	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*;
 	/*
 	Algebra<T_SCALAR_TYPE>
@@ -144,11 +101,9 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
-	inline Algebra<T_SCALAR_TYPE>
+	Algebra<T_SCALAR_TYPE>
 	bracket (const Algebra<T_SCALAR_TYPE>& g) const
-	{
-		return this->m_v.cross(g.v());
-	}
+	{ return this->m_v.cross(g.v()); }
 
 	/* Other operations */
 
@@ -160,48 +115,34 @@ public:
 	 */
 	Eigen::Matrix<T_SCALAR_TYPE,3,1>
 	operator* (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& vec) const
-	{
-		return m_v.cross(vec);
-	}
+	{ return m_v.cross(vec); }
 
 	/* Accessors */
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,1>
 	v ( ) const
-	{
-		return m_v;
-	}
+	{ return m_v; } 
 
 	void
 	v (const Eigen::AngleAxis<T_SCALAR_TYPE>& aa)
-	{
-		m_v = aa.angle()*aa.axis();
-	}
+	{ m_v = aa.angle()*aa.axis(); }
 
 	void
 	v (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& vec)
-	{
-		m_v = vec;
-	}
+	{ m_v = vec; }
 
 	T_SCALAR_TYPE const&
 	operator[] (size_t index) const
-	{
-		return m_v[index];
-	}
+	{ return m_v[index]; }
 
 	T_SCALAR_TYPE&
 	operator[] (size_t index)
-	{
-		return m_v[index];
-	}
+	{ return m_v[index]; }
 	
 	// Les fonctions de normalisation sont-elles vraiment utiles ?
 	void
 	normalize ( )
-	{
-		m_v.normalize();
-	}
+	{ m_v.normalize(); }
 
 	Algebra<T_SCALAR_TYPE>
 	normalized ( ) const
@@ -213,21 +154,15 @@ public:
 
 	T_SCALAR_TYPE
 	norm ( ) const
-	{
-		return m_v.norm();
-	}
+	{ return m_v.norm(); }
 
 	T_SCALAR_TYPE
 	angle ( ) const
-	{
-		return m_v.norm();
-	}
+	{ return m_v.norm(); }
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,1>
 	axis ( ) const
-	{
-		return m_v.normalized();
-	}
+	{ return m_v.normalized(); }
 
 	/**
 	 * Implements the exponential map \f$\exp:\mathfrak{so}(3)\rightarrow SO(3)\f$ evalutated at `*this`.
@@ -297,9 +232,7 @@ public:
 	 */
 	Eigen::AngleAxis<T_SCALAR_TYPE>
 	toAngleAxis ( ) const
-	{
-		return Eigen::AngleAxis<T_SCALAR_TYPE>(m_v.norm(),m_v.normalized());
-	}
+	{ return Eigen::AngleAxis<T_SCALAR_TYPE>(m_v.norm(),m_v.normalized()); }
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,3>
 	toRotationMatrix ( ) const
@@ -313,15 +246,11 @@ public:
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,1>
 	toVector ( ) const
-	{
-		return m_v;
-	}
+	{ return m_v; }
 
 	NOXVector<3>
 	toNOXVector ( ) const
-	{
-		return NOXVector<3>(m_v);
-	}
+	{ return NOXVector<3>(m_v); }
 
 	/**
 	 * Implements the three generators of the skew matrix representation of \f$\mathfrak{so}(3)\f$.
@@ -355,15 +284,11 @@ public:
 
 	static Algebra<T_SCALAR_TYPE>
 	Generator (int const i)
-	{
-		return Algebra(Algebra::GeneratorVect(i));
-	}
+	{ return Algebra(Algebra::GeneratorVect(i)); }
 
 	static Algebra<T_SCALAR_TYPE>
 	Zero ( )
-	{
-		return Algebra(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero());
-	}
+	{ return Algebra(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero()); }
 };
 
 } // namespace SO3
@@ -378,8 +303,7 @@ operator<< (std::ostream& stream, SO3::Algebra<T_SCALAR_TYPE> const& g)
 
 template <typename T_SCALAR_TYPE>
 const SO3::Algebra<T_SCALAR_TYPE>
-operator* (T_SCALAR_TYPE s, const SO3::Algebra<T_SCALAR_TYPE> g) {
-	return g*s;
-}
+operator* (T_SCALAR_TYPE s, const SO3::Algebra<T_SCALAR_TYPE> g)
+{ return g*s; }
 
 #endif

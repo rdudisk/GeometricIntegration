@@ -32,27 +32,19 @@ public:
 
 	T_M
 	base (void) const
-	{
-		return m_base;
-	}
+	{ return m_base; }
 
 	void
 	base(T_M b)
-	{
-		m_base = b;
-	}
+	{ m_base = b; }
 	
 	T_Q
 	pos ( ) const
-	{
-		return m_pos;
-	}
+	{ return m_pos; }
 	
 	void
 	pos (T_Q p)
-	{
-		m_pos = p;
-	}
+	{ m_pos = p; }
 
 	friend std::ostream&
 	operator<< (std::ostream& stream, const Syst<T_M,T_Q>& s)

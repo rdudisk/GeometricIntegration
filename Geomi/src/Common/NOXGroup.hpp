@@ -13,12 +13,10 @@
 template <typename T_Q, int T_SIZE_MULTIVECT = 1>
 class NOXGroup : public virtual NOX::Abstract::Group {
 public:
-	NOXGroup<T_Q,T_SIZE_MULTIVECT> (Abstract::NOXStep<T_Q,T_SIZE_MULTIVECT>& step) :
-		m_step(step),
+	NOXGroup<T_Q,T_SIZE_MULTIVECT> (Abstract::NOXStep<T_Q,T_SIZE_MULTIVECT>& step)
+	:	m_step(step),
 		m_xVector(step.getInitialGuess())
-	{
-		resetIsValid();
-	}
+	{ resetIsValid(); }
 
 	~NOXGroup<T_Q,T_SIZE_MULTIVECT> ( )
 	{ }
@@ -52,9 +50,7 @@ public:
 
 	NOX::Abstract::Group&
 	operator= (const NOX::Abstract::Group& g)
-	{
-		return operator=(dynamic_cast<const NOXGroup<T_Q,T_SIZE_MULTIVECT>&>(g));
-	}
+	{ return operator=(dynamic_cast<const NOXGroup<T_Q,T_SIZE_MULTIVECT>&>(g)); }
 
 	void
 	setX (const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& x)
@@ -65,9 +61,7 @@ public:
 
 	void
 	setX (const NOX::Abstract::Vector& x)
-	{
-		setX(dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(x));
-	}
+	{ setX(dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(x)); }
 
 	void
 	computeX (const NOXGroup<T_Q,T_SIZE_MULTIVECT>& grp, const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& d, double step)
@@ -113,12 +107,16 @@ public:
 			return NOX::Abstract::Group::Ok;
 
 		if (!m_isValidF) {
-			std::cerr << "ERROR: NOXGroup::computeGradient() - F is out of date wrt X" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::computeGradient() - F is out of date wrt X"
+				<< std::endl;
 			return NOX::Abstract::Group::BadDependency;
 		}
 
 		if (!m_isValidJacobian) {
-			std::cerr << "ERROR: NOXGroup::computeGradient() - Jacobian is out of date wrt X" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::computeGradient() - Jacobian is out of date wrt X"
+				<< std::endl;
 			return NOX::Abstract::Group::BadDependency;
 		}
 
@@ -135,12 +133,16 @@ public:
 			return NOX::Abstract::Group::Ok;
 
 		if (!m_isValidF) {
-			std::cerr << "ERROR: NOXGroup::computeNewton() - invalid F" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::computeNewton() - invalid F"
+				<< std::endl;
 			throw "NOX Error";
 		}
 
 		if (!m_isValidJacobian) {
-			std::cerr << "ERROR: NOXGroup::computeNewton() - invalid Jacobian" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::computeNewton() - invalid Jacobian"
+				<< std::endl;
 			throw "NOX Error";
 		}
 
@@ -153,18 +155,18 @@ public:
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobian (const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input, NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
+	applyJacobian (	const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input,
+					NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
 	{
 		if (!m_isValidJacobian)
 			return NOX::Abstract::Group::BadDependency;
-
 		result = m_jacobianMatrix*input;
-
 		return NOX::Abstract::Group::Ok;
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobian (const NOX::Abstract::Vector& input, NOX::Abstract::Vector& result) const
+	applyJacobian (	const NOX::Abstract::Vector& input,
+					NOX::Abstract::Vector& result) const
 	{
 		const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& v = dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(input);
 		NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& res = dynamic_cast<NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(result);
@@ -172,43 +174,51 @@ public:
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobianTranspose (const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input, NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
+	applyJacobianTranspose (const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input,
+							NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
 	{
 		if (!m_isValidJacobian)
 			return NOX::Abstract::Group::BadDependency;
-
 		result = m_jacobianMatrix.transpose()*input;
-
 		return NOX::Abstract::Group::Ok;
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobianTranspose (const NOX::Abstract::Vector& input, NOX::Abstract::Vector& result) const
+	applyJacobianTranspose (const NOX::Abstract::Vector& input,
+							NOX::Abstract::Vector& result) const
 	{
-		const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& v = dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(input);
-		NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& res = dynamic_cast<NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(result);
+		const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& v
+			= dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(input);
+		NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& res
+			= dynamic_cast<NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(result);
 		return applyJacobianTranspose(v,res);
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobianInverse (Teuchos::ParameterList& p, const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input, NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
+	applyJacobianInverse (	Teuchos::ParameterList& p,
+							const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& input,
+							NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& result) const
 	{
 		if (!m_isValidJacobian) {
-			std::cerr << "ERROR: NOXGroup::applyJacobianInverse() - invalid Jacobian" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::applyJacobianInverse() - invalid Jacobian"
+				<< std::endl;
 			throw "NOX Error";
 		}
-
 		// TODO : tester si le jacobien est inversible
 		result = m_jacobianMatrix.inverse()*input;
-		
 		return NOX::Abstract::Group::Ok;
 	}
 
 	NOX::Abstract::Group::ReturnType
-	applyJacobianInverse (Teuchos::ParameterList& p, const NOX::Abstract::Vector& input, NOX::Abstract::Vector& result) const
+	applyJacobianInverse (	Teuchos::ParameterList& p,
+							const NOX::Abstract::Vector& input,
+							NOX::Abstract::Vector& result) const
 	{
-		const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& v = dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(input);
-		NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& res = dynamic_cast<NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(result);
+		const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& v
+			= dynamic_cast<const NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(input);
+		NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>& res 
+			= dynamic_cast<NOXVector<T_Q::DOF*T_SIZE_MULTIVECT>&>(result);
 		return applyJacobianInverse(p,v,res);
 	}
 
@@ -217,86 +227,63 @@ public:
 	
 	bool
 	isF () const
-	{
-		return m_isValidF;
-	}
+	{ return m_isValidF; }
 	
 	bool
 	isJacobian () const
-	{
-		return m_isValidJacobian;
-	}
+	{ return m_isValidJacobian; }
 	
 	bool
 	isGradient () const
-	{
-		return m_isValidGradient;
-	}
+	{ return m_isValidGradient; }
 	
 	bool
 	isNewton () const
-	{
-		return m_isValidNewton;
-	}
+	{ return m_isValidNewton; }
 
 	const NOX::Abstract::Vector&
 	getX () const
-	{
-		return m_xVector;
-	}
+	{ return m_xVector; }
 
 	const NOX::Abstract::Vector&
 	getF () const
-	{
-		return m_fVector;
-	}
+	{ return m_fVector; }
 
 	double
 	getNormF () const
 	{
 		if (!m_isValidF) {
-			std::cerr << "ERROR: NOXGroup::getNormF() - invalid F, please call computeF() first" << std::endl;
+			std::cerr
+				<< "ERROR: NOXGroup::getNormF() - invalid F, please call computeF() first"
+				<< std::endl;
 			throw "NOX Error";
 		}
-
 		return m_fVector.norm();
 	}
 
 	const NOX::Abstract::Vector&
 	getGradient () const
-	{
-		return m_gradientVector;
-	}
+	{ return m_gradientVector; }
 
 	const NOX::Abstract::Vector&
 	getNewton () const
-	{
-		return m_newtonVector;
-	}
+	{ return m_newtonVector; }
 
 	Teuchos::RCP<const NOX::Abstract::Vector>
 	getXPtr () const
-	{
-		return Teuchos::RCP<const NOX::Abstract::Vector>(&m_xVector,false);
-	}
+	{ return Teuchos::RCP<const NOX::Abstract::Vector>(&m_xVector,false); }
 
 	Teuchos::RCP<const NOX::Abstract::Vector>
 	getFPtr () const
-	{
-		return Teuchos::RCP<const NOX::Abstract::Vector>(&m_fVector,false);
-	}
+	{ return Teuchos::RCP<const NOX::Abstract::Vector>(&m_fVector,false); }
 
 	Teuchos::RCP<const NOX::Abstract::Vector>
 	getGradientPtr () const
-	{
-		return Teuchos::RCP<const NOX::Abstract::Vector>(&m_gradientVector,false);
-	}
+	{ return Teuchos::RCP<const NOX::Abstract::Vector>(&m_gradientVector,false); }
 
 	Teuchos::RCP<const NOX::Abstract::Vector>
 	getNewtonPtr () const
-	{
-		return Teuchos::RCP<const NOX::Abstract::Vector>(&m_newtonVector,false);
-	}
+	{ return Teuchos::RCP<const NOX::Abstract::Vector>(&m_newtonVector,false); }
 
 	Teuchos::RCP<NOX::Abstract::Group>
 	clone (NOX::CopyType type = NOX::DeepCopy) const
@@ -310,15 +297,14 @@ public:
 	print () const
 	{
 		std::cout << "x = " << m_xVector << std::endl;
-
 		if (m_isValidF) {
 			std::cout << "F(x) = " << m_fVector << std::endl;
 		} else {
 			std::cout << "F(x) has not been computed" << std::endl;
 		}
-			
 		std::cout << std::endl;
 	}
+
 protected:
 	void
 	resetIsValid ()

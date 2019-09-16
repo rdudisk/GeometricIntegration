@@ -20,7 +20,7 @@ protected:
 
 public:
 	StepInternals<T_M,T_Q,T_TQ> (Abstract::Problem<T_M,T_Q>& problem)
-	:	m_problem(problem)
+	: m_problem(problem)
 	{ }
 
 	void
@@ -30,9 +30,6 @@ public:
 		m_q0 = q0;
 		m_q1 = q1;
 	}
-
-	//virtual T_Q
-	//posFromVel (T_Q, T_TQ v0) = 0;
 };
 } // namespace Abstract
 } // namespace Variational

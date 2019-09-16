@@ -16,23 +16,17 @@ protected:
 public:
 	Step<T_M,T_Q,T_TQ> (Variational::Abstract::Problem<T_M,T_Q>& problem)
 	:	m_problem(problem)
-	{
-		m_internals = new Variational::Abstract::StepInternals<T_M,T_Q,T_TQ>(problem);
-		//setType();
-	}
+	{ m_internals = new Variational::Abstract::StepInternals<T_M,T_Q,T_TQ>(problem); }
 
 	~Step<T_M,T_Q,T_TQ> ()
 	{ }
 
 	T_Q
 	posFromVel (T_Q q0, T_TQ v0)
-	{
-		return m_internals->posFromVel(q0,v0);
-	}
+	{ return m_internals->posFromVel(q0,v0); }
 
 	virtual void
 	setData (T_M h_var, T_Q q0_var, T_Q q1_var) = 0;
-	//{ m_internals->setData(h_var,q0_var,q1_var); }
 
 	virtual const T_Q
 	makeStep () = 0;

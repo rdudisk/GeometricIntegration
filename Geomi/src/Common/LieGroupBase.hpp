@@ -13,13 +13,6 @@ public:
 	static const unsigned int DOF = T_DOF;
 
 public:
-	/*LieGroupBase<T_DERIVED,T_DOF> ( )
-	{ }
-
-	virtual 
-	~LieGroupBase<T_DERIVED,T_DOF> ( )
-	{ }*/
-
 	/**
 	 * @return the group inverse of `*this`.
 	 */
@@ -54,9 +47,7 @@ public:
 
 	static const unsigned int
 	dof ()
-	{
-		return DOF;
-	}
+	{ return DOF; }
 };
 
 #endif

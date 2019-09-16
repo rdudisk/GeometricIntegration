@@ -60,41 +60,29 @@ public:
 
 	size_t
 	size() const
-	{
-		return m_node.size();
-	}
+	{ return m_node.size(); }
 
 	/* Accessors and setters */
 
 	T_M
 	base (const size_t& i) const
-	{
-		return m_node[i].base();
-	}
+	{ return m_node[i].base(); }
 
 	T_Q
 	pos (const size_t& i) const
-	{
-		return m_node[i].pos();
-	}
+	{ return m_node[i].pos(); }
 
 	void
 	base (const size_t& i, const T_M& b)
-	{
-		m_node[i].base(b);
-	}
+	{ m_node[i].base(b); }
 
 	void
 	pos (const size_t& i, const T_Q& p)
-	{
-		m_node[i].pos(p);
-	}
+	{ m_node[i].pos(p); }
 
 	static const unsigned int
 	dof ( )
-	{
-		return T_Q::DOF;
-	}
+	{ return T_Q::DOF; }
 
 	/**
 	 * Set the base space discretization as a linear interpolation consisting in \p n_steps steps
@@ -148,15 +136,11 @@ public:
 
 	int
 	append2csv (const std::string filename, const std::string sep=",")
-	{
-		return __write2csv__(filename,std::ios_base::app,sep);
-	}
+	{ return __write2csv__(filename,std::ios_base::app,sep); }
 
 	int
 	write2csv (const std::string filename, const std::string sep=",")
-	{
-		return __write2csv__(filename,std::ios_base::trunc,sep);
-	}
+	{ return __write2csv__(filename,std::ios_base::trunc,sep); }
 };
 
 #endif

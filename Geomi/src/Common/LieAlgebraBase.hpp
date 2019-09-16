@@ -7,13 +7,6 @@ class LieAlgebraBase : public CRTP<T_DERIVED>
 public:
 	static const unsigned int DOF = T_DOF;
 
-	void
-	thisWorks () const
-	{
-		T_SCALAR_TYPE s = 0.2;
-		std::cout << "This works: " << s << "\n";
-	}
-
 public:
 	/* Group operations */
 
@@ -88,9 +81,7 @@ public:
 
 	static T_DERIVED
 	bracket (const T_DERIVED& g1, const T_DERIVED& g2)
-	{
-		return g1.bracket(g2);
-	}
+	{ return g1.bracket(g2); }
 
 	/* Other operations */
 
@@ -110,9 +101,7 @@ public:
 
 	static const unsigned int
 	dof ()
-	{
-		return DOF;
-	}
+	{ return DOF; }
 };
 
 /*
