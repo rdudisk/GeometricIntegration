@@ -1,1 +1,6 @@
-*/old/*
+old/
+.gitignore
+codegen/
+headers/
+libs/
+.*
