@@ -25,3 +25,8 @@ for the rigid body problem.
 
 Hints about installation on debian-based systems can be found
 [here](https://github.com/rdudisk/GeometricIntegration/blob/master/install-process.txt).
+
+## Documentation
+
+You can find some documentation
+[here](https://github.com/rdudisk/GeometricIntegration/blob/master/doc/html/index.html).
