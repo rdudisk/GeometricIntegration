@@ -7,12 +7,12 @@ namespace Variational {
 
 template <typename T_M,
 		  typename T_Q,
-		  typename T_TQ>
-class EulerStepInternals : public Abstract::StepInternals<T_M,T_Q,T_TQ>, public ::Abstract::NOXStep<T_Q,1>
+		  typename T_PROBLEM>
+class EulerStepInternals : public Abstract::StepInternals<T_M,T_Q,T_PROBLEM>, public ::Abstract::NOXStep<T_Q,1>
 {
 public:
-	EulerStepInternals<T_M,T_Q,T_TQ> (Abstract::Problem<T_M,T_Q>& problem)
-	:	Abstract::StepInternals<T_M,T_Q,T_TQ>(problem)
+	EulerStepInternals<T_M,T_Q,T_PROBLEM> (T_PROBLEM& problem)
+	:	Abstract::StepInternals<T_M,T_Q,T_PROBLEM>(problem)
 	{ }
 
 	const NOXVector<T_Q::DOF>

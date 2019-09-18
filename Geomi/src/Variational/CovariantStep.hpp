@@ -1,5 +1,5 @@
-#ifndef DEF_VARIATIONAL_EULERSTEP
-#define DEF_VARIATIONAL_EULERSTEP
+#ifndef DEF_VARIATIONAL_COVARIANTSTEP
+#define DEF_VARIATIONAL_COVARIANTSTEP
 
 #include <NOX.H>
 #include <NOX_Common.H>
@@ -9,25 +9,26 @@
 namespace Variational {
 
 template <typename T_M,
-		  typename T_Q>
-class EulerStep : public Abstract::Step<T_M,T_Q,EulerStepInternals<T_M,T_Q,Abstract::Problem<T_M,T_Q>>,Abstract::Problem<T_M,T_Q>>
+		  typename T_Q,
+		  typename T_ALGEBRA>
+class CovariantStep : public Abstract::Step<T_M,
+											T_Q,
+											CovariantStepInternals<T_M,T_Q,T_ALGEBRA>,
+											Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>>
 {
-	using Problem = Abstract::Problem<T_M,T_Q>;
-	using Internals = EulerStepInternals<T_M,T_Q,Problem>;
+	using Internals = CovariantStepInternals<T_M,T_Q,T_ALGEBRA>;
+	using Problem = Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>;
 
 private:
 	Teuchos::RCP<Teuchos::ParameterList>			m_solverParametersPtr;
 	Teuchos::RCP<NOX::StatusTest::Combo>			m_statusTests;
-	Teuchos::RCP<NOXGroup<T_Q,1>>					m_grp;
+	Teuchos::RCP<NOXGroup<T_ALGEBRA,1>>				m_grp;
 	Teuchos::RCP<NOX::Solver::Generic>				m_solver;
 
 public:
-	EulerStep<T_M,T_Q> (Problem& problem)
+	CovariantStep<T_M,T_Q,T_ALGEBRA> (Problem& problem)
 	:	Abstract::Step<T_M,T_Q,Internals,Problem>(problem)
 	{
-		// m_internals is already initalized by base constructor, so this is useless
-		//this->m_internals = new Internals(problem);
-
 		// NOX
 		this->m_solverParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
 		Teuchos::ParameterList& solverParameters = *m_solverParametersPtr;
@@ -44,7 +45,7 @@ public:
 		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
-	~EulerStep<T_M,T_Q> ()
+	~CovariantStep<T_M,T_Q,T_ALGEBRA> ()
 	{ }
 
 	void
@@ -58,19 +59,20 @@ public:
 	const T_Q
 	makeStep (void)
 	{
-		// TODO: faire des tests pour voir si tout se passe bien
 		bool success = true;
 		bool verbose = false;
 
 		try {
 			m_solver->reset(this->m_internals->getInitialGuess());
 			NOX::StatusTest::StatusType status = m_solver->solve();
-			const NOXGroup<T_Q,1>& solnGrp = dynamic_cast<const NOXGroup<T_Q,1>&>(m_solver->getSolutionGroup());
-			const NOXVector<T_Q::DOF>& solnVec = dynamic_cast<const NOXVector<T_Q::DOF>&>(solnGrp.getX());
+			const NOXGroup<T_ALGEBRA,1>& solnGrp = dynamic_cast<const NOXGroup<T_ALGEBRA,1>&>(m_solver->getSolutionGroup());
+			const NOXVector<T_ALGEBRA::DOF>& solnVec = dynamic_cast<const NOXVector<T_ALGEBRA::DOF>&>(solnGrp.getX());
 
 			if (status != NOX::StatusTest::Converged)
 				success = false;
 
+			// TODO: la ligne suivante n'est pas bonne.
+			// Il faut faire l'update par exponentielle
 			T_Q solution(solnVec);
 
 			return solution;

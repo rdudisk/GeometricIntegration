@@ -3,13 +3,6 @@
 	
 namespace Variational {
 
-/**
- * %Factory for Variational integrators.
- * The following integrators are implemented:
- *
- *	- Explicit Euler
- */
-
 template <typename T_M,
 		  typename T_Q,
 		  typename T_TQ>

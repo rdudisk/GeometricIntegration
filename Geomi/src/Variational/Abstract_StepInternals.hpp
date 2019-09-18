@@ -8,7 +8,7 @@ namespace Abstract {
 
 template <typename T_M,
 		  typename T_Q,
-		  typename T_TQ>
+		  typename T_PROBLEM>
 class StepInternals
 {
 protected:
@@ -16,10 +16,10 @@ protected:
 	T_Q m_q0;
 	T_Q m_q1;
 
-	Abstract::Problem<T_M,T_Q>& m_problem;
+	T_PROBLEM& m_problem;
 
 public:
-	StepInternals<T_M,T_Q,T_TQ> (Abstract::Problem<T_M,T_Q>& problem)
+	StepInternals<T_M,T_Q,T_PROBLEM> (T_PROBLEM& problem)
 	: m_problem(problem)
 	{ }
 
