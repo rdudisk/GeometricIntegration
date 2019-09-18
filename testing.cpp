@@ -106,25 +106,6 @@ public:
 	}
 };
 
-template<int NUMBER>
-class Test {
-public:
-	static void
-	print ()
-	{
-#ifdef NUMBER
-		std::cout << "NUMBER DEFINED" << std::endl;
-#else
-		std::cout << "NUMBER NOT DEFINED" << std::endl;
-#endif
-#if NUMBER == 2
-		std::cout << "NUMBER==2" << std::endl;
-#else
-		std::cout << "NUMBER!=2" << std::endl;
-#endif
-	}
-};
-
 int
 main (int argc, char* argv[])
 {
