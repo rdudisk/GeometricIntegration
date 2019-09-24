@@ -8,40 +8,53 @@ namespace Variational {
 template <typename T_M,
 		  typename T_Q,
 		  typename T_ALGEBRA>
-class CovariantStepInternals : public Abstract::StepInternals<T_M,T_Q,Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>>, public ::Abstract::NOXStep<T_ALGEBRA,1>
+class CovariantStepInternals
+	: public Abstract::StepInternals<T_M,T_Q,Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>,T_ALGEBRA>,
+	  public ::Abstract::NOXStep<T_ALGEBRA,1>
 {
 	using Problem = Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>;
 
+protected:
+	using Abstract::StepInternals<T_M,T_Q,Problem,T_ALGEBRA>::m_h;
+	using Abstract::StepInternals<T_M,T_Q,Problem,T_ALGEBRA>::m_q0;
+	using Abstract::StepInternals<T_M,T_Q,Problem,T_ALGEBRA>::m_q1;
+	using Abstract::StepInternals<T_M,T_Q,Problem,T_ALGEBRA>::m_problem;
+
 public:
 	CovariantStepInternals<T_M,T_Q,T_ALGEBRA> (Problem& problem)
-	:	Abstract::StepInternals<T_M,T_Q,Problem>(problem)
+	:	Abstract::StepInternals<T_M,T_Q,Problem,T_ALGEBRA>(problem)
 	{ }
 
 	const NOXVector<T_ALGEBRA::DOF>
 	getInitialGuess ()
 	{
-		NOXVector<T_Q::DOF> ret((1.0+1.0/this->m_h)*this->m_q1-(1.0/this->m_h)*this->m_q0);
-		return ret;
+		// TODO
+		//NOXVector<T_Q::DOF> ret((1.0+1.0/m_h)*m_q1-(1.0/m_h)*m_q0);
+		//return ret;
 	}
+
+	T_Q
+	posFromVel (T_M h, T_Q q0, T_ALGEBRA v0) const
+	{ return q0*((h*v0).cay()); }
 
 	bool
 	computeF (NOXVector<T_ALGEBRA::DOF>& f, const NOXVector<T_ALGEBRA::DOF>& q)
 	{
-		T_ALGEBRA xi_prev = T_ALGEBRA::cay_inv(this->m_q0.inverse()*this->m_q1);
+		T_ALGEBRA xi_prev = T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
 		T_ALGEBRA xi_next = T_ALGEBRA(q);
 		T_Q tau_prev = T_ALGEBRA::cay(xi_prev);
 		T_Q tau_next = T_ALGEBRA::cay(xi_next);
 
-		f =	T_ALGEBRA::Ad(tau_prev).transpose()*xi_prev.dCayRInv().transpose()*this->m_problem.dLdv(xi_prev/this->m_h)
-				- xi_next.dCayRInv().transpose()*this->m_problem.dLdv(xi_next/this->m_h);
+		f =	T_ALGEBRA::Ad(tau_prev).transpose()*xi_prev.dCayRInv().transpose()*m_problem.dLdv(xi_prev/m_h)
+				- xi_next.dCayRInv().transpose()*m_problem.dLdv(xi_next*(1.0/m_h));
 		return true;
 	}
 
 	bool
 	computeJacobian (Eigen::Matrix<double,T_ALGEBRA::DOF,T_ALGEBRA::DOF>& J, const NOXVector<T_ALGEBRA::DOF>& q)
 	{
-		//J =		this->m_problem.JvdLdq(this->m_q1,(q-this->m_q1)/this->m_h )
-			//-	this->m_problem.JvdLdv(this->m_q1,(q-this->m_q1)/this->m_h )/this->m_h;
+		//J =		m_problem.JvdLdq(m_q1,(q-m_q1)/m_h )
+			//-	m_problem.JvdLdv(m_q1,(q-m_q1)/m_h )/m_h;
 		return true;
 	}
 };

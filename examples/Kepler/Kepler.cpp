@@ -135,7 +135,8 @@ main (int argc, char* argv[])
 	// TODO !!
 	myProblem.pos(1,pos+h*vel);
 
-	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Galerkin P2N2Gau");
+	//Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,KeplerProblem>::createIntegrator(myProblem,"Galerkin P2N2Gau");
+	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,KeplerProblem>::createIntegrator(myProblem,"Explicit Euler");
 
 	integrator.initialize();
 	integrator.integrate();

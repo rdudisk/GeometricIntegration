@@ -16,16 +16,16 @@ protected:
 	T_PROBLEM& m_problem;
 
 public:
-	Step<T_M,T_Q,T_INTERNALS,T_PROBLEM> (T_PROBLEM& problem)
+	Step<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ> (T_PROBLEM& problem)
 	:	m_problem(problem)
 	{ m_internals = new T_INTERNALS(problem); }
 
-	~Step<T_M,T_Q,T_INTERNALS,T_PROBLEM> ()
+	~Step<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ> ()
 	{ }
 
 	T_Q
-	posFromVel (T_Q q0, T_TQ v0)
-	{ return m_internals->posFromVel(q0,v0); }
+	posFromVel (T_M h, T_Q q0, T_TQ v0)
+	{ return m_internals->posFromVel(h,q0,v0); }
 
 	virtual void
 	setData (T_M h_var, T_Q q0_var, T_Q q1_var) = 0;

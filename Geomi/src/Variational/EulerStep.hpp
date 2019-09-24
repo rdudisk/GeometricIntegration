@@ -10,10 +10,10 @@ namespace Variational {
 
 template <typename T_M,
 		  typename T_Q>
-class EulerStep : public Abstract::Step<T_M,T_Q,EulerStepInternals<T_M,T_Q,Abstract::Problem<T_M,T_Q>>,Abstract::Problem<T_M,T_Q>>
+class EulerStep : public Abstract::Step<T_M,T_Q,EulerStepInternals<T_M,T_Q>,Abstract::Problem<T_M,T_Q>>
 {
 	using Problem = Abstract::Problem<T_M,T_Q>;
-	using Internals = EulerStepInternals<T_M,T_Q,Problem>;
+	using Internals = EulerStepInternals<T_M,T_Q>;
 
 private:
 	Teuchos::RCP<Teuchos::ParameterList>			m_solverParametersPtr;

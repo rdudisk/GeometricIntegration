@@ -15,7 +15,7 @@ private:
 	Eigen::Matrix<double,3,1> m_Inertia;
 
 public:
-	RigidBodyProblem()
+	RigidBody ()
 	{ m_Inertia << 1, 1, 1; }
 	
 	Eigen::Matrix<double,3,1>&
@@ -44,23 +44,28 @@ main (int argc, char* argv[])
 	RigidBody myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);
 
-	Eigen::Matrix<double,3,1> Iinv(2.0/3.0,1.0,2.0);
-	myProblem.Iinv(Iinv);
-
-	Eigen::Matrix<double,3,1> pos(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
-	myProblem.pos(0,pos);
-
-	Q pos, vel;
+	/*Q pos, vel;
 	pos << 0.0, 0.0, 0.0, -3.5023653, -3.8169847, -1.5507963;
 	vel << 0.0, 0.0, 0.0, 0.00565429, -0.00412490, -0.00190589;
 	myProblem.pos(0,pos);
 	// for now this is the only way to initialize the 2nd position consistently with the step definition
 	// TODO !!
 	myProblem.pos(1,pos+h*vel);
+	*/
 
 	Variational::Abstract::Integrator* integrator;
-	CovariantStep<M,Group,Algebra>* step = new CovariantStep<M,Group,Algebra>(myProblem);
-	integrator = new Integrator<M,Group,Algebra>(myProblem, *step);
+	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
+	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,RigidBody,Algebra>(myProblem, *step);
+
+	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
+	myProblem.Inertia(Inertia);
+
+	Group pos0 = Group::Identity();
+	myProblem.pos(0,pos0);
+
+	Algebra vel0 = Algebra(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
+	Group pos1 = step->posFromVel(h,pos0,vel0);
+	myProblem.pos(1,pos1);
 
 	integrator->initialize();
 	integrator->integrate();

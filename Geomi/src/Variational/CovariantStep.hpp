@@ -14,7 +14,8 @@ template <typename T_M,
 class CovariantStep : public Abstract::Step<T_M,
 											T_Q,
 											CovariantStepInternals<T_M,T_Q,T_ALGEBRA>,
-											Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>>
+											Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>,
+											T_ALGEBRA>
 {
 	using Internals = CovariantStepInternals<T_M,T_Q,T_ALGEBRA>;
 	using Problem = Abstract::LieProblem<T_M,T_Q,T_ALGEBRA>;
@@ -27,7 +28,7 @@ private:
 
 public:
 	CovariantStep<T_M,T_Q,T_ALGEBRA> (Problem& problem)
-	:	Abstract::Step<T_M,T_Q,Internals,Problem>(problem)
+	:	Abstract::Step<T_M,T_Q,Internals,Problem,T_ALGEBRA>(problem)
 	{
 		// NOX
 		this->m_solverParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
@@ -41,7 +42,7 @@ public:
 		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(500));
 		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
-		this->m_grp = Teuchos::rcp(new NOXGroup<T_Q,1>(*(this->m_internals)));
+		this->m_grp = Teuchos::rcp(new NOXGroup<T_ALGEBRA,1>(*(this->m_internals)));
 		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
 
