@@ -76,12 +76,28 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
+	// TODO: static_ added because the compiler doesn't seem to see this method
+	// when T_DERIVED already exists
 	T_DERIVED
 	bracket (const T_DERIVED& g) const;
 
 	static T_DERIVED
-	bracket (const T_DERIVED& g1, const T_DERIVED& g2)
+	static_bracket (const T_DERIVED& g1, const T_DERIVED& g2)
 	{ return g1.bracket(g2); }
+
+	T_DERIVED
+	Ad (const T_GROUP& g) const;
+
+	static T_DERIVED
+	static_Ad (const T_DERIVED& a, const T_GROUP& g)
+	{ return a.Ad(g); }
+
+	T_DERIVED
+	Ad_star (const T_GROUP& g) const;
+
+	static T_DERIVED
+	static_Ad_star (const T_GROUP& g, const T_DERIVED& a)
+	{ return a.Ad_star(g); }
 
 	/* Other operations */
 
@@ -90,11 +106,13 @@ public:
 
 	/**
 	 * Implements the exponential map \f$\exp:\mathfrak{so}(3)\rightarrow SO(3)\f$ evalutated at `*this`.
-	 * \return the \ref Lie::SO3::Group<T> implementation of the Lie group \f$SO(3)\f$ element
-	 * that represents the exponential of `*this`.
 	 */
 	T_GROUP
 	exp ( ) const;
+
+	static T_GROUP
+	exp (const T_DERIVED& g)
+	{ return g.exp(); }
 
 	NOXVector<T_DOF>
 	toNOXVector ( ) const;

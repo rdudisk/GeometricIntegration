@@ -42,10 +42,12 @@ public:
 	{
 		T_ALGEBRA xi_prev = T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
 		T_ALGEBRA xi_next = T_ALGEBRA(q);
-		T_Q tau_prev = T_ALGEBRA::cay(xi_prev);
-		T_Q tau_next = T_ALGEBRA::cay(xi_next);
+		T_Q tau_prev = xi_prev.cay();
+		T_Q tau_next = xi_next.cay();
 
-		f =	T_ALGEBRA::Ad(tau_prev).transpose()*xi_prev.dCayRInv().transpose()*m_problem.dLdv(xi_prev/m_h)
+		T_ALGEBRA::static_bracket(xi_prev,xi_next);
+		xi_prev.inverted();
+		f =	T_ALGEBRA::static_Ad_star(tau_prev,T_ALGEBRA(xi_prev.dCayRInv().transpose()*m_problem.dLdv(xi_prev*(1.0/m_h)))).toVector()
 				- xi_next.dCayRInv().transpose()*m_problem.dLdv(xi_next*(1.0/m_h));
 		return true;
 	}

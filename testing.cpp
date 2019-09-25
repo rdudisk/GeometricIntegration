@@ -44,18 +44,10 @@ main (int argc, char* argv[])
 	RigidBody myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);
 
-	/*Q pos, vel;
-	pos << 0.0, 0.0, 0.0, -3.5023653, -3.8169847, -1.5507963;
-	vel << 0.0, 0.0, 0.0, 0.00565429, -0.00412490, -0.00190589;
-	myProblem.pos(0,pos);
-	// for now this is the only way to initialize the 2nd position consistently with the step definition
-	// TODO !!
-	myProblem.pos(1,pos+h*vel);
-	*/
-
 	Variational::Abstract::Integrator* integrator;
 	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
-	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,RigidBody,Algebra>(myProblem, *step);
+	//integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,RigidBody,Algebra>(myProblem, *step);
+	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,Variational::Abstract::LieProblem<M,Group,Algebra>,Algebra>(myProblem, *step);
 
 	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
 	myProblem.Inertia(Inertia);

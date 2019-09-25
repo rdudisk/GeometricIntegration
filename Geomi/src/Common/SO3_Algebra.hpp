@@ -105,6 +105,14 @@ public:
 	bracket (const Algebra<T_SCALAR_TYPE>& g) const
 	{ return this->m_v.cross(g.v()); }
 
+	Algebra<T_SCALAR_TYPE>
+	Ad (const Group<T_SCALAR_TYPE>& g) const
+	{ return Algebra<T_SCALAR_TYPE>(g.toRotationMatrix()*this->toVector()); }
+
+	Algebra<T_SCALAR_TYPE>
+	Ad_star (const Group<T_SCALAR_TYPE>& g) const
+	{ return Algebra<T_SCALAR_TYPE>(g.toRotationMatrix().transpose()*this->toVector()); }
+
 	/* Other operations */
 
 	/**
@@ -219,13 +227,25 @@ public:
 	Group<T_SCALAR_TYPE>
 	cay ( ) const
 	{
-		T_SCALAR_TYPE n =   m_v.norm(),
-		  den = 4.0+n*n;
+		T_SCALAR_TYPE	n =   m_v.norm(),
+						den = 4.0+n*n;
 		Eigen::Matrix<T_SCALAR_TYPE,4,1> V;
 		//V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
 		//return Group<T>(V);
 		return Group<T_SCALAR_TYPE>(Eigen::AngleAxis<T_SCALAR_TYPE>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
 	}
+
+	static Algebra<T_SCALAR_TYPE>
+	cay_inv (const Group<T_SCALAR_TYPE>& g)
+	{ return fromRotationMatrix(2.0*(g.toRotationMatrix()-Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity())*(g.toRotationMatrix()+Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()).inverse()); }
+
+	Eigen::Matrix<T_SCALAR_TYPE,3,3>
+	dCayRInv ()
+	{ return Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()-0.5*this->toRotationMatrix()+0.25*this->toVector()*(this->toVector().transpose()); }
+
+	Algebra<T_SCALAR_TYPE>
+	dCayRInv (const Algebra<T_SCALAR_TYPE>& g)
+	{ return Algebra<T_SCALAR_TYPE>(this->dCayRInv()*g.toVector()); }
 
 	/**
 	 * \return the axis-angle representation of `*this`.
@@ -242,6 +262,12 @@ public:
 				m_v[2],		T_SCALAR_TYPE(0),		-m_v[0],
 				-m_v[1],	m_v[0],		T_SCALAR_TYPE(0);
 		return mat;
+	}
+
+	static Algebra<T_SCALAR_TYPE>
+	fromRotationMatrix (const Eigen::Matrix<T_SCALAR_TYPE,3,3>& m)
+	{
+		return Algebra<T_SCALAR_TYPE>(m(2,1),m(0,2),m(1,0));
 	}
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,1>

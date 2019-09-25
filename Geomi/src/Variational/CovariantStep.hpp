@@ -74,7 +74,9 @@ public:
 
 			// TODO: la ligne suivante n'est pas bonne.
 			// Il faut faire l'update par exponentielle
-			T_Q solution(solnVec);
+			//T_Q solution(solnVec);
+			// en attendant:
+			T_Q solution;
 
 			return solution;
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
