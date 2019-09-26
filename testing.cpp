@@ -46,7 +46,6 @@ main (int argc, char* argv[])
 
 	Variational::Abstract::Integrator* integrator;
 	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
-	//integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,RigidBody,Algebra>(myProblem, *step);
 	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,Variational::Abstract::LieProblem<M,Group,Algebra>,Algebra>(myProblem, *step);
 
 	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
