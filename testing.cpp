@@ -61,7 +61,23 @@ main (int argc, char* argv[])
 	integrator->initialize();
 	integrator->integrate();
 	
-	myProblem.write2csv("results.csv");
+	//myProblem.write2csv("results.csv");
+	
+	std::ofstream file;
+	file.open("results.csv",std::ios_base::trunc);
+	Group q0, q1;
+	Algebra xi;
+	double t;
+	if (file.is_open()) {
+		for (int i=0; i<myProblem.size()-1; i++) {
+			q0 = myProblem.pos(i);
+			q1 = myProblem.pos(i+1);
+			t = myProblem.base(i);
+			xi = ((1.0/h)*Algebra::cay_inv(q0.inverse()*q1));
+			file << t << "," << csvString<Algebra>(xi,",") << std::endl;
+		}
+		file.close();
+	}
 
 	return 0;
 }
