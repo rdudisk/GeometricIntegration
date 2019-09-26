@@ -28,9 +28,8 @@ public:
 	const NOXVector<T_ALGEBRA::DOF>
 	getInitialGuess ()
 	{
-		// TODO
-		//NOXVector<T_Q::DOF> ret((1.0+1.0/m_h)*m_q1-(1.0/m_h)*m_q0);
-		//return ret;
+		T_ALGEBRA xi_prev = (1.0/m_h)*T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
+		return xi_prev.toNOXVector();
 	}
 
 	T_Q
@@ -38,10 +37,10 @@ public:
 	{ return q0*((h*v0).cay()); }
 
 	bool
-	computeF (NOXVector<T_ALGEBRA::DOF>& f, const NOXVector<T_ALGEBRA::DOF>& q)
+	computeF (NOXVector<T_ALGEBRA::DOF>& f, const NOXVector<T_ALGEBRA::DOF>& xi)
 	{
-		T_ALGEBRA xi_prev = T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
-		T_ALGEBRA xi_next = T_ALGEBRA(q);
+		T_ALGEBRA xi_prev = (1.0/m_h)*T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
+		T_ALGEBRA xi_next = T_ALGEBRA(xi);
 		T_Q tau_prev = xi_prev.cay();
 		T_Q tau_next = xi_next.cay();
 
