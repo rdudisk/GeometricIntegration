@@ -39,7 +39,7 @@ int
 main (int argc, char* argv[])
 {
 	double h = 0.1;
-	int n_steps = 50;
+	int n_steps = 25;
 
 	RigidBody myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);

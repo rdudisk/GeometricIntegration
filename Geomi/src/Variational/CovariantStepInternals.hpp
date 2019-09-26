@@ -27,10 +27,7 @@ public:
 
 	const NOXVector<T_ALGEBRA::DOF>
 	getInitialGuess ()
-	{
-		T_ALGEBRA xi_prev = (1.0/m_h)*T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
-		return xi_prev.toNOXVector();
-	}
+	{ return ((1.0/m_h)*T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1)).toNOXVector(); }
 
 	T_Q
 	posFromVel (T_M h, T_Q q0, T_ALGEBRA v0) const
@@ -41,21 +38,24 @@ public:
 	{
 		T_ALGEBRA xi_prev = (1.0/m_h)*T_ALGEBRA::cay_inv(m_q0.inverse()*m_q1);
 		T_ALGEBRA xi_next = T_ALGEBRA(xi);
-		T_Q tau_prev = xi_prev.cay();
-		T_Q tau_next = xi_next.cay();
+		T_Q tau_prev = (m_h*xi_prev).cay();
 
-		T_ALGEBRA::static_bracket(xi_prev,xi_next);
-		xi_prev.inverted();
-		f =	T_ALGEBRA::static_Ad_star(tau_prev,T_ALGEBRA(xi_prev.dCayRInv().transpose()*m_problem.dLdv(xi_prev*(1.0/m_h)))).toVector()
-				- xi_next.dCayRInv().transpose()*m_problem.dLdv(xi_next*(1.0/m_h));
+		f =	(-1.0)*T_ALGEBRA::static_Ad_star(tau_prev,T_ALGEBRA((m_h*xi_prev).dCayRInv().transpose()*m_problem.dLdv(xi_prev))).toVector()
+				+ (m_h*xi_next).dCayRInv().transpose()*m_problem.dLdv(xi_next);
 		return true;
 	}
 
 	bool
-	computeJacobian (Eigen::Matrix<double,T_ALGEBRA::DOF,T_ALGEBRA::DOF>& J, const NOXVector<T_ALGEBRA::DOF>& q)
+	computeJacobian (Eigen::Matrix<double,T_ALGEBRA::DOF,T_ALGEBRA::DOF>& J, const NOXVector<T_ALGEBRA::DOF>& xi_vec)
 	{
-		//J =		m_problem.JvdLdq(m_q1,(q-m_q1)/m_h )
-			//-	m_problem.JvdLdv(m_q1,(q-m_q1)/m_h )/m_h;
+		T_ALGEBRA xi = T_ALGEBRA(xi_vec);
+
+		for (int i=0; i<T_ALGEBRA::DOF; i++) {
+			// TODO vérifier les indices
+			J.block(0,i,T_ALGEBRA::DOF,1) = (Eigen::Matrix<double,T_ALGEBRA::DOF,T_ALGEBRA::DOF>::Identity()+0.5*m_h*T_ALGEBRA::GeneratorMatrix(i)+m_h*m_h*0.25*(T_ALGEBRA::GeneratorVector(i)*xi.toVector().transpose()+xi.toVector()*T_ALGEBRA::GeneratorVector(i).transpose()))*m_problem.dLdv(xi);
+		}
+		J += (m_h*xi).dCayRInv().transpose()*m_problem.JvdLdv(xi);
+
 		return true;
 	}
 };

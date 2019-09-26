@@ -240,11 +240,11 @@ public:
 	{ return fromRotationMatrix(2.0*(g.toRotationMatrix()-Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity())*(g.toRotationMatrix()+Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()).inverse()); }
 
 	Eigen::Matrix<T_SCALAR_TYPE,3,3>
-	dCayRInv ()
+	dCayRInv () const
 	{ return Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()-0.5*this->toRotationMatrix()+0.25*this->toVector()*(this->toVector().transpose()); }
 
 	Algebra<T_SCALAR_TYPE>
-	dCayRInv (const Algebra<T_SCALAR_TYPE>& g)
+	dCayRInv (const Algebra<T_SCALAR_TYPE>& g) const
 	{ return Algebra<T_SCALAR_TYPE>(this->dCayRInv()*g.toVector()); }
 
 	/**
@@ -301,7 +301,7 @@ public:
 	}
 
 	static Eigen::Matrix<T_SCALAR_TYPE,3,1>
-	GeneratorVect (int const i)
+	GeneratorVector (int const i)
 	{
 		Eigen::Matrix<T_SCALAR_TYPE,3,1> res(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero());
 		res(i) = T_SCALAR_TYPE(1);
@@ -310,7 +310,7 @@ public:
 
 	static Algebra<T_SCALAR_TYPE>
 	Generator (int const i)
-	{ return Algebra(Algebra::GeneratorVect(i)); }
+	{ return Algebra(Algebra::GeneratorVector(i)); }
 
 	static Algebra<T_SCALAR_TYPE>
 	Zero ( )

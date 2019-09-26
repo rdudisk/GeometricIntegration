@@ -39,7 +39,7 @@ public:
 		lineSearchParameters.set("Method","Full Step");
 
 		Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-8,NOX::StatusTest::NormF::Unscaled));
-		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(500));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(200));
 		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
 		this->m_grp = Teuchos::rcp(new NOXGroup<T_ALGEBRA,1>(*(this->m_internals)));
@@ -72,11 +72,7 @@ public:
 			if (status != NOX::StatusTest::Converged)
 				success = false;
 
-			// TODO: la ligne suivante n'est pas bonne.
-			// Il faut faire l'update par exponentielle
-			//T_Q solution(solnVec);
-			// en attendant:
-			T_Q solution;
+			T_Q solution = this->m_internals->q1()*(this->m_internals->h()*T_ALGEBRA(solnVec)).cay();
 
 			return solution;
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);

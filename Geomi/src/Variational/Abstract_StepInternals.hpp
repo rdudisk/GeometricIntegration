@@ -32,6 +32,18 @@ public:
 		m_q1 = q1;
 	}
 
+	T_M
+	h () const
+	{ return m_h; }
+
+	T_Q
+	q0 () const
+	{ return m_q0; }
+
+	T_Q
+	q1 () const
+	{ return m_q1; }
+
 	virtual T_Q
 	posFromVel (T_M h, T_Q q0, T_TQ v0) const = 0;
 };
