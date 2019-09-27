@@ -1,8 +1,7 @@
 Geomi: Geometric Integration										 {#mainpage}
 ============================
 
-Presentation
-------------
+## Presentation
 
 Geomi is a `C++` library to perform numerical integration of dynamical systems
 while preserving the underlying geometrical structures.
@@ -31,19 +30,51 @@ The design concepts of Geomi are the following:
 - Modularity
 - Code factorisation
 
-Installation
-------------
+## Installation
 
-Hints about installation on debian-based systems can be found
-[here](https://github.com/rdudisk/GeometricIntegration/blob/master/install-process.txt).
+In order for Geomi to compile and run, some dependencies have to be installed.
+Hints about the process are given for debian-based systems.
 
-Examples
---------
+### NOX
+NOX is a package from the [Trilinos](https://trilinos.github.io/) project.
+To install Trilinos, run
+	# apt-get install trilinos-all-dev trilinos-doc
 
-An [example](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/Kepler)
+### Eigen 3
+Eigen is a C++ library for linear algebra.
+Information about its installation can be found on the
+[official website](http://eigen.tuxfamily.org/index.php?title=Main_Page).
+For debian users, there is a package available
+	# apt-get install libeigen3-dev libeigen3-doc
+or, for the up-to-date version, the official GitHub
+	$ cd ~
+	$ git clone https://github.com/eigenteam/eigen-git-mirror
+	$ cmake eigen-git-mirror
+	# make install
+If includes directives do not work when you compile, you probably need to
+create a link (you need to adapt depending on the actual installation directory)
+	# ln -s /usr/include/eigen3/Eigen /usr/local/include/Eigen
+<!--
+	Nécessaire ? Essayer sans d'abord
+	# apt-get install libmrpt-dev
+-->
+If you want to be able to compile the documentation, you need to install
+[Doxygen](http://doxygen.nl/)
+	# apt-get install doxygen*
+
+## Examples
+
+For the `Variational` module, an
+[example](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/Kepler)
 is given for the two-bodies problem.
-Here is a concrete [example](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody)
-for the rigid body problem.
+Regarding the `RKMK` module, a solution for the rigid body problem is given
+[here](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody).
 
-Quick tutorial
---------------
+## Quick tutorial
+
+## Documentation
+
+Online documentation can be found
+[here](https://rdudisk.github.io/GeometricIntegration/doc/html/index.html).
+It can also be build from the source by running
+	$ make doxygen
