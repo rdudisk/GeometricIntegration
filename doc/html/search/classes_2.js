@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['eulerstep',['EulerStep',['../classVariational_1_1EulerStep.html',1,'Variational']]],
-  ['eulerstepinternals',['EulerStepInternals',['../classVariational_1_1EulerStepInternals.html',1,'Variational']]],
-  ['explicitstep',['ExplicitStep',['../classRKMK_1_1ExplicitStep.html',1,'RKMK']]]
+  ['diagonalstep',['DiagonalStep',['../classRKMK_1_1DiagonalStep.html',1,'RKMK']]],
+  ['diagonalstepinternals',['DiagonalStepInternals',['../classRKMK_1_1DiagonalStepInternals.html',1,'RKMK']]],
+  ['discsyst',['DiscSyst',['../classDiscSyst.html',1,'']]]
 ];

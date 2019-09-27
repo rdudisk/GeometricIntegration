@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classSO3_1_1Group.html" title="SO3::Group\&lt; T_SCALAR\l_TYPE \&gt;" alt="" coords="5,5,177,47"/>
+<area shape="rect" id="node1" href="$classRKMK_1_1Abstract_1_1Integrator.html" title="RKMK::Abstract::Integrator" alt="" coords="5,20,187,47"/>
+<area shape="rect" id="node2" href="$classRKMK_1_1Integrator.html" title="RKMK::Integrator\&lt; T\l_M, T_Q, T_LIE_ALGEBRA,\l T_N_INTERNAL_STAGES \&gt;" alt="" coords="235,5,433,61"/>
 </map>

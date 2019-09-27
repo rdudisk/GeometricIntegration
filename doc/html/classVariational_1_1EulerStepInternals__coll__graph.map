@@ -1,4 +1,4 @@
-<map id="Variational::EulerStepInternals&lt; T_M, T_Q, T_TQ &gt;" name="Variational::EulerStepInternals&lt; T_M, T_Q, T_TQ &gt;">
-<area shape="rect" id="node2" href="$classVariational_1_1Abstract_1_1StepInternals.html" title="Variational::Abstract\l::StepInternals\&lt; T_M,\l T_Q, T_TQ \&gt;" alt="" coords="5,5,155,61"/>
-<area shape="rect" id="node3" href="$classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l T_Q, 1 \&gt;" alt="" coords="9,86,151,127"/>
+<map id="Variational::EulerStepInternals&lt; T_M, T_Q &gt;" name="Variational::EulerStepInternals&lt; T_M, T_Q &gt;">
+<area shape="rect" id="node2" href="$classVariational_1_1Abstract_1_1StepInternals.html" title="Variational::Abstract\l::StepInternals\&lt; T_M,\l T_Q, Abstract::Problem\l\&lt; T_M, T_Q \&gt; \&gt;" alt="" coords="139,17,303,87"/>
+<area shape="rect" id="node5" href="$classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l T_Q, 1 \&gt;" alt="" coords="149,111,292,153"/>
 </map>

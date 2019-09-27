@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classDiscSyst.html" title="DiscSyst\&lt; T_M, T_Q \&gt;" alt="" coords="5,46,164,73"/>
-<area shape="rect" id="node2" href="$classRKMK_1_1Abstract_1_1Problem.html" title="RKMK::Abstract::Problem\l\&lt; T_M, T_Q, T_LIE_ALGEBRA \&gt;" alt="" coords="212,5,431,47"/>
-<area shape="rect" id="node3" href="$classVariational_1_1Abstract_1_1Problem.html" title="Variational::Abstract\l::Problem\&lt; T_M, T_Q \&gt;" alt="" coords="241,71,402,112"/>
+<area shape="rect" id="node1" href="$classCRTP.html" title="CRTP\&lt; Algebra\&lt; T_SCALAR\l_TYPE \&gt; \&gt;" alt="" coords="5,20,201,61"/>
+<area shape="rect" id="node2" href="$classLieAlgebraBase.html" title="LieAlgebraBase\&lt; Algebra\l\&lt; T_SCALAR_TYPE \&gt;, Group\l\&lt; T_SCALAR_TYPE \&gt;, 3, T\l_SCALAR_TYPE \&gt;" alt="" coords="249,5,449,76"/>
+<area shape="rect" id="node3" href="$classSO3_1_1Algebra.html" title="SO3::Algebra\&lt; T_SCALAR\l_TYPE \&gt;" alt="" coords="497,20,679,61"/>
 </map>
