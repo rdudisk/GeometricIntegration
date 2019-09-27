@@ -36,31 +36,44 @@ In order for Geomi to compile and run, some dependencies have to be installed.
 Hints about the process are given for debian-based systems.
 
 ### NOX
+
 NOX is a package from the [Trilinos](https://trilinos.github.io/) project.
 To install Trilinos, run
-	# apt-get install trilinos-all-dev trilinos-doc
+
+    # apt-get install trilinos-all-dev trilinos-doc
 
 ### Eigen 3
+
 Eigen is a C++ library for linear algebra.
 Information about its installation can be found on the
 [official website](http://eigen.tuxfamily.org/index.php?title=Main_Page).
 For debian users, there is a package available
-	# apt-get install libeigen3-dev libeigen3-doc
+
+    # apt-get install libeigen3-dev libeigen3-doc
+
 or, for the up-to-date version, the official GitHub
-	$ cd ~
-	$ git clone https://github.com/eigenteam/eigen-git-mirror
-	$ cmake eigen-git-mirror
-	# make install
+
+    $ cd ~
+    $ git clone https://github.com/eigenteam/eigen-git-mirror
+    $ cmake eigen-git-mirror
+    # make install
+
 If includes directives do not work when you compile, you probably need to
 create a link (you need to adapt depending on the actual installation directory)
-	# ln -s /usr/include/eigen3/Eigen /usr/local/include/Eigen
+
+    # ln -s /usr/include/eigen3/Eigen /usr/local/include/Eigen
+
 <!--
 	Nécessaire ? Essayer sans d'abord
 	# apt-get install libmrpt-dev
 -->
+
+### Doxygen
+
 If you want to be able to compile the documentation, you need to install
 [Doxygen](http://doxygen.nl/)
-	# apt-get install doxygen*
+
+    # apt-get install doxygen*
 
 ## Examples
 
