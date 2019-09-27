@@ -1,10 +1,12 @@
-FILE_PATTERNS = *.cpp *.hpp *.h
+FILE_PATTERNS = *.cpp *.hpp *.h *.dox
 RECURSIVE = YES
 EXCLUDE_PATTERNS = */headers/old/* */libs/* */headers/*
-INPUT = Geomi/ main.cpp
+INPUT = Geomi/ main.cpp doc/src/ README.md
 OUTPUT_DIRECTORY = doc/
 EXTRACT_PRIVATE = YES
 EXTRACT_STATIC = YES
 GENERATE_LATEX = NO
 USE_MATHJAX = YES
 HAVE_DOT = YES
+
+PROJECT_NAME = Geomi
