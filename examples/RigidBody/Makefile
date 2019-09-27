@@ -27,4 +27,5 @@ figure:
 	sed 's/CSV_FILENAME/output.csv/g' ../../visualisation/rigid-body/template.tex > tmp.tex
 	latexmk -f -pdf -pdflatex="pdflatex -shell-escape -interaction=nonstopmode" -use-make tmp.tex
 	pdf2svg tmp.pdf figure.svg
+	gs -q -dNOCACHE -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=figure.eps tmp.pdf
 	rm output.csv exact0.csv exact1.csv tmp.*

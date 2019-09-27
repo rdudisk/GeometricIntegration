@@ -9,5 +9,6 @@ GENERATE_LATEX = NO
 USE_MATHJAX = YES
 HAVE_DOT = YES
 IMAGE_PATH = .
+HTML_EXTRA_STYLESHEET = doc/src/extra_stylesheet.css
 
 PROJECT_NAME = Geomi
