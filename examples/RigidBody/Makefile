@@ -21,3 +21,10 @@ DEFINES=-DMYAPP_EPETRA
 
 RigidBody: RigidBody.cpp
 	$(CXX) $(CXX_FLAGS) -g -O3 RigidBody.cpp -o RigidBody $(LINK_FLAGS) $(INCLUDE_DIRS) -I./../../ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES)
+
+figure:
+	python ../../visualisation/rigid-body/projection.py ../../examples/RigidBody/results.csv
+	sed 's/CSV_FILENAME/output.csv/g' ../../visualisation/rigid-body/template.tex > tmp.tex
+	latexmk -f -pdf -pdflatex="pdflatex -shell-escape -interaction=nonstopmode" -use-make tmp.tex
+	pdf2svg tmp.pdf figure.svg
+	rm output.csv exact0.csv exact1.csv tmp.*
