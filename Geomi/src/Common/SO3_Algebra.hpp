@@ -15,6 +15,7 @@ namespace SO3
 
 /**
  * Class Lie algebra \f$\mathfrak{so}(3)\f$ implementation.
+ * 
  * \tparam T Floating point type used for internal representation of coefficients.
  */
 
