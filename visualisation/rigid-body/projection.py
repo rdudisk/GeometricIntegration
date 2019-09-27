@@ -1,6 +1,5 @@
 import sys
 from sys import __stdout__ as stdout
-from projection import *
 from mpmath import *
 import csv
 
