@@ -19,7 +19,6 @@ typedef SO3::Algebra<double> Algebra;
 
 typedef NOXVector<3> Q;
 typedef NOXVector<3> NOXV;
-typedef NOXGroup<Q> NOXG;
 
 class RigidBodyProblem : public RKMK::Abstract::Problem<double,Q,Algebra>
 {
