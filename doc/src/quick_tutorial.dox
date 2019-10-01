@@ -10,7 +10,7 @@ In this module, we consider dynamical systems governed by the equation
 \f[
 	\dot Y(t) = A(Y)Y(t)
 \f]
-where \f$Y\f$ lies on the configuration manifold \f$\mathcal M\f$ of the system,
+where \f$Y\f$ lies on the configuration manifold \f$\mathcal M\subset\mathbb R^n\f$ of the system,
 with \f$\mathcal M\f$ left-invariant for the action of the Lie group \f$G\f$,
 and \f$A(Y)\f$ belongs to the associated Lie algebra \f$\mathfrak g\f$ for all \f$Y\f$.
 
@@ -20,7 +20,7 @@ To use this module, we need only need to include the `RKMK` header of Geomi.
 \endcode
 
 The first step is to define the Lie algebra.
-This is done either by using a preexisting implementation of the abstract class `Abstract::LieAlgebra` or by provinding your own.
+This is done either by using a preexisting implementation of the base class `LieAlgebraBase` or by provinding your own.
 In this case, we use the class `SO3::Algebra` implementing the \f$\mathfrak{so}(3)\f$ algebra.
 \code{.cpp}
 typedef SO3::Algebra<double> Algebra;
@@ -83,4 +83,10 @@ and the function receives as arguments the instance of the problem and a string 
 	bool success = integrator.integrate();
 \endcode
 
+The result of the above code give the time evolution of the angular momentum of the body.
+As can clearly be seen on the following figure, the solution lies on the sphere of radius \f$\Vert Y_0\Vert\f$, preserving the norm of the angular momentum.
+\image html examples/RigidBody/figure.svg
+\image latex examples/RigidBody/figure.eps
+
+\section variational Variational module
 */

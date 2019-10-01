@@ -4062,7 +4062,7 @@ nan,nan
 0.771560560722955,-0.316962872442209
 \end{filecontents}
 
-	\begin{tikzpicture}[>=Stealth,scale=2.5]
+	\begin{tikzpicture}[>=Stealth,scale=5]
 		% plot ball
 		\shade[ball color = black, opacity=0.3] (0,0) circle [radius=1cm];
 		% -- necessaire pour pxy
@@ -4098,9 +4098,9 @@ nan,nan
 		}
 		% plot axes
 		\def\lambda{1.5}
-		\draw[thick,->] (0,0) -- (\pxy{\lambda}{0}{0}) node[anchor=east] {$\pi_1$};
-		\draw[thick,->] (0,0) -- (\pxy{0}{\lambda}{0}) node[anchor=west] {$\pi_2$};
-		\draw[thick,->] (0,0) -- (\pxy{0}{0}{\lambda}) node[anchor=west] {$\pi_3$};
+		\draw[thick,->] (0,0) -- (\pxy{\lambda}{0}{0}) node[anchor=east] {$y_1$};
+		\draw[thick,->] (0,0) -- (\pxy{0}{\lambda}{0}) node[anchor=west] {$y_2$};
+		\draw[thick,->] (0,0) -- (\pxy{0}{0}{\lambda}) node[anchor=west] {$y_3$};
 		% plot axes intersection with sphere
 		\filldraw[fill=black] (\pxy{1}{0}{0}) circle (0.12mm);
 		\filldraw[fill=black] (\pxy{0}{1}{0}) circle (0.12mm);
