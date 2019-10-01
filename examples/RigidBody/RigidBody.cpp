@@ -10,7 +10,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "Geomi/Common"
 #include "Geomi/RKMK"
 
 #include <Eigen/Dense>
@@ -19,10 +18,10 @@ typedef SO3::Algebra<double> Algebra;
 
 typedef NOXVector<3> Q;
 typedef NOXVector<3> NOXV;
-typedef NOXGroup<Q> NOXG;
 
-class RigidBodyProblem : public RKMK::Abstract::Problem<double,Q,Algebra>
+class RigidBodyProblem : public RKMK::Abstract::Problem<Algebra>
 {
+	typedef NOXVector<3> Q;
 	private:
 		Eigen::Matrix<double,3,1> m_Iinv;
 	
@@ -69,11 +68,11 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,3,1> pos(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
 	myProblem.pos(0,pos);
 
-	RKMK::Abstract::Integrator& integrator = RKMK::Factory<double,Q,Algebra>::createIntegrator(myProblem,"RK 4");
+	RKMK::Abstract::Integrator& integrator = RKMK::Factory<Algebra>::createIntegrator(myProblem,"RK 4");
 
 	bool success = integrator.integrate();
 
-	//myProblem.write2csv("results.csv");
+	myProblem.write2csv("results.csv");
 
 	return (success ? EXIT_SUCCESS : EXIT_FAILURE);
 }

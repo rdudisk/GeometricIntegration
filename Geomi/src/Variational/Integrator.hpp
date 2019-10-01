@@ -33,20 +33,22 @@ namespace Variational {
 
 template <typename T_M,
 		  typename T_Q,
-		  typename T_TQ>
+		  typename T_INTERNALS,
+		  typename T_PROBLEM,
+		  typename T_TQ = T_Q>
 class Integrator : public Abstract::Integrator
 {
 private:
-	Abstract::Problem<T_M,T_Q>& m_problem;
-	Abstract::Step<T_M,T_Q,T_TQ>& m_step;
+	T_PROBLEM& m_problem;
+	Abstract::Step<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ>& m_step;
 	
 public:
-	Integrator<T_M,T_Q,T_TQ> (Abstract::Problem<T_M,T_Q>& problem,
-							  Abstract::Step<T_M,T_Q,T_TQ>& step)
+	Integrator<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ> (T_PROBLEM& problem,
+		  Abstract::Step<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ>& step)
 	: m_problem(problem), m_step(step)
 	{ }
 
-	~Integrator<T_M,T_Q,T_TQ> ()
+	~Integrator<T_M,T_Q,T_INTERNALS,T_PROBLEM,T_TQ> ()
 	{ }
 
 	// is supposed to do nothing for 1 step methods

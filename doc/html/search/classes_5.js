@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['impliciteulerstep',['ImplicitEulerStep',['../classVariational_1_1ImplicitEulerStep.html',1,'Variational']]],
-  ['impliciteulerstepinternals',['ImplicitEulerStepInternals',['../classVariational_1_1ImplicitEulerStepInternals.html',1,'Variational']]],
-  ['integrator',['Integrator',['../classVariational_1_1Integrator.html',1,'Variational::Integrator&lt; T_M, T_Q, T_TQ &gt;'],['../classRKMK_1_1Abstract_1_1Integrator.html',1,'RKMK::Abstract::Integrator'],['../classRKMK_1_1Integrator.html',1,'RKMK::Integrator&lt; T_M, T_Q, T_LIE_ALGEBRA, T_N_INTERNAL_STAGES &gt;'],['../classVariational_1_1Abstract_1_1Integrator.html',1,'Variational::Abstract::Integrator']]]
+  ['galerkinstep',['GalerkinStep',['../classVariational_1_1GalerkinStep.html',1,'Variational']]],
+  ['galerkinstepinitwrapper',['GalerkinStepInitWrapper',['../classVariational_1_1GalerkinStepInitWrapper.html',1,'Variational']]],
+  ['galerkinstepinternals',['GalerkinStepInternals',['../classVariational_1_1GalerkinStepInternals.html',1,'Variational']]],
+  ['gausslegendre',['GaussLegendre',['../classGaussLegendre.html',1,'']]],
+  ['group',['Group',['../classSO3_1_1Group.html',1,'SO3']]]
 ];

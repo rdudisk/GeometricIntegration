@@ -1,149 +1,83 @@
 #include <iostream>
 #include <cmath>
 
-#include <boost/math/special_functions/jacobi_elliptic.hpp>
-#include <boost/math/special_functions/ellint_1.hpp>
-
 #include "Geomi/Common"
 #include "Geomi/Variational"
 
 
-#define N_BODIES				2
-#define BODY_DOF				3
 typedef double					M;
-typedef NOXVector<BODY_DOF*N_BODIES>	Q;
-typedef NOXVector<BODY_DOF*N_BODIES>	TQ;
+typedef SO3::Group<double>		Group;
+typedef SO3::Algebra<double>	Algebra;
 
-/**
- * 2 bodies problem
- * L(q,v) = (1/2)*(m1*v1**2+m2*v2**2) + G*m1*m2/||q1-q2||**2
- * where q = (q1,q2)^T and v = (v1,v2)^T
- */
-class KeplerProblem : public Variational::Abstract::Problem<M,Q>
+class RigidBody : public Variational::Abstract::LieProblem<M,Group,Algebra>
 {
 private:
-	double m_G;
-	double m_m1;
-	double m_m2;
+	Eigen::Matrix<double,3,1> m_Inertia;
 
 public:
-	void
-	G (double _G)
-	{ m_G = _G; }
+	RigidBody ()
+	{ m_Inertia << 1, 1, 1; }
+	
+	Eigen::Matrix<double,3,1>&
+	Inertia ()
+	{ return m_Inertia; }
 
 	void
-	m1 (double _m1)
-	{ m_m1 = _m1; }
+	Inertia (Eigen::Matrix<double,3,1> val)
+	{ m_Inertia = val; }
 
-	void
-	m2 (double _m2)
-	{ m_m2 = _m2; }
+	Eigen::Matrix<double,3,1>
+	dLdv (const Algebra g)
+	{ return m_Inertia.asDiagonal()*g.toVector(); }
 
-	Eigen::Matrix<double,Q::DOF,1>
-	dLdq (const Q q, const Q v)
-	{
-		Eigen::Matrix<double,BODY_DOF,1> q1 = q.head<3>(), q2 = q.tail<3>();
-
-		Eigen::Matrix<double,Q::DOF,1> _dLdq;
-
-		_dLdq.head<3>() = -2.0*m_G*m_m1*m_m2*pow((q1-q2).norm(),-4)*(q1-q2);
-		_dLdq.tail<3>() = -_dLdq.head<3>();
-
-		return _dLdq;
-	}
-
-	Eigen::Matrix<double,Q::DOF,1>
-	dLdv (const Q q, const Q v)
-	{
-		Eigen::Matrix<double,BODY_DOF,1> v1 = v.head<3>(), v2 = v.tail<3>();
-
-		Eigen::Matrix<double,Q::DOF,1> _dLdv;
-
-		_dLdv.head<3>() = m_m1*v1;	
-		_dLdv.tail<3>() = m_m2*v2;	
-
-		return _dLdv;
-	}
-
-	Eigen::Matrix<double,Q::DOF,Q::DOF>
-	JqdLdq (const Q q, const Q v)
-	{
-		Eigen::Matrix<double,BODY_DOF,1> q1 = q.head<3>(), q2 = q.tail<3>();
-
-		Eigen::Matrix<double,Q::DOF,Q::DOF> _JqdLdq;
-
-		double invSquareNorm = 1.0/((q1-q2).dot(q1-q2));
-		double frontConst = m_G*m_m1*m_m2;
-		
-		_JqdLdq.block<3,3>(0,0) = -2.0*frontConst*pow(invSquareNorm,2)*Eigen::Matrix<double,3,3>::Identity()
-									+ 8.0*frontConst*pow(invSquareNorm,3)*((q1-q2)*(q1-q2).transpose());
-		_JqdLdq.block<3,3>(3,3) = _JqdLdq.block<3,3>(0,0);
-		_JqdLdq.block<3,3>(3,0) = -_JqdLdq.block<3,3>(0,0);
-		_JqdLdq.block<3,3>(0,3) = -_JqdLdq.block<3,3>(0,0);
-
-		return _JqdLdq;
-	}
-
-	Eigen::Matrix<double,Q::DOF,Q::DOF>
-	JvdLdq (const Q q, const Q v)
-	{ return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero(); }
-
-	Eigen::Matrix<double,Q::DOF,Q::DOF>
-	JqdLdv (const Q q, const Q v)
-	{ return Eigen::Matrix<double,Q::DOF,Q::DOF>::Zero(); }
-
-	Eigen::Matrix<double,Q::DOF,Q::DOF>
-	JvdLdv (const Q q, const Q v)
-	{
-		Eigen::Matrix<double,Q::DOF,Q::DOF> _JvdLdv;
-		
-		_JvdLdv.block<3,3>(0,0) = m_m1*Eigen::Matrix<double,3,3>::Identity();
-		_JvdLdv.block<3,3>(3,3) = m_m2*Eigen::Matrix<double,3,3>::Identity();
-		_JvdLdv.block<3,3>(0,3) = Eigen::Matrix<double,3,3>::Zero();
-		_JvdLdv.block<3,3>(3,0) = Eigen::Matrix<double,3,3>::Zero();
-
-		return _JvdLdv;
-	}
+	Eigen::Matrix<double,3,3>
+	JvdLdv (const Algebra)
+	{ return m_Inertia.asDiagonal(); }
 };
 
 int
 main (int argc, char* argv[])
 {
 	double h = 0.1;
-	int n_steps = 50;
+	int n_steps = 25;
 
-	/*
-	 * Initial data:
-	 *				| Sun					| Jupiter				|
-	 * mass			| 1.00000597682			| 0.0000954786104043	|
-	 * q0(1)		| 0.0					| -3.5023653			|
-	 * q0(2)		| 0.0					| -3.8169847			|
-	 * q0(3)		| 0.0					| -1.5507963			|
-	 * v0(1)		| 0.0					| 0.00565429			|
-	 * v0(2)		| 0.0					| -0.00412490			|
-	 * v0(3)		| 0.0					| -0.00190589			|
-	 */
-	KeplerProblem myProblem;
+	RigidBody myProblem;
 	myProblem.baselinstep(0.0,h,n_steps);
 
-	myProblem.G(2.95912208286e-4);
-	myProblem.m1(1.00000597682);
-	myProblem.m2(0.0000954786104043);
+	Variational::Abstract::Integrator* integrator;
+	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
+	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,Variational::Abstract::LieProblem<M,Group,Algebra>,Algebra>(myProblem, *step);
 
-	Q pos, vel;
-	pos << 0.0, 0.0, 0.0, -3.5023653, -3.8169847, -1.5507963;
-	vel << 0.0, 0.0, 0.0, 0.00565429, -0.00412490, -0.00190589;
-	myProblem.pos(0,pos);
-	// for now this is the only way to initialize the 2nd position consistently with the step definition
-	// TODO !!
-	myProblem.pos(1,pos+h*vel);
+	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
+	myProblem.Inertia(Inertia);
 
-	Variational::Abstract::Integrator& integrator = Variational::Factory<double,Q,TQ>::createIntegrator(myProblem,"Galerkin P2N2Gau");
+	Group pos0 = Group::Identity();
+	myProblem.pos(0,pos0);
 
-	integrator.initialize();
-	integrator.integrate();
+	Algebra vel0 = Algebra(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
+	Group pos1 = step->posFromVel(h,pos0,vel0);
+	myProblem.pos(1,pos1);
+
+	integrator->initialize();
+	integrator->integrate();
 	
-	myProblem.write2csv("results.csv");
+	//myProblem.write2csv("results.csv");
+	
+	std::ofstream file;
+	file.open("results.csv",std::ios_base::trunc);
+	Group q0, q1;
+	Algebra xi;
+	double t;
+	if (file.is_open()) {
+		for (int i=0; i<myProblem.size()-1; i++) {
+			q0 = myProblem.pos(i);
+			q1 = myProblem.pos(i+1);
+			t = myProblem.base(i);
+			xi = ((1.0/h)*Algebra::cay_inv(q0.inverse()*q1));
+			file << t << "," << csvString<Algebra>(xi,",") << std::endl;
+		}
+		file.close();
+	}
 
 	return 0;
 }

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: Variational::Abstract::Step&lt; T_M, T_Q, T_TQ &gt; Class Template Reference</title>
+<title>Geomi: Variational::Abstract::Step&lt; T_M, T_Q, T_INTERNALS, T_PROBLEM, T_TQ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -19,6 +19,7 @@
 });
 </script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extra_stylesheet.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -27,7 +28,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Geomi
    </div>
   </td>
  </tr>
@@ -73,48 +74,41 @@ $(function() {
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classVariational_1_1Abstract_1_1Step-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Variational::Abstract::Step&lt; T_M, T_Q, T_TQ &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">Variational::Abstract::Step&lt; T_M, T_Q, T_INTERNALS, T_PROBLEM, T_TQ &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Inheritance diagram for Variational::Abstract::Step&lt; T_M, T_Q, T_TQ &gt;:</div>
+Collaboration diagram for Variational::Abstract::Step&lt; T_M, T_Q, T_INTERNALS, T_PROBLEM, T_TQ &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classVariational_1_1Abstract_1_1Step__inherit__graph.png" border="0" usemap="#Variational_1_1Abstract_1_1Step_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="Variational_1_1Abstract_1_1Step_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map" id="Variational_1_1Abstract_1_1Step_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map">
-<area shape="rect" id="node2" href="classVariational_1_1EulerStep.html" title="Variational::EulerStep\l\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="247,5,395,47"/>
-<area shape="rect" id="node3" href="classVariational_1_1GalerkinStep.html" title="Variational::GalerkinStep\l\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="238,71,405,112"/>
-<area shape="rect" id="node4" href="classVariational_1_1ImplicitEulerStep.html" title="Variational::ImplicitEuler\lStep\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="235,136,408,177"/>
-<area shape="rect" id="node5" href="classVariational_1_1MidpointStep.html" title="Variational::MidpointStep\l\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="238,201,405,243"/>
-<area shape="rect" id="node6" href="classVariational_1_1Step.html" title="Variational::Step\&lt;\l T_M, T_Q, T_TQ \&gt;" alt="" coords="252,267,391,308"/>
-</map>
+<div class="center"><img src="classVariational_1_1Abstract_1_1Step__coll__graph.png" border="0" usemap="#Variational_1_1Abstract_1_1Step_3_01T__M_00_01T__Q_00_01T__INTERNALS_00_01T__PROBLEM_00_01T__TQ_01_4_coll__map" alt="Collaboration graph"/></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad8fa86f94ecbf78f917d039e4e868067"><td class="memItemLeft" align="right" valign="top"><a id="ad8fa86f94ecbf78f917d039e4e868067"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Step</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Variational::Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
-<tr class="separator:ad8fa86f94ecbf78f917d039e4e868067"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93413f6064cfd2313b129f058f679c10"><td class="memItemLeft" align="right" valign="top"><a id="a93413f6064cfd2313b129f058f679c10"></a>
-T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>posFromVel</b> (T_Q q0, T_TQ v0)</td></tr>
-<tr class="separator:a93413f6064cfd2313b129f058f679c10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd7b8d7de53c030b14a38acc8f2e80ef"><td class="memItemLeft" align="right" valign="top"><a id="afd7b8d7de53c030b14a38acc8f2e80ef"></a>
+<tr class="memitem:adb8d21e79a9cfc38ac4e0735cba4ca5d"><td class="memItemLeft" align="right" valign="top"><a id="adb8d21e79a9cfc38ac4e0735cba4ca5d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Step</b> (T_PROBLEM &amp;problem)</td></tr>
+<tr class="separator:adb8d21e79a9cfc38ac4e0735cba4ca5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca1470e3e5c9f5be923a414fc20881e0"><td class="memItemLeft" align="right" valign="top"><a id="aca1470e3e5c9f5be923a414fc20881e0"></a>
+T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>posFromVel</b> (T_M h, T_Q q0, T_TQ v0)</td></tr>
+<tr class="separator:aca1470e3e5c9f5be923a414fc20881e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2d7a8b006736d65423ba5e09d33428c"><td class="memItemLeft" align="right" valign="top"><a id="ab2d7a8b006736d65423ba5e09d33428c"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h_var, T_Q q0_var, T_Q q1_var)=0</td></tr>
-<tr class="separator:afd7b8d7de53c030b14a38acc8f2e80ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a63289551f031f81ea6ac82264a7be6"><td class="memItemLeft" align="right" valign="top"><a id="a8a63289551f031f81ea6ac82264a7be6"></a>
+<tr class="separator:ab2d7a8b006736d65423ba5e09d33428c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1139effefd28cd29987f96b8ede1ddd9"><td class="memItemLeft" align="right" valign="top"><a id="a1139effefd28cd29987f96b8ede1ddd9"></a>
 virtual const T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>makeStep</b> ()=0</td></tr>
-<tr class="separator:a8a63289551f031f81ea6ac82264a7be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5ef89f035c14d883b2a24f5418810a5"><td class="memItemLeft" align="right" valign="top"><a id="ad5ef89f035c14d883b2a24f5418810a5"></a>
+<tr class="separator:a1139effefd28cd29987f96b8ede1ddd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3a9a53e6aa72973147e575b05d464de"><td class="memItemLeft" align="right" valign="top"><a id="aa3a9a53e6aa72973147e575b05d464de"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()=0</td></tr>
-<tr class="separator:ad5ef89f035c14d883b2a24f5418810a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aa3a9a53e6aa72973147e575b05d464de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a4a491b77b4141bb54102a67bbdf2999b"><td class="memItemLeft" align="right" valign="top"><a id="a4a491b77b4141bb54102a67bbdf2999b"></a>
-<a class="el" href="classVariational_1_1Abstract_1_1StepInternals.html">Variational::Abstract::StepInternals</a>&lt; T_M, T_Q, T_TQ &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_internals</b></td></tr>
-<tr class="separator:a4a491b77b4141bb54102a67bbdf2999b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22a5baa95f0173f32488183a00de2304"><td class="memItemLeft" align="right" valign="top"><a id="a22a5baa95f0173f32488183a00de2304"></a>
-<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Variational::Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_problem</b></td></tr>
-<tr class="separator:a22a5baa95f0173f32488183a00de2304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61dcdf4ff7f1543bf866ed9981a05cf8"><td class="memItemLeft" align="right" valign="top"><a id="a61dcdf4ff7f1543bf866ed9981a05cf8"></a>
+T_INTERNALS *&#160;</td><td class="memItemRight" valign="bottom"><b>m_internals</b></td></tr>
+<tr class="separator:a61dcdf4ff7f1543bf866ed9981a05cf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0649c7b43f4feced2534fb11ad4b9b1"><td class="memItemLeft" align="right" valign="top"><a id="af0649c7b43f4feced2534fb11ad4b9b1"></a>
+T_PROBLEM &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_problem</b></td></tr>
+<tr class="separator:af0649c7b43f4feced2534fb11ad4b9b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>Geomi/src/Variational/<a class="el" href="Variational_2Abstract__Step_8hpp_source.html">Abstract_Step.hpp</a></li>

@@ -3,16 +3,10 @@
 	
 namespace Variational {
 
-/**
- * %Factory for Variational integrators.
- * The following integrators are implemented:
- *
- *	- Explicit Euler
- */
-
 template <typename T_M,
 		  typename T_Q,
-		  typename T_TQ>
+		  typename T_PROBLEM,
+		  typename T_TQ = T_Q>
 class Factory
 {
 public:
@@ -21,6 +15,7 @@ public:
 	{
 		Abstract::Integrator* integrator = NULL;
 
+		/*
 		if (s=="Implicit Euler") {
 			ImplicitEulerStep<T_M,T_Q,T_TQ>* step
 				= new ImplicitEulerStep<T_M,T_Q,T_TQ>(problem);
@@ -38,12 +33,12 @@ public:
 			GalerkinStep<T_M,T_Q,T_TQ,2>* step
 				= new GalerkinStep<T_M,T_Q,T_TQ,2>(problem);
 			integrator = new Integrator<T_M,T_Q,T_TQ>(problem, *step);
-		}
-		else {
-			EulerStep<T_M,T_Q,T_TQ>* step
-				= new EulerStep<T_M,T_Q,T_TQ>(problem);
-			integrator = new Integrator<T_M,T_Q,T_TQ>(problem, *step);
-		}
+		}*/
+		//else {
+			EulerStep<T_M,T_Q>* step
+				= new EulerStep<T_M,T_Q>(problem);
+			integrator = new Integrator<T_M,T_Q,EulerStepInternals<T_M,T_Q>,Abstract::Problem<T_M,T_Q>>(problem, *step);
+		//}
 		return *integrator;
 	}
 };

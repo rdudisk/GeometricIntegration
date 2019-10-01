@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: Variational::EulerStep&lt; T_M, T_Q, T_TQ &gt; Class Template Reference</title>
+<title>Geomi: Variational::EulerStep&lt; T_M, T_Q &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -19,6 +19,7 @@
 });
 </script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extra_stylesheet.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -27,7 +28,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Geomi
    </div>
   </td>
  </tr>
@@ -70,75 +71,85 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classVariational_1_1EulerStep-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Variational::EulerStep&lt; T_M, T_Q, T_TQ &gt; Class Template Reference</div>  </div>
+<div class="title">Variational::EulerStep&lt; T_M, T_Q &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Inheritance diagram for Variational::EulerStep&lt; T_M, T_Q, T_TQ &gt;:</div>
+Inheritance diagram for Variational::EulerStep&lt; T_M, T_Q &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classVariational_1_1EulerStep__inherit__graph.png" border="0" usemap="#Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map" id="Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_inherit__map">
-<area shape="rect" id="node2" href="classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="5,5,187,47"/>
+<div class="center"><img src="classVariational_1_1EulerStep__inherit__graph.png" border="0" usemap="#Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_inherit__map" id="Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_inherit__map">
+<area shape="rect" id="node2" href="classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, EulerStep\lInternals\&lt; T_M, T_Q \&gt;, Abstract\l::Problem\&lt; T_M, T_Q \&gt; \&gt;" alt="" coords="5,5,217,76"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for Variational::EulerStep&lt; T_M, T_Q, T_TQ &gt;:</div>
+Collaboration diagram for Variational::EulerStep&lt; T_M, T_Q &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classVariational_1_1EulerStep__coll__graph.png" border="0" usemap="#Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_coll__map" id="Variational_1_1EulerStep_3_01T__M_00_01T__Q_00_01T__TQ_01_4_coll__map">
-<area shape="rect" id="node2" href="classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="5,5,187,47"/>
+<div class="center"><img src="classVariational_1_1EulerStep__coll__graph.png" border="0" usemap="#Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_coll__map" id="Variational_1_1EulerStep_3_01T__M_00_01T__Q_01_4_coll__map">
+<area shape="rect" id="node2" href="classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, EulerStep\lInternals\&lt; T_M, T_Q \&gt;, Abstract\l::Problem\&lt; T_M, T_Q \&gt; \&gt;" alt="" coords="5,5,217,76"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4a319812cafcfa4dc50deb7eebdf3985"><td class="memItemLeft" align="right" valign="top"><a id="a4a319812cafcfa4dc50deb7eebdf3985"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>EulerStep</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
-<tr class="separator:a4a319812cafcfa4dc50deb7eebdf3985"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f210b3a8b16f172f995042f96e7f9b6"><td class="memItemLeft" align="right" valign="top"><a id="a8f210b3a8b16f172f995042f96e7f9b6"></a>
+<tr class="memitem:ab552481d074d9f3e4323e675137ecb29"><td class="memItemLeft" align="right" valign="top"><a id="ab552481d074d9f3e4323e675137ecb29"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>EulerStep</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Problem</a> &amp;problem)</td></tr>
+<tr class="separator:ab552481d074d9f3e4323e675137ecb29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67e1529f608d8da55f6089de3d3704fb"><td class="memItemLeft" align="right" valign="top"><a id="a67e1529f608d8da55f6089de3d3704fb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b> (T_M h_var, T_Q q0_var, T_Q q1_var)</td></tr>
-<tr class="separator:a8f210b3a8b16f172f995042f96e7f9b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa07bab2322cdb76ce58cdd42a829d02e"><td class="memItemLeft" align="right" valign="top"><a id="aa07bab2322cdb76ce58cdd42a829d02e"></a>
+<tr class="separator:a67e1529f608d8da55f6089de3d3704fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f5c74b80524da3e75984deb8452f32d"><td class="memItemLeft" align="right" valign="top"><a id="a5f5c74b80524da3e75984deb8452f32d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> (void)</td></tr>
-<tr class="separator:aa07bab2322cdb76ce58cdd42a829d02e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accbf980ac552bef8e8dd1608573f4794"><td class="memItemLeft" align="right" valign="top"><a id="accbf980ac552bef8e8dd1608573f4794"></a>
+<tr class="separator:a5f5c74b80524da3e75984deb8452f32d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a838240cfe8725b2b58b6fe48cdcffa7d"><td class="memItemLeft" align="right" valign="top"><a id="a838240cfe8725b2b58b6fe48cdcffa7d"></a>
 const T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>makeStep</b> (void)</td></tr>
-<tr class="separator:accbf980ac552bef8e8dd1608573f4794"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classVariational_1_1Abstract_1_1Step"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classVariational_1_1Abstract_1_1Step')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classVariational_1_1Abstract_1_1Step.html">Variational::Abstract::Step&lt; T_M, T_Q, T_TQ &gt;</a></td></tr>
-<tr class="memitem:ad8fa86f94ecbf78f917d039e4e868067 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="ad8fa86f94ecbf78f917d039e4e868067"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Step</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Variational::Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
-<tr class="separator:ad8fa86f94ecbf78f917d039e4e868067 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93413f6064cfd2313b129f058f679c10 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a93413f6064cfd2313b129f058f679c10"></a>
-T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>posFromVel</b> (T_Q q0, T_TQ v0)</td></tr>
-<tr class="separator:a93413f6064cfd2313b129f058f679c10 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a838240cfe8725b2b58b6fe48cdcffa7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classVariational_1_1Abstract_1_1Step"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classVariational_1_1Abstract_1_1Step')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classVariational_1_1Abstract_1_1Step.html">Variational::Abstract::Step&lt; T_M, T_Q, EulerStepInternals&lt; T_M, T_Q &gt;, Abstract::Problem&lt; T_M, T_Q &gt; &gt;</a></td></tr>
+<tr class="memitem:adb8d21e79a9cfc38ac4e0735cba4ca5d inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="adb8d21e79a9cfc38ac4e0735cba4ca5d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Step</b> (<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;problem)</td></tr>
+<tr class="separator:adb8d21e79a9cfc38ac4e0735cba4ca5d inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca1470e3e5c9f5be923a414fc20881e0 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="aca1470e3e5c9f5be923a414fc20881e0"></a>
+T_Q&#160;</td><td class="memItemRight" valign="bottom"><b>posFromVel</b> (T_M h, T_Q q0, T_Q v0)</td></tr>
+<tr class="separator:aca1470e3e5c9f5be923a414fc20881e0 inherit pub_methods_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
+Private Types</h2></td></tr>
+<tr class="memitem:a2425f874a5a495fe64ec013d0d4e7732"><td class="memItemLeft" align="right" valign="top"><a id="a2425f874a5a495fe64ec013d0d4e7732"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Problem</b> = <a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt;</td></tr>
+<tr class="separator:a2425f874a5a495fe64ec013d0d4e7732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee3e70bf4a1ea96c35bc2a0aa18538b5"><td class="memItemLeft" align="right" valign="top"><a id="aee3e70bf4a1ea96c35bc2a0aa18538b5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Internals</b> = <a class="el" href="classVariational_1_1EulerStepInternals.html">EulerStepInternals</a>&lt; T_M, T_Q &gt;</td></tr>
+<tr class="separator:aee3e70bf4a1ea96c35bc2a0aa18538b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a1c927184a8b2c90d456c515d5efcb2e4"><td class="memItemLeft" align="right" valign="top"><a id="a1c927184a8b2c90d456c515d5efcb2e4"></a>
+<tr class="memitem:ab307ba2282cbd654dfaaf301d291ae25"><td class="memItemLeft" align="right" valign="top"><a id="ab307ba2282cbd654dfaaf301d291ae25"></a>
 Teuchos::RCP&lt; Teuchos::ParameterList &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_solverParametersPtr</b></td></tr>
-<tr class="separator:a1c927184a8b2c90d456c515d5efcb2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39269e727a5a3ce8814a1921b0243b9e"><td class="memItemLeft" align="right" valign="top"><a id="a39269e727a5a3ce8814a1921b0243b9e"></a>
+<tr class="separator:ab307ba2282cbd654dfaaf301d291ae25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ef87e84de64b213fe2ea6954341506f"><td class="memItemLeft" align="right" valign="top"><a id="a6ef87e84de64b213fe2ea6954341506f"></a>
 Teuchos::RCP&lt; NOX::StatusTest::Combo &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_statusTests</b></td></tr>
-<tr class="separator:a39269e727a5a3ce8814a1921b0243b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb2337a8c6cff5a5bd5640d900fed719"><td class="memItemLeft" align="right" valign="top"><a id="adb2337a8c6cff5a5bd5640d900fed719"></a>
+<tr class="separator:a6ef87e84de64b213fe2ea6954341506f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56725af9edc033a712c7e9097a3c3ffd"><td class="memItemLeft" align="right" valign="top"><a id="a56725af9edc033a712c7e9097a3c3ffd"></a>
 Teuchos::RCP&lt; <a class="el" href="classNOXGroup.html">NOXGroup</a>&lt; T_Q, 1 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_grp</b></td></tr>
-<tr class="separator:adb2337a8c6cff5a5bd5640d900fed719"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92b3506f2449c6de97ec6fb8b1523515"><td class="memItemLeft" align="right" valign="top"><a id="a92b3506f2449c6de97ec6fb8b1523515"></a>
+<tr class="separator:a56725af9edc033a712c7e9097a3c3ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a962d6a68c43c67fcfd4dc8a29b0290be"><td class="memItemLeft" align="right" valign="top"><a id="a962d6a68c43c67fcfd4dc8a29b0290be"></a>
 Teuchos::RCP&lt; NOX::Solver::Generic &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_solver</b></td></tr>
-<tr class="separator:a92b3506f2449c6de97ec6fb8b1523515"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a962d6a68c43c67fcfd4dc8a29b0290be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_classVariational_1_1Abstract_1_1Step"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classVariational_1_1Abstract_1_1Step')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classVariational_1_1Abstract_1_1Step.html">Variational::Abstract::Step&lt; T_M, T_Q, T_TQ &gt;</a></td></tr>
-<tr class="memitem:a4a491b77b4141bb54102a67bbdf2999b inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a4a491b77b4141bb54102a67bbdf2999b"></a>
-<a class="el" href="classVariational_1_1Abstract_1_1StepInternals.html">Variational::Abstract::StepInternals</a>&lt; T_M, T_Q, T_TQ &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_internals</b></td></tr>
-<tr class="separator:a4a491b77b4141bb54102a67bbdf2999b inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22a5baa95f0173f32488183a00de2304 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a22a5baa95f0173f32488183a00de2304"></a>
-<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Variational::Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_problem</b></td></tr>
-<tr class="separator:a22a5baa95f0173f32488183a00de2304 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classVariational_1_1Abstract_1_1Step"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classVariational_1_1Abstract_1_1Step')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classVariational_1_1Abstract_1_1Step.html">Variational::Abstract::Step&lt; T_M, T_Q, EulerStepInternals&lt; T_M, T_Q &gt;, Abstract::Problem&lt; T_M, T_Q &gt; &gt;</a></td></tr>
+<tr class="memitem:a61dcdf4ff7f1543bf866ed9981a05cf8 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="a61dcdf4ff7f1543bf866ed9981a05cf8"></a>
+<a class="el" href="classVariational_1_1EulerStepInternals.html">EulerStepInternals</a>&lt; T_M, T_Q &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_internals</b></td></tr>
+<tr class="separator:a61dcdf4ff7f1543bf866ed9981a05cf8 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0649c7b43f4feced2534fb11ad4b9b1 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memItemLeft" align="right" valign="top"><a id="af0649c7b43f4feced2534fb11ad4b9b1"></a>
+<a class="el" href="classVariational_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_problem</b></td></tr>
+<tr class="separator:af0649c7b43f4feced2534fb11ad4b9b1 inherit pro_attribs_classVariational_1_1Abstract_1_1Step"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>Geomi/src/Variational/<a class="el" href="EulerStep_8hpp_source.html">EulerStep.hpp</a></li>

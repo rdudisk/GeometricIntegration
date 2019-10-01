@@ -45,23 +45,22 @@ namespace RKMK {
 	\endcode
  */
 
-template <typename T_M,
-		  typename T_Q,
-		  typename T_LIE_ALGEBRA,
-		  int T_N_INTERNAL_STAGES>
+template <typename T_LIE_ALGEBRA,
+		  int T_N_INTERNAL_STAGES,
+		  typename T_M = double>
 class Integrator : public RKMK::Abstract::Integrator
 {
 private:
-	RKMK::Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& m_problem;
-	RKMK::Abstract::Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>& m_step;
+	RKMK::Abstract::Problem<T_LIE_ALGEBRA,T_M>& m_problem;
+	RKMK::Abstract::Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>& m_step;
 	
 public:
-	Integrator<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (RKMK::Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& problem,
-														   RKMK::Abstract::Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>& step)
+	Integrator<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> (RKMK::Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem,
+													   RKMK::Abstract::Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>& step)
 	: m_problem(problem), m_step(step)
 	{ }
 
-	~Integrator<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> ()
+	~Integrator<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> ()
 	{ }
 
 	void
@@ -73,9 +72,9 @@ public:
 	{
 		int i;
 		bool success = false;
-		double h;
+		T_M h;
 		int n_steps = m_problem.size();
-		T_Q Y0, Y1;
+		NOXVector<T_LIE_ALGEBRA::DOF> Y0, Y1;
 
 		for (i=0; i<n_steps-1; i++) {
 			Y0 = m_problem.pos(i);

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: RKMK::Factory&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; Class Template Reference</title>
+<title>Geomi: RKMK::Factory&lt; T_LIE_ALGEBRA, T_M &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -19,6 +19,7 @@
 });
 </script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extra_stylesheet.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -27,7 +28,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">Geomi
    </div>
   </td>
  </tr>
@@ -72,7 +73,7 @@ $(function() {
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classRKMK_1_1Factory-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">RKMK::Factory&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; Class Template Reference</div>  </div>
+<div class="title">RKMK::Factory&lt; T_LIE_ALGEBRA, T_M &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -80,13 +81,13 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:acda9c77c88633e0a61fccc3ce66aa27a"><td class="memItemLeft" align="right" valign="top"><a id="acda9c77c88633e0a61fccc3ce66aa27a"></a>
-static <a class="el" href="classRKMK_1_1Abstract_1_1Integrator.html">Abstract::Integrator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>createIntegrator</b> (<a class="el" href="classRKMK_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_M, T_Q, T_LIE_ALGEBRA &gt; &amp;problem, std::string s)</td></tr>
-<tr class="separator:acda9c77c88633e0a61fccc3ce66aa27a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ca9dd81397f31e44580d86204947a61"><td class="memItemLeft" align="right" valign="top"><a id="a1ca9dd81397f31e44580d86204947a61"></a>
+static <a class="el" href="classRKMK_1_1Abstract_1_1Integrator.html">Abstract::Integrator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>createIntegrator</b> (<a class="el" href="classRKMK_1_1Abstract_1_1Problem.html">Abstract::Problem</a>&lt; T_LIE_ALGEBRA, T_M &gt; &amp;problem, std::string s)</td></tr>
+<tr class="separator:a1ca9dd81397f31e44580d86204947a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T_M, typename T_Q, typename T_LIE_ALGEBRA&gt;<br />
-class RKMK::Factory&lt; T_M, T_Q, T_LIE_ALGEBRA &gt;</h3>
+<div class="textblock"><h3>template&lt;typename T_LIE_ALGEBRA, typename T_M = double&gt;<br />
+class RKMK::Factory&lt; T_LIE_ALGEBRA, T_M &gt;</h3>
 
 <p>Factory for RKMK integrators. This is meant to be a user friendly interface to instantiate <a class="el" href="classRKMK_1_1Integrator.html">RKMK::Integrator</a> objects. The following integrators are implemented:</p>
 <ul>

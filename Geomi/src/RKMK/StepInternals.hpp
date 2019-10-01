@@ -5,19 +5,18 @@
 
 namespace RKMK {
 
-template <typename T_M,
-		  typename T_Q,
-		  typename T_LIE_ALGEBRA,
-		  int T_N_INTERNAL_STAGES>
+template <typename T_LIE_ALGEBRA,
+		  int T_N_INTERNAL_STAGES,
+		  typename T_M>
 class StepInternals
 {
 protected:
-	T_Q m_y0;
+	NOXVector<T_LIE_ALGEBRA::DOF> m_y0;
 	T_M m_h;
 
 	T_LIE_ALGEBRA m_solution;
 
-	Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& m_interface;
+	Abstract::Problem<T_LIE_ALGEBRA,T_M>& m_problem;
 
 	double			m_a_coeffs	[T_N_INTERNAL_STAGES * T_N_INTERNAL_STAGES];
 	double			m_b_coeffs	[T_N_INTERNAL_STAGES];
@@ -25,25 +24,26 @@ protected:
 	unsigned int	m_order_q;
 
 public:
-	StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface)
-	:	m_interface(interface)
+	StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> (Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem)
+	:	m_problem(problem)
 	{ setTruncatureOrder(); }
 
-	static StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>&
-	newFromProblem (Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface)
+	static StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>&
+	newFromProblem (Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem)
 	{
-		StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>* res = new StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>(interface);
+		StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>* res
+			= new StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>(problem);
 		return *res;
 	}
 
 	void
-	operator= (const StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>& other)
+	operator= (const StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>& other)
 	{
 		// TODO: Cod'e avec le cul, il faut verifier tout ca.
 		m_y0		= other.m_y0;
 		m_h			= other.m_h;
 		m_solution	= other.m_solution;
-		m_interface = other.m_interface;
+		m_problem   = other.m_problem;
 		std::copy(std::begin(other.m_a_coeffs),std::end(other.m_a_coeffs),std::begin(m_a_coeffs));
 		std::copy(std::begin(other.m_b_coeffs),std::end(other.m_b_coeffs),std::begin(m_b_coeffs));
 		std::copy(std::begin(other.m_k),std::end(other.m_k),std::begin(m_k));
@@ -55,7 +55,7 @@ public:
 	{ return m_a_coeffs[i*T_N_INTERNAL_STAGES+j]; }
 
 	void
-	setData (T_M h_var, T_Q y0_var)
+	setData (T_M h_var, NOXVector<T_LIE_ALGEBRA::DOF> y0_var)
 	{
 		m_h = h_var;
 		m_y0 = y0_var;
@@ -100,7 +100,7 @@ public:
 				omega += this->m_k[j]*this->m_h*this->a_coeffs(i,j);
 			}
 
-			this->m_interface.computeA(A,omega.exp()*this->m_y0);
+			this->m_problem.computeA(A,omega.exp()*this->m_y0);
 			// TODO: should you really overwrite m_k[i] ?
 			this->m_k[i] = omega.computeDExpRInv(A,this->m_order_q);
 			sol += this->m_b_coeffs[i]*this->m_h*this->m_k[i];
@@ -112,35 +112,24 @@ public:
 		return success;
 	}
 
-	const T_Q
-	reconstruct (const NOXVector<T_Q::DOF>& solution)
+	const NOXVector<T_LIE_ALGEBRA::DOF>
+	reconstruct (const NOXVector<T_LIE_ALGEBRA::DOF>& solution)
 	{
 		T_LIE_ALGEBRA w(solution);
-		return T_Q(w.exp()*m_y0);
+		return NOXVector<T_LIE_ALGEBRA::DOF>(w.exp()*m_y0);
 	}
 
-	const T_Q
+	const NOXVector<T_LIE_ALGEBRA::DOF>
 	reconstruct ()
 	{ return this->reconstruct(this->m_solution.toVector()); }
 
-	/*
-	const T_Q
-	reconstruct ()
-	{
-		T_LIE_ALGEBRA w = T_LIE_ALGEBRA::Zero();
-		for (int i=0; i<T_N_INTERNAL_STAGES; i++)
-			w += m_h*m_b_coeffs[i]*m_k[i];
-		return T_Q(w.exp()*m_y0);
-	}
-	*/
+	bool
+	computeA (T_LIE_ALGEBRA& A, const NOXVector<T_LIE_ALGEBRA::DOF>& y)
+	{ return m_problem.computeA(A,y); }
 
 	bool
-	computeA (T_LIE_ALGEBRA& A, const T_Q& y)
-	{ return m_interface.computeA(A,y); }
-
-	bool
-	computeJacobianA (std::vector<T_LIE_ALGEBRA>& JA, const T_Q& y)
-	{ return m_interface.computeJacobianA(JA,y); }
+	computeJacobianA (std::vector<T_LIE_ALGEBRA>& JA, const NOXVector<T_LIE_ALGEBRA::DOF>& y)
+	{ return m_problem.computeJacobianA(JA,y); }
 
 };
 } // namespace RKMK

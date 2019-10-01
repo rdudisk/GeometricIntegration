@@ -8,11 +8,10 @@
 
 namespace RKMK {
 
-template <typename T_M,
-		  typename T_Q,
-		  typename T_LIE_ALGEBRA,
-		  int T_N_INTERNAL_STAGES>
-class DiagonalStepInternals : public StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>, public ::Abstract::NOXStep<T_Q,1>
+template <typename T_LIE_ALGEBRA,
+		  int T_N_INTERNAL_STAGES,
+		  typename T_M = double>
+class DiagonalStepInternals : public StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>, public ::Abstract::NOXStep<NOXVector<T_LIE_ALGEBRA::DOF>,1>
 {
 private:
 	int m_fevals;
@@ -21,8 +20,8 @@ private:
 	int m_currentStep;
 
 public:
-	DiagonalStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface)
-	:	StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>(interface)
+	DiagonalStepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> (Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem)
+	:	StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>(problem)
 	{
 		m_fevals = 0;
 		m_initialGuess = T_LIE_ALGEBRA::Zero();
@@ -30,21 +29,9 @@ public:
 		m_currentStep = 0;
 	}
 
-	/*
-	DIRKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (const DIRKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>& other)
-	:	Abstract::RKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>(interface)
-	{
-		m_fevals = other.m_fevals;
-		m_initialGuess = other.m_initialGuess;
-		m_solution = other.m_solution;
-		m_currentStep = other.m_currentStep;
-	}
-	*/
-
-
-	const NOXVector<T_Q::DOF*T_N_INTERNAL_STAGES>
+	const NOXVector<T_LIE_ALGEBRA::DOF*T_N_INTERNAL_STAGES>
 	getInitialGuess ()
-	{ return NOXVector<T_Q::DOF*T_N_INTERNAL_STAGES>::Zero(); }
+	{ return NOXVector<T_LIE_ALGEBRA::DOF*T_N_INTERNAL_STAGES>::Zero(); }
 
 	int
 	currentStep ()
@@ -56,11 +43,11 @@ public:
 	{ m_currentStep = c; }
 
 	void
-	setSolutionK (const NOXVector<T_Q::DOF>& x)
+	setSolutionK (const NOXVector<T_LIE_ALGEBRA::DOF>& x)
 	{ this->m_k[m_currentStep] = T_LIE_ALGEBRA(x); }
 
 	bool
-	computeF (NOXVector<T_Q::DOF>& f, const NOXVector<T_Q::DOF>& x)
+	computeF (NOXVector<T_LIE_ALGEBRA::DOF>& f, const NOXVector<T_LIE_ALGEBRA::DOF>& x)
 	{
 		bool success = false;
 
@@ -77,7 +64,7 @@ public:
 			omega += this->m_k[j]*this->a_coeffs(m_currentStep,j);
 		}
 		omega = this->m_h*omega;
-		this->m_interface.computeA(A,omega.exp()*this->m_y0);
+		this->m_problem.computeA(A,omega.exp()*this->m_y0);
 		res = omega.computeDExpRInv(A,this->m_order_q) - this->m_k[m_currentStep];
 
 		f = res.toVector();
@@ -87,7 +74,7 @@ public:
 	}
 
 	bool
-	computeJacobian (Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>& J, const NOXVector<T_Q::DOF>& x)
+	computeJacobian (Eigen::Matrix<double,T_LIE_ALGEBRA::DOF,T_LIE_ALGEBRA::DOF>& J, const NOXVector<T_LIE_ALGEBRA::DOF>& x)
 	{
 		this->m_k[m_currentStep] = T_LIE_ALGEBRA(x);
 
@@ -107,15 +94,15 @@ public:
 		}
 		w = this->m_h*w;
 
-		NOXVector<T_Q::DOF> Y = w.exp()*this->m_y0;
+		NOXVector<T_LIE_ALGEBRA::DOF> Y = w.exp()*this->m_y0;
 
 		T_LIE_ALGEBRA A;
 		this->computeA(A,Y);
 
 		std::vector<T_LIE_ALGEBRA> JA;
 		this->computeJacobianA(JA,Y);
-		Eigen::Matrix<double,T_Q::DOF,T_Q::DOF> MatJA;
-		for (i=0; i<T_Q::DOF; i++) {
+		Eigen::Matrix<double,T_LIE_ALGEBRA::DOF,T_LIE_ALGEBRA::DOF> MatJA;
+		for (i=0; i<T_LIE_ALGEBRA::DOF; i++) {
 			// TODO : row ? col ?
 			MatJA.row(i) = (JA[i]).toVector();
 		}
@@ -127,7 +114,7 @@ public:
 
 		// Computing dF/dk_p
 
-		for (p=0; p<T_Q::DOF; p++) {
+		for (p=0; p<T_LIE_ALGEBRA::DOF; p++) {
 			Gen = T_LIE_ALGEBRA::Generator(p);
 			dAdk = T_LIE_ALGEBRA(this->m_h*a*MatJA*w.partialExp(p)*this->m_y0);
 			dfdk = dAdk;

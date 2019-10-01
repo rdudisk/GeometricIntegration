@@ -1,11 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l T_Q, 1 \&gt;" alt="" coords="39,105,182,146"/>
-<area shape="rect" id="node2" href="$classRKMK_1_1DiagonalStepInternals.html" title="RKMK::DiagonalStepInternals\l\&lt; T_M, T_Q, T_LIE_ALGEBRA,\l T_N_INTERNAL_STAGES \&gt;" alt="" coords="264,5,475,61"/>
-<area shape="rect" id="node3" href="$classVariational_1_1EulerStepInternals.html" title="Variational::EulerStepInternals\l\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="270,86,469,127"/>
-<area shape="rect" id="node4" href="$classVariational_1_1ImplicitEulerStepInternals.html" title="Variational::ImplicitEuler\lStepInternals\&lt; T_M, T_Q,\l T_TQ \&gt;" alt="" coords="282,152,457,208"/>
-<area shape="rect" id="node5" href="$classVariational_1_1MidpointStepInternals.html" title="Variational::MidpointStep\lInternals\&lt; T_M, T_Q, T_TQ \&gt;" alt="" coords="271,233,467,274"/>
-<area shape="rect" id="node6" href="$classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l T_Q, T_N_STEPS \&gt;" alt="" coords="37,306,184,347"/>
-<area shape="rect" id="node7" href="$classVariational_1_1GalerkinStepInternals.html" title="Variational::GalerkinStep\lInternals\&lt; T_M, T_Q, T\l_TQ, T_N_STEPS \&gt;" alt="" coords="286,299,453,355"/>
-<area shape="rect" id="node8" href="$classRKMK_1_1StepInternals.html" title="RKMK::StepInternals\l\&lt; T_M, T_Q, T_LIE_ALGEBRA,\l T_N_INTERNAL_STAGES \&gt;" alt="" coords="5,5,216,61"/>
-<area shape="rect" id="node9" href="$classVariational_1_1Abstract_1_1StepInternals.html" title="Variational::Abstract\l::StepInternals\&lt; T_M,\l T_Q, T_TQ \&gt;" alt="" coords="36,207,185,263"/>
+<area shape="rect" id="node1" href="$classAbstract_1_1NOXStep.html" title="Abstract::NOXStep\&lt;\l NOXVector\&lt; T_LIE_ALGEBRA\l::DOF \&gt;, 1 \&gt;" alt="" coords="5,5,216,61"/>
+<area shape="rect" id="node2" href="$classRKMK_1_1DiagonalStepInternals.html" title="RKMK::DiagonalStepInternals\l\&lt; T_LIE_ALGEBRA, T_N_INTERNAL\l_STAGES, T_M \&gt;" alt="" coords="264,45,511,101"/>
+<area shape="rect" id="node3" href="$classRKMK_1_1StepInternals.html" title="RKMK::StepInternals\l\&lt; T_LIE_ALGEBRA, T_N\l_INTERNAL_STAGES, T_M \&gt;" alt="" coords="9,85,212,141"/>
 </map>
