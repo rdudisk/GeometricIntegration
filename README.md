@@ -85,6 +85,9 @@ Regarding the `RKMK` module, a solution for the rigid body problem is given
 
 ## Quick tutorial
 
+An introduction on how to use the library can be found on this
+[page](https://rdudisk.github.io/GeometricIntegration/doc/html/quick_tutorial.html).
+
 ## Documentation
 
 Online documentation can be found
