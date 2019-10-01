@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, T_INTERNALS,\l T_PROBLEM, T_TQ \&gt;" alt="" coords="5,5,236,61"/>
+<area shape="rect" id="node1" href="$classVariational_1_1Abstract_1_1Step.html" title="Variational::Abstract\l::Step\&lt; T_M, T_Q, Covariant\lStepInternals\&lt; T_M, T_Q,\l T_ALGEBRA \&gt;, Abstract::LieProblem\l\&lt; T_M, T_Q, T_ALGEBRA \&gt;, T_ALGEBRA \&gt;" alt="" coords="5,5,295,91"/>
+<area shape="rect" id="node2" href="$classVariational_1_1CovariantStep.html" title="Variational::CovariantStep\l\&lt; T_M, T_Q, T_ALGEBRA \&gt;" alt="" coords="343,27,533,69"/>
 </map>

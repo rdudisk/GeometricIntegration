@@ -8,19 +8,29 @@ Developpers might consider reading the documentation instead.
 \section rkmk RKMK module
 In this module, we consider dynamical systems governed by the equation
 \f[
-	\dot Y(t) = A(t,Y)Y(t)
+	\dot Y(t) = A(Y)Y(t)
 \f]
 where \f$Y\f$ lies on the configuration manifold \f$\mathcal M\f$ of the system,
-with \f$\mathcal M\f$ is left-invariant for the action of the Lie group \f$G\f$,
-and \f$A\f$ belongs to the associated Lie algebra \f$\mathfrak g\f$ for all couple \f$t,Y\f$.
+with \f$\mathcal M\f$ left-invariant for the action of the Lie group \f$G\f$,
+and \f$A(Y)\f$ belongs to the associated Lie algebra \f$\mathfrak g\f$ for all \f$Y\f$.
 
-The first step is to define the configuration manifold. **TODO**
+To use this module, we need only need to include the `RKMK` header of Geomi.
+\code{.cpp}
+#include <Geomi/RKMK>
+\endcode
+
+The first step is to define the Lie algebra.
+This is done either by using a preexisting implementation of the abstract class `Abstract::LieAlgebra` or by provinding your own.
+In this case, we use the class `SO3::Algebra` implementing the \f$\mathfrak{so}(3)\f$ algebra.
+\code{.cpp}
+typedef SO3::Algebra<double> Algebra;
+\endcode
 
 The second step is to provide the equations for the problem, namely the matrix \f$A\f$.
 This is done by inheriting the abstract class `RKMK::Abstract::Problem` and implementing the virtual functions `computeA` and `computeJacobianA`.
 In our example with the rigid body problem, we have
 \code{.cpp}
-class RigidBodyProblem : public RKMK::Abstract::Problem<double,Q,Algebra>
+class RigidBodyProblem : public RKMK::Abstract::Problem<Algebra>
 {
 	private:
 		// Inverted inertia tensor
@@ -46,4 +56,31 @@ class RigidBodyProblem : public RKMK::Abstract::Problem<double,Q,Algebra>
 		}
 };
 \endcode
+
+The system is now fully defined and can be initialized and solved using a Runge-Kutta Munthe-Kaas integrator.
+An instance `myProblem` is setup on a constant size time-step grid with arbitrary initial conditions and parameters.
+\code{.cpp}
+	RigidBodyProblem myProblem;
+
+	double h = 0.1;
+	int n_steps = 1000;
+	myProblem.baselinstep(0.0,h,n_steps);
+
+	Eigen::Matrix<double,3,1> Iinv(3.0/2.0,1.0,0.5);
+	myProblem.Iinv(Iinv);
+
+	Eigen::Matrix<double,3,1> pos(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
+	myProblem.pos(0,pos);
+\endcode
+
+Finally an integrator is created from the `RKMK::Factory` template class by calling the `createIntegrator` function.
+The templates arguments should be the same than those for the `RKMK::Abstract::Problem`,
+and the function receives as arguments the instance of the problem and a string denoting the specific numerical scheme to use
+(in this case the classical order 4 Runge-Kutta, see **REF** for a list of available schemes).
+\code{.cpp}
+	RKMK::Abstract::Integrator& integrator = RKMK::Factory<double,Q,Algebra>::createIntegrator(myProblem,"RK 4");
+
+	bool success = integrator.integrate();
+\endcode
+
 */

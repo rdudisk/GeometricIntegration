@@ -1,8 +1,6 @@
 #ifndef DEF_RKMK_EXPLICIT_STEP
 #define DEF_RKMK_EXPLICIT_STEP
 
-//#include "RKMK_Abstract_Step.hpp"
-
 namespace RKMK {
 
 /**
@@ -11,21 +9,20 @@ namespace RKMK {
  * Since the computation of the solution is straightforward, it is generally faster than an implicit method.
  */
 
-template <typename T_M,
-		  typename T_Q,
-		  typename T_LIE_ALGEBRA,
-		  int T_N_INTERNAL_STAGES>
-class ExplicitStep : public RKMK::Abstract::Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>
+template <typename T_LIE_ALGEBRA,
+		  int T_N_INTERNAL_STAGES,
+		  typename T_M = double>
+class ExplicitStep : public RKMK::Abstract::Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>
 {
 public:
-	ExplicitStep<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface)
-	:	RKMK::Abstract::Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>(interface)
+	ExplicitStep<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> (Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem)
+	:	RKMK::Abstract::Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>(problem)
 	{ }
 
-	const T_Q
+	const NOXVector<T_LIE_ALGEBRA::DOF>
 	makeStep (void)
 	{
-		T_Q* Y1 = new T_Q();
+		NOXVector<T_LIE_ALGEBRA::DOF>* Y1 = new NOXVector<T_LIE_ALGEBRA::DOF>();
 		bool success;
 
 		success = this->m_internals->computeSolution();

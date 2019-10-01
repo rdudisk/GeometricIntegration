@@ -12,15 +12,14 @@ namespace Abstract {
  * This class is used by RKMK::ExplicitStep and RKMK::DiagonalStep.
  */
 
-template <typename T_M,
-		  typename T_Q,
-		  typename T_LIE_ALGEBRA,
-		  int T_N_INTERNAL_STAGES>
+template <typename T_LIE_ALGEBRA,
+		  int T_N_INTERNAL_STAGES,
+		  typename T_M = double>
 class Step
 { 
 protected:
-	RKMK::StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>* m_internals;
-	RKMK::Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& m_interface;
+	RKMK::StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>* m_internals;
+	RKMK::Abstract::Problem<T_LIE_ALGEBRA,T_M>& m_problem;
 	char m_type;
 
 public:
@@ -29,26 +28,14 @@ public:
 	static const char TYPE_DIAGONAL_IMPLICIT = 2;
 
 public:
-	Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (RKMK::Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface)
-	//													 Abstract::RKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>& internals)
-	:	m_interface(interface)
-		//m_internals(internals)
-		//m_internals(Abstract::RKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>::newFromProblem(interface))
+	Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> (RKMK::Abstract::Problem<T_LIE_ALGEBRA,T_M>& problem)
+	:	m_problem(problem)
 	{
-		m_internals = new RKMK::StepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>(interface);
+		m_internals = new RKMK::StepInternals<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M>(problem);
 		setType();
 	}
 
-	/*
-	RKMKStep<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> (Abstract::Problem<T_M,T_Q,T_LIE_ALGEBRA>& interface,
-														 std::vector<double> a,
-														 std::vector<double> b)
-	:	m_interface(interface),
-		m_internals(Abstract::RKMKStepInternals<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES>::newFromProblem(interface))
-	{ m_internals.setCoeffs(a,b); }
-	*/
-
-	~Step<T_M,T_Q,T_LIE_ALGEBRA,T_N_INTERNAL_STAGES> ()
+	~Step<T_LIE_ALGEBRA,T_N_INTERNAL_STAGES,T_M> ()
 	{ }
 
 	bool
@@ -56,7 +43,7 @@ public:
 	{ return m_internals->setCoeffs(a,b); }
 
 	void
-	setData (T_M h_var, T_Q y0_var)
+	setData (T_M h_var, NOXVector<T_LIE_ALGEBRA::DOF> y0_var)
 	{ m_internals->setData(h_var,y0_var); }
 
 	void
@@ -88,7 +75,7 @@ public:
 	type ()
 	{ return m_type; }
 
-	virtual const T_Q
+	virtual const NOXVector<T_LIE_ALGEBRA::DOF>
 	makeStep () = 0;
 };
 } // namespace Abstract
