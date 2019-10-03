@@ -81,7 +81,7 @@ For the `Variational` module, an
 [example](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/Kepler)
 is given for the two-bodies problem.
 Regarding the `RKMK` module, a solution for the rigid body problem is given
-[here](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody).
+[here](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody/RKMK).
 
 ## Quick tutorial
 
