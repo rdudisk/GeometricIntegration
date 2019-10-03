@@ -52,7 +52,10 @@ public:
 
 		for (int i=0; i<T_ALGEBRA::DOF; i++) {
 			// TODO vérifier les indices
-			J.block(0,i,T_ALGEBRA::DOF,1) = (Eigen::Matrix<double,T_ALGEBRA::DOF,T_ALGEBRA::DOF>::Identity()+0.5*m_h*T_ALGEBRA::GeneratorMatrix(i)+m_h*m_h*0.25*(T_ALGEBRA::GeneratorVector(i)*xi.toVector().transpose()+xi.toVector()*T_ALGEBRA::GeneratorVector(i).transpose()))*m_problem.dLdv(xi);
+			J.block(0,i,T_ALGEBRA::DOF,1) =
+				(0.5*m_h*T_ALGEBRA::GeneratorMatrix(i)
+				 +m_h*m_h*0.25*(T_ALGEBRA::GeneratorVector(i)*xi.toVector().transpose()+xi.toVector()*T_ALGEBRA::GeneratorVector(i).transpose()))
+				*m_problem.dLdv(xi);
 		}
 		J += (m_h*xi).dCayRInv().transpose()*m_problem.JvdLdv(xi);
 
