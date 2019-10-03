@@ -41,4 +41,15 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 				BOOST_TEST ( poly[i][j]==0.0 );
 		}
 	}
+
+	/* SO(3) tests */
+
+	typedef SO3::Group<double> Group;
+	typedef SO3::Algebra<double> Algebra;
+
+	Algebra w1(1.1,2.8,1.9);
+	Algebra w2 = Algebra::cay_inv(w1.cay());
+
+	for (i=0; i<3; i++)
+		BOOST_TEST ( w1[i] == w2[i] );
 }
