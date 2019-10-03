@@ -85,8 +85,8 @@ and the function receives as arguments the instance of the problem and a string 
 
 The result of the above code give the time evolution of the angular momentum of the body.
 As can clearly be seen on the following figure, the solution lies on the sphere of radius \f$\Vert Y_0\Vert\f$, preserving the norm of the angular momentum.
-\image html examples/RigidBody/figure.svg
-\image latex examples/RigidBody/figure.eps
+\image html examples/RigidBody/RKMK/figure.svg
+\image latex examples/RigidBody/RKMK/figure.eps
 
 \section variational Variational module
 */
