@@ -92,5 +92,4 @@ An introduction on how to use the library can be found on this
 
 Online documentation can be found
 [here](https://rdudisk.github.io/GeometricIntegration/doc/html/index.html).
-It can also be build from the source by running
-	$ make doxygen
+It can also be build from the source by running `$ make doxygen`
