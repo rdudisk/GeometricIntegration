@@ -230,10 +230,15 @@ public:
 	{
 		T_SCALAR_TYPE	n =   m_v.norm(),
 						den = 4.0+n*n;
-		Eigen::Matrix<T_SCALAR_TYPE,4,1> V;
+		//Eigen::Matrix<T_SCALAR_TYPE,4,1> V;
 		//V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
 		//return Group<T>(V);
-		return Group<T_SCALAR_TYPE>(Eigen::AngleAxis<T_SCALAR_TYPE>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
+		//return Group<T_SCALAR_TYPE>(Eigen::AngleAxis<T_SCALAR_TYPE>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
+		Eigen::Matrix<T_SCALAR_TYPE,3,3> W = this->toRotationMatrix();
+		Eigen::Matrix<T_SCALAR_TYPE,3,3> M =
+			Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()
+			+ (4.0/den)*(W+0.5*W*W);
+		return Group<T_SCALAR_TYPE>(M);
 	}
 
 	static Algebra<T_SCALAR_TYPE>
