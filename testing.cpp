@@ -2,14 +2,13 @@
 #include <cmath>
 
 #include "Geomi/Common"
-#include "Geomi/Variational"
-
+#include "Geomi/MultiVariational"
 
 typedef double					M;
 typedef SO3::Group<double>		Group;
 typedef SO3::Algebra<double>	Algebra;
 
-class RigidBody : public Variational::Abstract::LieProblem<M,Group,Algebra>
+class RigidBody : public MultiVariational::Abstract::LieProblem<Group,Algebra,2>
 {
 private:
 	Eigen::Matrix<double,3,1> m_Inertia;
@@ -26,59 +25,70 @@ public:
 	Inertia (Eigen::Matrix<double,3,1> val)
 	{ m_Inertia = val; }
 
+	/*
+	template <>
 	Eigen::Matrix<double,3,1>
-	dLdv (const Algebra g)
+	dLdv<0> (const Algebra g)
+	{ return m_Inertia.asDiagonal()*g.toVector(); }
+
+	template <>
+	Eigen::Matrix<double,3,1>
+	dLdv<1> (const Algebra g)
 	{ return m_Inertia.asDiagonal()*g.toVector(); }
 
 	Eigen::Matrix<double,3,3>
-	JvdLdv (const Algebra)
+	JvdLdv<0,0> (const Algebra)
 	{ return m_Inertia.asDiagonal(); }
+
+	Eigen::Matrix<double,3,3>
+	JvdLdv<0,1> (const Algebra)
+	{ return m_Inertia.asDiagonal(); }
+
+	Eigen::Matrix<double,3,3>
+	JvdLdv<1,0> (const Algebra)
+	{ return m_Inertia.asDiagonal(); }
+
+	Eigen::Matrix<double,3,3>
+	JvdLdv<1,1> (const Algebra)
+	{ return m_Inertia.asDiagonal(); }
+	*/
 };
+/*
+template <>
+Eigen::Matrix<double,3,1>
+RigidBody::dLdv<0> (const Algebra g)
+{ return m_Inertia.asDiagonal()*g.toVector(); }
+*/
+
+namespace ns {
+	template <typename U>
+	class A {
+		public:
+		template <typename V>
+		void foo(V);
+	};
+
+	class B : public A<int>
+	{
+	};
+
+	//template <>
+	//template <>
+	//void A<int>::foo<double> (double);
+	
+	//void
+	//B::template foo<double>(double);
+} // namespace
+
+//template <>
+//template <>
+//void ns::A<int>::foo<double> (double d) { std::cout << d << std::endl; };
+
+//void ns::B::template foo<double> (double d) { std::cout << d << std::endl; };
 
 int
 main (int argc, char* argv[])
 {
-	double h = 0.1;
-	int n_steps = 25;
-
-	RigidBody myProblem;
-	myProblem.baselinstep(0.0,h,n_steps);
-
-	Variational::Abstract::Integrator* integrator;
-	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
-	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,Variational::Abstract::LieProblem<M,Group,Algebra>,Algebra>(myProblem, *step);
-
-	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
-	myProblem.Inertia(Inertia);
-
-	Group pos0 = Group::Identity();
-	myProblem.pos(0,pos0);
-
-	Algebra vel0 = Algebra(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
-	Group pos1 = step->posFromVel(h,pos0,vel0);
-	myProblem.pos(1,pos1);
-
-	integrator->initialize();
-	integrator->integrate();
-	
-	//myProblem.write2csv("results.csv");
-	
-	std::ofstream file;
-	file.open("results.csv",std::ios_base::trunc);
-	Group q0, q1;
-	Algebra xi;
-	double t;
-	if (file.is_open()) {
-		for (int i=0; i<myProblem.size()-1; i++) {
-			q0 = myProblem.pos(i);
-			q1 = myProblem.pos(i+1);
-			t = myProblem.base(i);
-			xi = ((1.0/h)*Algebra::cay_inv(q0.inverse()*q1));
-			file << t << "," << csvString<Algebra>(xi,",") << std::endl;
-		}
-		file.close();
-	}
-
 	return 0;
 }
 

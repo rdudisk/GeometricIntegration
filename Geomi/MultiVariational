@@ -1,0 +1,16 @@
+#ifndef DEF_MULTIVARIATIONAL
+#define DEF_MULTIVARIATIONAL
+
+#include "src/MultiVariational/Syst.hpp"
+#include "src/MultiVariational/DiscSyst.hpp"
+#include "src/MultiVariational/Abstract_LieProblem.hpp"
+#include "src/MultiVariational/Abstract_StepInternals.hpp"
+#include "src/MultiVariational/Abstract_Step.hpp"
+//#include "src/MultiVariational/CovariantStepInternals.hpp"
+//#include "src/MultiVariational/CovariantStep.hpp"
+//#include "src/MultiVariational/Integrator.hpp"
+//#include "src/MultiVariational/Factory.hpp"
+
+#endif
+
+/* vim: set filetype=cpp et sw=2 ts=2 ai: */

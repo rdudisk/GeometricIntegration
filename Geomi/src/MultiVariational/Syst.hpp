@@ -46,6 +46,7 @@ public:
 	pos (T_Q p)
 	{ m_pos = p; }
 
+	/*
 	std::string
 	csvString (const std::string sep)
 	{
@@ -54,6 +55,7 @@ public:
 		std::string str(ss.str());
 		return str;
 	}
+	*/
 };
 
 } // namespace MultiVariational
