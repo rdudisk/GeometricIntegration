@@ -1,10 +1,20 @@
 #include <iostream>
 #include <cmath>
 
-#include "Geomi/Common"
-#include "Geomi/Variational"
+//#include "Geomi/Common"
+//#include "Geomi/BiVariational"
+
+#include <Epetra_config.h>
+
+#ifdef HAVE_MPI
+	#include <mpi.h>
+	#include <Epetra_MpiComm.h>
+#else
+	#include <Epetra_SerialComm.h>
+#endif
 
 
+/*
 typedef double					M;
 typedef SO3::Group<double>		Group;
 typedef SO3::Algebra<double>	Algebra;
@@ -34,50 +44,39 @@ public:
 	JvdLdv (const Algebra)
 	{ return m_Inertia.asDiagonal(); }
 };
+*/
+
+void
+routine (const Epetra_Comm &comm, std::ostream &out)
+{
+	out << "MyPID = " << comm.MyPID() << std::endl;
+}
 
 int
 main (int argc, char* argv[])
 {
-	double h = 0.1;
-	int n_steps = 25;
 
-	RigidBody myProblem;
-	myProblem.baselinstep(0.0,h,n_steps);
+#ifdef HAVE_MPI
+	MPI_Init(&argc,&argv);
+	Epetra_MpiComm comm(MPI_COMM_WORLD);
+#else
+	Epetra_SerialComm comm;
+#endif
 
-	Variational::Abstract::Integrator* integrator;
-	Variational::CovariantStep<M,Group,Algebra>* step = new Variational::CovariantStep<M,Group,Algebra>(myProblem);
-	integrator = new Variational::Integrator<M,Group,Variational::CovariantStepInternals<M,Group,Algebra>,Variational::Abstract::LieProblem<M,Group,Algebra>,Algebra>(myProblem, *step);
+	const int myRank = comm.MyPID();
+	const int numProcs = comm.NumProc();
 
-	Eigen::Matrix<double,3,1> Inertia(2.0/3.0,1.0,2.0);
-	myProblem.Inertia(Inertia);
+	if (myRank > 0)
+		std::cout << "Total number of processes " << numProcs << std::endl;
 
-	Group pos0 = Group::Identity();
-	myProblem.pos(0,pos0);
+	routine(comm,std::cout);
 
-	Algebra vel0 = Algebra(cos(M_PI/3.0), 0.0, sin(M_PI/3.0));
-	Group pos1 = step->posFromVel(h,pos0,vel0);
-	myProblem.pos(1,pos1);
+	if (comm.MyPID() == 0)
+		std::cout << "End result: TEST PASSED" << std::endl;
 
-	integrator->initialize();
-	integrator->integrate();
-	
-	//myProblem.write2csv("results.csv");
-	
-	std::ofstream file;
-	file.open("results.csv",std::ios_base::trunc);
-	Group q0, q1;
-	Algebra xi;
-	double t;
-	if (file.is_open()) {
-		for (int i=0; i<myProblem.size()-1; i++) {
-			q0 = myProblem.pos(i);
-			q1 = myProblem.pos(i+1);
-			t = myProblem.base(i);
-			xi = ((1.0/h)*Algebra::cay_inv(q0.inverse()*q1));
-			file << t << "," << csvString<Algebra>(xi,",") << std::endl;
-		}
-		file.close();
-	}
+#ifdef HAVE_MPI
+	MPI_Finalize();
+#endif
 
 	return 0;
 }
