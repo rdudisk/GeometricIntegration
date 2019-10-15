@@ -1,12 +1,12 @@
-#ifndef DEF_COMMON_SO3_GROUP
-#define DEF_COMMON_SO3_GROUP
+#ifndef DEF_COMMON_SE3_GROUP
+#define DEF_COMMON_SE3_GROUP
 
 #include <string>
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-namespace SO3
+namespace SE3
 {
 
 /**
@@ -14,34 +14,43 @@ namespace SO3
  * \tparam T_SCALAR Floating point type used for internal representation of coefficients.
  */
 template <typename T_SCALAR>
-class Group : public LieGroupBase<Group<T_SCALAR>,3>
+class Group : public LieGroupBase<Group<T_SCALAR>,6>
 {
 protected:
 	Eigen::Quaternion<T_SCALAR> m_q;
+	Eigen::Matrix<T_SCALAR,3,1> m_trans;
 
 //public:
 	//static const unsigned int DOF = 3;
 
 public:
-	Group<T_SCALAR> ( )
-	: m_q(Eigen::Quaternion<T_SCALAR>::Identity())
+	Group ( )
+	: m_q(Eigen::Quaternion<T_SCALAR>::Identity()), m_trans(Eigen::Matrix<T_SCALAR,3,1>::Zero())
 	{ }
 
-	Group<T_SCALAR> (const Group<T_SCALAR>& g)
-	: m_q(g.m_q)
+	Group (const Group<T_SCALAR>& g)
+	: m_q(g.m_q), m_trans(g.m_trans)
 	{ }
 
-	Group<T_SCALAR> (const Eigen::Quaternion<T_SCALAR>& q)
-	: m_q(q)
+	Group (const Eigen::Quaternion<T_SCALAR>& q, const Eigen::Matrix<T_SCALAR,3,1>& trans)
+	: m_q(q), m_trans(trans)
 	{ }
 
+	Group (const Eigen::Matrix<T_SCALAR,4,4>& m)
+	: m_trans(m.block(0,3,3,1))
+	{
+		Eigen::Matrix<T_SCALAR,3,3> tmp = m.block(0,0,3,3);
+		m_q = Eigen::Quaternion<T_SCALAR>(tmp);
+	}
+
+	/*
 	Group<T_SCALAR> (	const T_SCALAR& w,
 							const T_SCALAR& x,
 							const T_SCALAR& y,
 							const T_SCALAR& z)
 	{ q(w,x,y,z); }
 
-	Group<T_SCALAR> (const T_SCALAR* data)
+	Group (const T_SCALAR* data)
 	{ q(data); }
 
 	template<class Derived>
@@ -58,8 +67,17 @@ public:
 	template<class OtherScalar, int OtherOptions>
 	Group<T_SCALAR> (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
 	{ q(other); }
+	*/
 
 	/* Accessors and setters */
+
+	Eigen::Matrix<T_SCALAR,3,1>
+	trans ( ) const
+	{ return m_trans; }
+
+	void
+	trans (const Eigen::Matrix<T_SCALAR,3,1>& v)
+	{ m_trans = v; }
 
 	/**
 	 * \return the quaternion representation of the rotation.
@@ -108,6 +126,14 @@ public:
 	q (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
+	T_SCALAR const&
+	operator[] (size_t index) const
+	{ return m_trans[index-3]; }
+
+	T_SCALAR&
+	operator[] (size_t index)
+	{ return m_trans[index-3]; }
+
 	/* Group operations */
 
 	/**
@@ -115,20 +141,20 @@ public:
 	 */
 	Group<T_SCALAR>
 	inverse( ) const
-	{ return Group<T_SCALAR>(m_q.inverse()); }
+	{ return Group<T_SCALAR>(m_q.inverse(),-m_trans); }
 
 	/**
 	 * \return the element representing the group identity for operation `*`.
 	 */
 	static Group<T_SCALAR>
 	Identity ( )
-	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::Identity()); }
+	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::Identity(),Eigen::Matrix<T_SCALAR,3,1>::Zero()); }
 
 	/* Group operation is '*' and not '+' since we are used to the matrix representation,
 	 * in which case the mutliplication is the group operation */
 	void
 	operator*= (Group<T_SCALAR> const& g)
-	{ m_q *= g.q(); m_q.normalize(); }
+	{ m_q *= g.q(); m_q.normalize(); m_trans += g.trans(); }
 
 	/**
 	 * Implements the group operation on \f$SO(3)\f$.
@@ -145,13 +171,15 @@ public:
 		return res;
 	}
 
+
 	/**
-	 * \return the transformation of the \f$\mathbb R^3\f$ vector \p v by the rotation
-	 * represented by `*this`.
+	 * \return the transformation of the \f$\mathbb R^3\f$ vector \p v by `*this`.
 	 */
 	Eigen::Matrix<T_SCALAR,3,1>
 	transformVector (const Eigen::Matrix<T_SCALAR,3,1>& v) const
-	{ return this->toRotationMatrix()*v; }
+	{
+		return this->rotationMatrix()*v+this->m_trans;
+	}
 
 	/**
 	 * Implements the product of the matrix representation of the rotation `*this`
@@ -161,36 +189,50 @@ public:
 	 */
 	Eigen::Matrix<T_SCALAR,3,1>
 	operator* (Eigen::Matrix<T_SCALAR,3,1> const& v) const
-	{ return m_q._transformVector(v); }
+	{ return this->transformVector(v); }
 
 	/**
 	 * \return the 3 by 3 matrix representation of the rotation.
 	 */
 	Eigen::Matrix<T_SCALAR,3,3>
-	toRotationMatrix ( ) const
+	rotationMatrix ( ) const
 	{ return m_q.toRotationMatrix(); }
+
+	Eigen::Matrix<T_SCALAR,4,4>
+	matrix ( ) const
+	{
+		Eigen::Matrix<T_SCALAR,4,4> M = Eigen::Matrix<T_SCALAR,4,4>::Zero();
+		M.block(0,0,3,3) = this->rotationMatrix();
+		M.block(0,3,3,1) = m_trans;
+		M(3,3) = T_SCALAR(1);
+		return M;
+	}
 
 	/**
 	 * \return the axis-angle representation of the rotation.
 	 */
+	/*
 	Eigen::Matrix<T_SCALAR,3,3>
 	toAxisAngle ( ) const
 	{ return Eigen::AngleAxis<T_SCALAR>(m_q); }
+	*/
 
 	/**
 	 * \return the vector representation of the rotation, that is the vector \f$\vec v\f$
 	 * such that the rotation of any given vector \f$\vec u\f$ is the result of \f$vec v\wedge\vec u\f$.
 	 */
+	/*
 	Eigen::Matrix<T_SCALAR,3,1>
 	toVector ( ) const
 	{
 		Eigen::AngleAxis<T_SCALAR> aa(m_q);
 		return aa.angle()*aa.axis();
 	}
+	*/
 
 	bool
 	isApprox (Group<T_SCALAR> const& g) const
-	{ return m_q.isApprox(g.q()); }
+	{ return m_q.isApprox(g.q()) & m_trans.isApprox(g.trans()); }
 
 };
 
@@ -198,9 +240,9 @@ public:
 
 template <typename T_SCALAR>
 std::ostream
-operator<< (std::ostream& stream, SO3::Group<T_SCALAR> const& G)
+operator<< (std::ostream& stream, SE3::Group<T_SCALAR> const& G)
 {
-	stream << G.toRotationMatrix();
+	stream << G.matrix();
 	return stream;
 }
 

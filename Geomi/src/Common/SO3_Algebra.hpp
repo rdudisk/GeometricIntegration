@@ -19,30 +19,30 @@ namespace SO3
  * \tparam T Floating point type used for internal representation of coefficients.
  */
 
-template <typename T_SCALAR_TYPE>
-class Algebra : public LieAlgebraBase<	Algebra<T_SCALAR_TYPE>,
-										Group<T_SCALAR_TYPE>,
+template <typename T_SCALAR>
+class Algebra : public LieAlgebraBase<	Algebra<T_SCALAR>,
+										Group<T_SCALAR>,
 										3,
-										T_SCALAR_TYPE>
+										T_SCALAR>
 {
 protected:
-	Eigen::Matrix<T_SCALAR_TYPE,3,1> m_v;
+	Eigen::Matrix<T_SCALAR,3,1> m_v;
 
 public:
-	Algebra<T_SCALAR_TYPE> ( )
-	: m_v(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero())
+	Algebra<T_SCALAR> ( )
+	: m_v(Eigen::Matrix<T_SCALAR,3,1>::Zero())
 	{ }
 
-	Algebra<T_SCALAR_TYPE> (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& v)
+	Algebra<T_SCALAR> (const Eigen::Matrix<T_SCALAR,3,1>& v)
 	: m_v(v)
 	{ }
 
-	Algebra<T_SCALAR_TYPE> (const T_SCALAR_TYPE a, const T_SCALAR_TYPE b, const T_SCALAR_TYPE c)
-	: m_v(Eigen::Matrix<T_SCALAR_TYPE,3,1>(a,b,c))
+	Algebra<T_SCALAR> (const T_SCALAR a, const T_SCALAR b, const T_SCALAR c)
+	: m_v(Eigen::Matrix<T_SCALAR,3,1>(a,b,c))
 	{ }
 
-	// Removed because ambiguity with  Algebra<T_SCALAR_TYPE> (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& v)
-	/* Algebra<T_SCALAR_TYPE> (const NOXVector<3> v)
+	// Removed because ambiguity with  Algebra<T_SCALAR> (const Eigen::Matrix<T_SCALAR,3,1>& v)
+	/* Algebra<T_SCALAR> (const NOXVector<3> v)
 	: m_v(v)
 	{ }
 	*/
@@ -52,46 +52,46 @@ public:
 	/**
 	 * \return the group inverse of `*this`.
 	 */
-	Algebra<T_SCALAR_TYPE>
+	Algebra<T_SCALAR>
 	inverse ( ) const
 	{
-		Algebra<T_SCALAR_TYPE> a(-m_v);
+		Algebra<T_SCALAR> a(-m_v);
 		return a;
 	}
 
 	void
-	operator+= (const Algebra<T_SCALAR_TYPE>& g)
+	operator+= (const Algebra<T_SCALAR>& g)
 	{ m_v += g.v(); }
 
 	/**
 	 * \return the element representing the group identity for operation `+`.
 	 */
-	static Algebra<T_SCALAR_TYPE>
+	static Algebra<T_SCALAR>
 	Identity ( )
 	{
-		Algebra<T_SCALAR_TYPE> res(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero());
+		Algebra<T_SCALAR> res(Eigen::Matrix<T_SCALAR,3,1>::Zero());
 		return res;
 	}
 	
-	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator+;
-	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator-;
+	using LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,3,T_SCALAR>::operator+;
+	using LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,3,T_SCALAR>::operator-;
 
 	/* Vector space operations */
 
 	void
-	operator*= (T_SCALAR_TYPE s)
+	operator*= (T_SCALAR s)
 	{ m_v *= s; }
 	
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
 	 */
 
-	using LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*;
+	using LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,3,T_SCALAR>::operator*;
 	/*
-	Algebra<T_SCALAR_TYPE>
-	operator* (const T_SCALAR_TYPE& s) const
+	Algebra<T_SCALAR>
+	operator* (const T_SCALAR& s) const
 	{
-		return LieAlgebraBase<Algebra<T_SCALAR_TYPE>,Group<T_SCALAR_TYPE>,3,T_SCALAR_TYPE>::operator*(s);
+		return LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,3,T_SCALAR>::operator*(s);
 	}
 	*/
 
@@ -102,17 +102,17 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
-	Algebra<T_SCALAR_TYPE>
-	bracket (const Algebra<T_SCALAR_TYPE>& g) const
+	Algebra<T_SCALAR>
+	bracket (const Algebra<T_SCALAR>& g) const
 	{ return this->m_v.cross(g.v()); }
 
-	Algebra<T_SCALAR_TYPE>
-	Ad (const Group<T_SCALAR_TYPE>& g) const
-	{ return Algebra<T_SCALAR_TYPE>(g.toRotationMatrix()*this->toVector()); }
+	Algebra<T_SCALAR>
+	Ad (const Group<T_SCALAR>& g) const
+	{ return Algebra<T_SCALAR>(g.toRotationMatrix()*this->toVector()); }
 
-	Algebra<T_SCALAR_TYPE>
-	Ad_star (const Group<T_SCALAR_TYPE>& g) const
-	{ return Algebra<T_SCALAR_TYPE>(g.toRotationMatrix().transpose()*this->toVector()); }
+	Algebra<T_SCALAR>
+	Ad_star (const Group<T_SCALAR>& g) const
+	{ return Algebra<T_SCALAR>(g.toRotationMatrix().transpose()*this->toVector()); }
 
 	/* Other operations */
 
@@ -122,29 +122,29 @@ public:
 	 * with a vector reprentation it implements \f$\omega\wedge v\f$.
 	 * \return the result of the action of `*this` on \p vec.
 	 */
-	Eigen::Matrix<T_SCALAR_TYPE,3,1>
-	operator* (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& vec) const
+	Eigen::Matrix<T_SCALAR,3,1>
+	operator* (const Eigen::Matrix<T_SCALAR,3,1>& vec) const
 	{ return m_v.cross(vec); }
 
 	/* Accessors */
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,1>
+	Eigen::Matrix<T_SCALAR,3,1>
 	v ( ) const
 	{ return m_v; } 
 
 	void
-	v (const Eigen::AngleAxis<T_SCALAR_TYPE>& aa)
+	v (const Eigen::AngleAxis<T_SCALAR>& aa)
 	{ m_v = aa.angle()*aa.axis(); }
 
 	void
-	v (const Eigen::Matrix<T_SCALAR_TYPE,3,1>& vec)
+	v (const Eigen::Matrix<T_SCALAR,3,1>& vec)
 	{ m_v = vec; }
 
-	T_SCALAR_TYPE const&
+	T_SCALAR const&
 	operator[] (size_t index) const
 	{ return m_v[index]; }
 
-	T_SCALAR_TYPE&
+	T_SCALAR&
 	operator[] (size_t index)
 	{ return m_v[index]; }
 	
@@ -153,23 +153,23 @@ public:
 	normalize ( )
 	{ m_v.normalize(); }
 
-	Algebra<T_SCALAR_TYPE>
+	Algebra<T_SCALAR>
 	normalized ( ) const
 	{
-		Algebra<T_SCALAR_TYPE> res(*this);
+		Algebra<T_SCALAR> res(*this);
 		res.normalize();
 		return res;
 	}
 
-	T_SCALAR_TYPE
+	T_SCALAR
 	norm ( ) const
 	{ return m_v.norm(); }
 
-	T_SCALAR_TYPE
+	T_SCALAR
 	angle ( ) const
 	{ return m_v.norm(); }
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,1>
+	Eigen::Matrix<T_SCALAR,3,1>
 	axis ( ) const
 	{ return m_v.normalized(); }
 
@@ -178,27 +178,27 @@ public:
 	 * \return the \ref Lie::SO3::Group<T> implementation of the Lie group \f$SO(3)\f$ element
 	 * that represents the exponential of `*this`.
 	 */
-	Group<T_SCALAR_TYPE>
+	Group<T_SCALAR>
 	exp ( ) const
 	{
-		T_SCALAR_TYPE a = m_v.norm()/2.0;
-		Eigen::Matrix<T_SCALAR_TYPE,4,1> V;
+		T_SCALAR a = m_v.norm()/2.0;
+		Eigen::Matrix<T_SCALAR,4,1> V;
 		//V << cos(a) << sin(a)*m_v.normalized();
 		//return Group<T>(V);
-		return Group<T_SCALAR_TYPE>(Eigen::AngleAxis<T_SCALAR_TYPE>(cos(a),sin(a)*m_v.normalized()));
+		return Group<T_SCALAR>(Eigen::AngleAxis<T_SCALAR>(cos(a),sin(a)*m_v.normalized()));
 	}
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,3>
+	Eigen::Matrix<T_SCALAR,3,3>
 	partialExp (const unsigned int i) const
 	{
-		T_SCALAR_TYPE nm = this->norm();
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> K = (this->normalized()).toRotationMatrix();
-		T_SCALAR_TYPE c = cos(nm), s = sin(nm);
+		T_SCALAR nm = this->norm();
+		Eigen::Matrix<T_SCALAR,3,3> K = (this->normalized()).toRotationMatrix();
+		T_SCALAR c = cos(nm), s = sin(nm);
 
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> M = Algebra<T_SCALAR_TYPE>::GeneratorMatrix(i);
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> dexpdw;
+		Eigen::Matrix<T_SCALAR,3,3> M = Algebra<T_SCALAR>::GeneratorMatrix(i);
+		Eigen::Matrix<T_SCALAR,3,3> dexpdw;
 
-		if (isZero<T_SCALAR_TYPE>(nm))
+		if (isZero<T_SCALAR>(nm))
 			dexpdw = M;
 		else
 			dexpdw = (c-(s/nm))*((*this)[i]*(1.0/nm))*K + (s/nm)*M + (s+(1.0-c)*(2.0/nm))*((*this)[i]*(1.0/nm))*K*K + ((1-c)/nm)*(M*K+K*M);
@@ -206,12 +206,12 @@ public:
 		return dexpdw;
 	}
 
-	Algebra<T_SCALAR_TYPE>
-	computeDExpRInv (const Algebra<T_SCALAR_TYPE>& y, unsigned int order_p = 0) const
+	Algebra<T_SCALAR>
+	computeDExpRInv (const Algebra<T_SCALAR>& y, unsigned int order_p = 0) const
 	{
-		Algebra<T_SCALAR_TYPE> res = y;
+		Algebra<T_SCALAR> res = y;
 		if (order_p>0) {
-			Algebra<T_SCALAR_TYPE> A = y;
+			Algebra<T_SCALAR> A = y;
 			for (int i=0; i<order_p; i++) {
 				A = this->bracket(A);
 				res += BERNOULLI_NUMBERS[i+1]*A;
@@ -225,58 +225,58 @@ public:
 	 * \return the \ref Lie::SO3::Group<T> implementation of the Lie group \f$SO(3)\f$ element
 	 * that represents the image of `*this` by the Cayley map.
 	 */
-	Group<T_SCALAR_TYPE>
+	Group<T_SCALAR>
 	cay ( ) const
 	{
-		T_SCALAR_TYPE	n =   m_v.norm(),
+		T_SCALAR	n =   m_v.norm(),
 						den = 4.0+n*n;
-		//Eigen::Matrix<T_SCALAR_TYPE,4,1> V;
+		//Eigen::Matrix<T_SCALAR,4,1> V;
 		//V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
 		//return Group<T>(V);
-		//return Group<T_SCALAR_TYPE>(Eigen::AngleAxis<T_SCALAR_TYPE>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> W = this->toRotationMatrix();
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> M =
-			Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()
+		//return Group<T_SCALAR>(Eigen::AngleAxis<T_SCALAR>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
+		Eigen::Matrix<T_SCALAR,3,3> W = this->toRotationMatrix();
+		Eigen::Matrix<T_SCALAR,3,3> M =
+			Eigen::Matrix<T_SCALAR,3,3>::Identity()
 			+ (4.0/den)*(W+0.5*W*W);
-		return Group<T_SCALAR_TYPE>(M);
+		return Group<T_SCALAR>(M);
 	}
 
-	static Algebra<T_SCALAR_TYPE>
-	cay_inv (const Group<T_SCALAR_TYPE>& g)
-	{ return fromRotationMatrix(2.0*(g.toRotationMatrix()-Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity())*(g.toRotationMatrix()+Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()).inverse()); }
+	static Algebra<T_SCALAR>
+	cay_inv (const Group<T_SCALAR>& g)
+	{ return fromRotationMatrix(2.0*(g.toRotationMatrix()-Eigen::Matrix<T_SCALAR,3,3>::Identity())*(g.toRotationMatrix()+Eigen::Matrix<T_SCALAR,3,3>::Identity()).inverse()); }
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,3>
+	Eigen::Matrix<T_SCALAR,3,3>
 	dCayRInv () const
-	{ return Eigen::Matrix<T_SCALAR_TYPE,3,3>::Identity()-0.5*this->toRotationMatrix()+0.25*this->toVector()*(this->toVector().transpose()); }
+	{ return Eigen::Matrix<T_SCALAR,3,3>::Identity()-0.5*this->toRotationMatrix()+0.25*this->toVector()*(this->toVector().transpose()); }
 
-	Algebra<T_SCALAR_TYPE>
-	dCayRInv (const Algebra<T_SCALAR_TYPE>& g) const
-	{ return Algebra<T_SCALAR_TYPE>(this->dCayRInv()*g.toVector()); }
+	Algebra<T_SCALAR>
+	dCayRInv (const Algebra<T_SCALAR>& g) const
+	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.toVector()); }
 
 	/**
 	 * \return the axis-angle representation of `*this`.
 	 */
-	Eigen::AngleAxis<T_SCALAR_TYPE>
+	Eigen::AngleAxis<T_SCALAR>
 	toAngleAxis ( ) const
-	{ return Eigen::AngleAxis<T_SCALAR_TYPE>(m_v.norm(),m_v.normalized()); }
+	{ return Eigen::AngleAxis<T_SCALAR>(m_v.norm(),m_v.normalized()); }
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,3>
+	Eigen::Matrix<T_SCALAR,3,3>
 	toRotationMatrix ( ) const
 	{
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> mat;
-		mat <<	T_SCALAR_TYPE(0),		-m_v[2],	m_v[1],
-				m_v[2],		T_SCALAR_TYPE(0),		-m_v[0],
-				-m_v[1],	m_v[0],		T_SCALAR_TYPE(0);
+		Eigen::Matrix<T_SCALAR,3,3> mat;
+		mat <<	T_SCALAR(0),		-m_v[2],	m_v[1],
+				m_v[2],		T_SCALAR(0),		-m_v[0],
+				-m_v[1],	m_v[0],		T_SCALAR(0);
 		return mat;
 	}
 
-	static Algebra<T_SCALAR_TYPE>
-	fromRotationMatrix (const Eigen::Matrix<T_SCALAR_TYPE,3,3>& m)
+	static Algebra<T_SCALAR>
+	fromRotationMatrix (const Eigen::Matrix<T_SCALAR,3,3>& m)
 	{
-		return Algebra<T_SCALAR_TYPE>(m(2,1),m(0,2),m(1,0));
+		return Algebra<T_SCALAR>(m(2,1),m(0,2),m(1,0));
 	}
 
-	Eigen::Matrix<T_SCALAR_TYPE,3,1>
+	Eigen::Matrix<T_SCALAR,3,1>
 	toVector ( ) const
 	{ return m_v; }
 
@@ -296,46 +296,46 @@ public:
 	 *	\f[ \widehat\omega = \omega\cdot\left(\widehat J_0,\widehat J_1,\widehat J_2\right)^T. \f]
 	 * \return the `i`-th generator matrix.
 	 */
-	static Eigen::Matrix<T_SCALAR_TYPE,3,3>
+	static Eigen::Matrix<T_SCALAR,3,3>
 	GeneratorMatrix (int const i)
 	{
-		Eigen::Matrix<T_SCALAR_TYPE,3,3> res(Eigen::Matrix<T_SCALAR_TYPE,3,3>::Zero());
-		if (i == 0)			{ res(1,2) = T_SCALAR_TYPE(-1); res(2,1) = T_SCALAR_TYPE(1);  }
-		else if (i == 1)	{ res(0,2) = T_SCALAR_TYPE(1);  res(2,0) = T_SCALAR_TYPE(-1); }
-		else				{ res(0,1) = T_SCALAR_TYPE(-1); res(1,0) = T_SCALAR_TYPE(1);  }
+		Eigen::Matrix<T_SCALAR,3,3> res(Eigen::Matrix<T_SCALAR,3,3>::Zero());
+		if (i == 0)			{ res(1,2) = T_SCALAR(-1); res(2,1) = T_SCALAR(1);  }
+		else if (i == 1)	{ res(0,2) = T_SCALAR(1);  res(2,0) = T_SCALAR(-1); }
+		else				{ res(0,1) = T_SCALAR(-1); res(1,0) = T_SCALAR(1);  }
 		return res;
 	}
 
-	static Eigen::Matrix<T_SCALAR_TYPE,3,1>
+	static Eigen::Matrix<T_SCALAR,3,1>
 	GeneratorVector (int const i)
 	{
-		Eigen::Matrix<T_SCALAR_TYPE,3,1> res(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero());
-		res(i) = T_SCALAR_TYPE(1);
+		Eigen::Matrix<T_SCALAR,3,1> res(Eigen::Matrix<T_SCALAR,3,1>::Zero());
+		res(i) = T_SCALAR(1);
 		return res;
 	}
 
-	static Algebra<T_SCALAR_TYPE>
+	static Algebra<T_SCALAR>
 	Generator (int const i)
 	{ return Algebra(Algebra::GeneratorVector(i)); }
 
-	static Algebra<T_SCALAR_TYPE>
+	static Algebra<T_SCALAR>
 	Zero ( )
-	{ return Algebra(Eigen::Matrix<T_SCALAR_TYPE,3,1>::Zero()); }
+	{ return Algebra(Eigen::Matrix<T_SCALAR,3,1>::Zero()); }
 };
 
 } // namespace SO3
 
-template <typename T_SCALAR_TYPE>
+template <typename T_SCALAR>
 std::ostream&
-operator<< (std::ostream& stream, SO3::Algebra<T_SCALAR_TYPE> const& g)
+operator<< (std::ostream& stream, SO3::Algebra<T_SCALAR> const& g)
 {
 	stream << g.v();
 	return stream;
 }
 
-template <typename T_SCALAR_TYPE>
-const SO3::Algebra<T_SCALAR_TYPE>
-operator* (T_SCALAR_TYPE s, const SO3::Algebra<T_SCALAR_TYPE> g)
+template <typename T_SCALAR>
+const SO3::Algebra<T_SCALAR>
+operator* (T_SCALAR s, const SO3::Algebra<T_SCALAR> g)
 { return g*s; }
 
 #endif

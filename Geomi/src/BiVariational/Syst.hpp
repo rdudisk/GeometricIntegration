@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 
-//#include "Common_csv.hpp"
+namespace BiVariational {
 
 template <typename T_SCALAR, typename T_Q, typename T_VEL>
 class Syst
@@ -30,6 +30,10 @@ public:
 	: m_coord(coord), m_pos(pos)
 	{ }
 
+	Syst (CoordVec coord, T_Q pos, VelVec vel)
+	: m_coord(coord), m_pos(pos), m_vel(vel)
+	{ }
+
 	~Syst ( )
 	{ }
 
@@ -40,6 +44,10 @@ public:
 	void
 	coord (CoordVec b)
 	{ m_coord = b; }
+
+	void
+	coord (int i, T_SCALAR s)
+	{ m_coord[i] = s; }
 	
 	T_Q
 	pos ( ) const
@@ -57,5 +65,7 @@ public:
 	vel (VelVec v)
 	{ m_vel = v; }
 };
+
+} // namespace BiVariational
 
 #endif

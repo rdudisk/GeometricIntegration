@@ -9,6 +9,8 @@
 #include "src/Common/LieAlgebraBase.hpp"
 #include "src/Common/SO3_Group.hpp"
 #include "src/Common/SO3_Algebra.hpp"
+#include "src/Common/SE3_Group.hpp"
+#include "src/Common/SE3_Algebra.hpp"
 #include "src/Common/csv.hpp"
 #include "src/Common/Syst.hpp"
 #include "src/Common/DiscSyst.hpp"

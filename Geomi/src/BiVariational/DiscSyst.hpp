@@ -6,6 +6,8 @@
 #include <cmath>
 #include <vector>
 
+namespace BiVariational {
+
 template <typename T_SCALAR, typename T_Q, typename T_VEL>
 class DiscSyst
 {
@@ -33,6 +35,28 @@ public:
 
 	/* Accessors and setters */
 
+	void
+	setSize (const size_t i, const size_t j)
+	{
+		m_size[0] = i;
+		m_size[1] = j;
+		m_node.resize(i*j);
+
+		std::vector<T_SCALAR> default_coord(2);
+		default_coord[0] = 0.0; default_coord[1] = 0.0;
+		T_Q default_pos;
+		std::vector<T_VEL> default_vel(2);
+		default_vel[0] = T_VEL(); default_vel[1] = T_VEL();
+
+		Syst<T_SCALAR,T_Q,T_VEL> default_node(default_coord,default_pos,default_vel);
+
+		int k;
+
+		for (k=0; k<i*j; k++) {
+			m_node[k] = default_node;
+		}
+	}
+
 	Syst<T_SCALAR,T_Q,T_VEL>
 	node (const size_t i, const size_t j) const
 	{ return m_node[getIndex(i,j)]; }
@@ -50,8 +74,20 @@ public:
 	coord (const size_t i, const size_t j, const CoordVec b)
 	{ m_node[getIndex(i,j)].coord(b); }
 
+	T_SCALAR
+	step_size (const size_t i, const size_t j, const size_t dir)
+	{
+		T_SCALAR t0 = m_node[getIndex(i,j)].coord()[dir];
+		T_SCALAR t1;
+		if (dir==0)
+			t1 = m_node[getIndex(i+1,j)].coord()[0];
+		else
+			t1 = m_node[getIndex(i,j+1)].coord()[1];
+		return t1-t0;
+	}
+
 	T_Q
-	pos (const size_t i) const
+	pos (const size_t i, const size_t j) const
 	{ return m_node[getIndex(i,j)].pos(); }
 
 	void
@@ -69,6 +105,28 @@ public:
 	static const unsigned int
 	dof ( )
 	{ return T_Q::DOF; }
+
+	/**
+	 * Set the base space discretization as a linear interpolation constisting in \p n_steps steps of length
+	 * \p step_size starting at \p inf_lim.
+	 * \warning This completely overwrites the entire data content of `*this`.
+	 */
+	void
+	baselinstep (T_SCALAR time_inf_lim, T_SCALAR time_step_size, T_SCALAR space_inf_lim, T_SCALAR space_step_size)
+	{
+		int i,j;
+		std::vector<T_SCALAR> c(2);
+		for (i=0; i<m_size[0]; i++) {
+			c[0] = time_inf_lim+i*time_step_size;
+			for (j=0; j<m_size[1]; j++) {
+				c[1] = space_inf_lim+j*space_step_size;
+				coord(i,j,c);
+			}
+		}
+	}
+
 };
+
+}
 
 #endif

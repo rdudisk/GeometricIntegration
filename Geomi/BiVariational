@@ -1,0 +1,29 @@
+#ifndef DEF_BIVARIATIONAL
+#define DEF_BIVARIATIONAL
+
+#include "Common"
+
+#include "NOX.H"
+#include "NOX_Epetra.H"
+
+#include <Epetra_config.h>
+#ifdef HAVE_MPI
+	#include <mpi.h>
+	#include <Epetra_MpiComm.h>
+#else
+	#include <Epetra_SerialComm.h>
+#endif
+#include <Epetra_Map.h>
+#include <Epetra_Vector.h>
+#include <Epetra_Version.h>
+
+#include "src/BiVariational/Syst.hpp"
+#include "src/BiVariational/DiscSyst.hpp"
+#include "src/BiVariational/Abstract_LieProblem.hpp"
+#include "src/BiVariational/StepInternals.hpp"
+#include "src/BiVariational/Step.hpp"
+#include "src/BiVariational/Integrator.hpp"
+
+#endif
+
+/* vim: set filetype=cpp et sw=2 ts=2 ai: */
