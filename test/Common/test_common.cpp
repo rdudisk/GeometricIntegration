@@ -44,12 +44,69 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 
 	/* SO(3) tests */
 
-	typedef SO3::Group<double> Group;
-	typedef SO3::Algebra<double> Algebra;
+	typedef SO3::Group<double> SO3G;
+	typedef SO3::Algebra<double> SO3A;
 
-	Algebra w1(1.1,2.8,1.9);
-	Algebra w2 = Algebra::cay_inv(w1.cay());
+	SO3A w1(1.1,2.8,1.9);
+	SO3A w2 = SO3A::cay_inv(w1.cay());
 
 	for (i=0; i<3; i++)
 		BOOST_TEST ( w1[i] == w2[i] );
+
+	/* SE(3) tests ***********************************************************/
+
+	typedef SE3::Group<double> SE3G;
+	typedef SE3::Algebra<double> SE3A;
+
+	SE3G g1, g2;
+	SE3A a1, a2, a3, a4;
+
+	/* Group inverse */
+	g1 = SE3G::Random();
+	g2 = g1*(g1.inverse());
+
+	BOOST_TEST ( g2.isApprox(SE3G::Identity()) );
+
+	/* 3D vector transformation */
+
+	Eigen::Matrix<double,3,1> v3D1 = Eigen::Matrix<double,3,1>::Random().normalized();
+	Eigen::Matrix<double,3,1> v3D2 = g1.transformVector(v3D1) - g1.trans();
+	Eigen::Matrix<double,3,1> v3D3 = g1.rotateVector(v3D1);
+
+	BOOST_TEST ( v3D1.norm() == v3D2.norm() );
+	BOOST_TEST ( v3D1.norm() == v3D3.norm() );
+
+	for (i=0; i<3; i++)
+		BOOST_TEST ( v3D2[i] == v3D3[i] );
+
+	/* Algebra inverse */
+	a1 = SE3A::Random();
+	a2 = a1+(a1.inverse());
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a2[i] == 0.0 );
+
+	/* Ad_star */
+	/* Test the property Ad^*_{g^{-1}}\circ Ad^*_g = Ad^*_e */
+	a1 = SE3A::Random();
+	g1 = SE3G::Random();
+	g2 = g1.inverse();
+	a3 = SE3A::static_Ad_star(g1,SE3A::static_Ad_star(g2,a1));
+	a4 = SE3A::static_Ad_star(SE3G::Identity(),a1);
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a3[i] == a4[i] );
+
+	/* Cayley and inverse */
+	a1 = SE3A::Random();
+	a2 = SE3A::cay_inv(a1.cay());
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a1[i] == a2[i] );
+
+	g1 = SE3A::Zero().cay();
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( g1.isApprox(SE3G::Identity()) );
+
 }

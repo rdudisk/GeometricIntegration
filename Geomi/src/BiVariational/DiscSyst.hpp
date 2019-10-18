@@ -79,6 +79,10 @@ public:
 	{
 		T_SCALAR t0 = m_node[getIndex(i,j)].coord()[dir];
 		T_SCALAR t1;
+		if ((dir==0 && i==m_size[0]-1) || (dir==1 && j==m_size[1]-1)) {
+			std::cout << "Error, I can't give you the step in dir " << dir << " at point " << i << "," << j << std::endl;
+			return 0;
+		}
 		if (dir==0)
 			t1 = m_node[getIndex(i+1,j)].coord()[0];
 		else
@@ -98,9 +102,17 @@ public:
 	vel (const size_t i, const size_t j) const
 	{ return m_node[getIndex(i,j)].vel(); }
 
+	T_VEL
+	vel (const size_t i, const size_t j, const size_t dir) const
+	{ return m_node[getIndex(i,j)].vel(dir); }
+
 	void
 	vel (const size_t i, const size_t j, const VelVec v)
 	{ m_node[getIndex(i,j)].vel(v); }
+
+	void
+	vel (const size_t i, const size_t j, const size_t dir, const T_VEL v)
+	{ m_node[getIndex(i,j)].vel(dir,v); }
 
 	static const unsigned int
 	dof ( )

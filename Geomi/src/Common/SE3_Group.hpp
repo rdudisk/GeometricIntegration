@@ -78,6 +78,11 @@ public:
 	void
 	trans (const Eigen::Matrix<T_SCALAR,3,1>& v)
 	{ m_trans = v; }
+	
+	void
+	trans (const size_t i, const T_SCALAR s)
+	// TODO check index domain
+	{ m_trans[i] = s; }
 
 	/**
 	 * \return the quaternion representation of the rotation.
@@ -126,6 +131,7 @@ public:
 	q (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
+	/*
 	T_SCALAR const&
 	operator[] (size_t index) const
 	{ return m_trans[index-3]; }
@@ -133,6 +139,7 @@ public:
 	T_SCALAR&
 	operator[] (size_t index)
 	{ return m_trans[index-3]; }
+	*/
 
 	/* Group operations */
 
@@ -141,7 +148,7 @@ public:
 	 */
 	Group<T_SCALAR>
 	inverse( ) const
-	{ return Group<T_SCALAR>(m_q.inverse(),-m_trans); }
+	{ return Group<T_SCALAR>(m_q.inverse(),-m_q.toRotationMatrix().transpose()*m_trans); }
 
 	/**
 	 * \return the element representing the group identity for operation `*`.
@@ -149,6 +156,10 @@ public:
 	static Group<T_SCALAR>
 	Identity ( )
 	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::Identity(),Eigen::Matrix<T_SCALAR,3,1>::Zero()); }
+
+	static Group<T_SCALAR>
+	Random ( )
+	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::UnitRandom(),Eigen::Matrix<T_SCALAR,3,1>::Zero()); }
 
 	/* Group operation is '*' and not '+' since we are used to the matrix representation,
 	 * in which case the mutliplication is the group operation */
@@ -181,6 +192,12 @@ public:
 		return this->rotationMatrix()*v+this->m_trans;
 	}
 
+	Eigen::Matrix<T_SCALAR,3,1>
+	rotateVector (const Eigen::Matrix<T_SCALAR,3,1>& v) const
+	{
+		return this->rotationMatrix()*v;
+	}
+
 	/**
 	 * Implements the product of the matrix representation of the rotation `*this`
 	 * and the voctor \p v.
@@ -207,28 +224,6 @@ public:
 		M(3,3) = T_SCALAR(1);
 		return M;
 	}
-
-	/**
-	 * \return the axis-angle representation of the rotation.
-	 */
-	/*
-	Eigen::Matrix<T_SCALAR,3,3>
-	toAxisAngle ( ) const
-	{ return Eigen::AngleAxis<T_SCALAR>(m_q); }
-	*/
-
-	/**
-	 * \return the vector representation of the rotation, that is the vector \f$\vec v\f$
-	 * such that the rotation of any given vector \f$\vec u\f$ is the result of \f$vec v\wedge\vec u\f$.
-	 */
-	/*
-	Eigen::Matrix<T_SCALAR,3,1>
-	toVector ( ) const
-	{
-		Eigen::AngleAxis<T_SCALAR> aa(m_q);
-		return aa.angle()*aa.axis();
-	}
-	*/
 
 	bool
 	isApprox (Group<T_SCALAR> const& g) const

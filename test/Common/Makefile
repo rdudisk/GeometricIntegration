@@ -1,6 +1,6 @@
 all: test_common
 
-include Makefile.export.NOX
+include /usr/local/trilinos/include/Makefile.export.NOX
 
 CXX=$(NOX_CXX_COMPILER)
 CC=$(NOX_C_COMPILER)
@@ -21,3 +21,4 @@ DEFINES=-DMYAPP_EPETRA
 
 test_common: test_common.cpp
 	$(CXX) $(CXX_FLAGS) -g test_common.cpp -o test_common $(LINK_FLAGS) $(INCLUDE_DIRS) -I./../../ $(DEFINES) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
+	#$(CXX) $(CXX_FLAGS) -g test_common.cpp -o test_common -I./../../ -lgsl -lgslblas -lm

@@ -42,7 +42,7 @@ public:
 		printParams.set("MyPID", m_comm->MyPID());
 		printParams.set("Output Precision", 3);
 		printParams.set("Output Processor", 0);
-		bool verbose = true;
+		bool verbose = false;
 		if (verbose)
 			printParams.set("Output Information",
 					NOX::Utils::OuterIteration +
@@ -75,7 +75,8 @@ public:
 		linearSolverParameters.set("Aztec Solver","GMRES");
 		linearSolverParameters.set("Max Iterations",800);
 		linearSolverParameters.set("Tolerance",1e-4);
-		linearSolverParameters.set("Preconditioner","New Ifpack");
+		//linearSolverParameters.set("Preconditioner","New Ifpack");
+		linearSolverParameters.set("Preconditioner","None");
 		linearSolverParameters.set("Preconditioner Reuse Policy","Reuse");
 		linearSolverParameters.set("Max Age Of Prec",5);
 
@@ -105,8 +106,9 @@ public:
 		//Teuchos::RCP<NOX::Epetra::Group> grpPtr =
 		this->m_grp = Teuchos::rcp(new NOX::Epetra::Group(printParams,iReq,initialGuess,linSys));
 
+		/*
 		Teuchos::RCP<NOX::StatusTest::NormF> absresid = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-8));
-		Teuchos::RCP<NOX::StatusTest::NormF> relresid = Teuchos::rcp(new NOX::StatusTest::NormF(*m_grp,1.0e-2));
+		Teuchos::RCP<NOX::StatusTest::NormF> relresid = Teuchos::rcp(new NOX::StatusTest::NormF(*m_grp.get(),1.0e-2));
 		Teuchos::RCP<NOX::StatusTest::NormUpdate> update = Teuchos::rcp(new NOX::StatusTest::NormUpdate(1.0e-5));
 		Teuchos::RCP<NOX::StatusTest::NormWRMS> wrms = Teuchos::rcp(new NOX::StatusTest::NormWRMS(1.0e-2,1.0e-8));
 		Teuchos::RCP<NOX::StatusTest::Combo> converged = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::AND));
@@ -114,13 +116,18 @@ public:
 		converged->addStatusTest(relresid);
 		converged->addStatusTest(update);
 		converged->addStatusTest(wrms);
-		Teuchos::RCP<NOX::StatusTest::MaxIters> maxiters = Teuchos::rcp(new NOX::StatusTest::MaxIters(50));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> maxiters = Teuchos::rcp(new NOX::StatusTest::MaxIters(20));
 		Teuchos::RCP<NOX::StatusTest::FiniteValue> fv = Teuchos::rcp(new NOX::StatusTest::FiniteValue);
 		Teuchos::RCP<NOX::StatusTest::Combo> combo = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR));
 		combo->addStatusTest(converged);
 		combo->addStatusTest(maxiters);
 		combo->addStatusTest(fv);
 		this->m_statusTests = combo;
+		*/
+		// Alternative test
+		Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-8,NOX::StatusTest::NormF::Unscaled));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(20));
+		this->m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
 
 		this->m_solver = NOX::Solver::buildSolver(this->m_grp,this->m_statusTests,this->m_solverParametersPtr);
 	}
@@ -145,13 +152,19 @@ public:
 
 		try {
 			m_internals->setupStep();
-			m_solver->reset(this->m_internals->getInitialGuess());
+			m_solver->reset(NOX::Epetra::Vector(this->m_internals->getInitialGuess()));
 			NOX::StatusTest::StatusType status = m_solver->solve();
-			//const NOXGroup<T_Q,1>& solnGrp = dynamic_cast<const NOXGroup<T_VEL,1>&>(m_solver->getSolutionGroup());
-			//const NOXVector<T_Q::DOF>& solnVec = dynamic_cast<const NOXVector<T_VEL::DOF>&>(solnGrp.getX());
+			const NOX::Epetra::Group& finalGroup = dynamic_cast<const NOX::Epetra::Group&>(m_solver->getSolutionGroup());
+			const Epetra_Vector& solution = (dynamic_cast<const NOX::Epetra::Vector&>(finalGroup.getX())).getEpetraVector();
 
-			//if (status != NOX::StatusTest::Converged)
-				//success = false;
+
+			//std::cout << "Approximate solution:" << std::endl << solution  << std::endl;
+
+			if (status != NOX::StatusTest::Converged)
+				success = false;
+			else {
+				m_internals->setSolution(solution);
+			}
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
 
 		std::cout << "makeStep success: " << success << std::endl;
@@ -163,18 +176,6 @@ public:
 
 		return success;
 	}
-
-	/*
-	void
-	test () const
-	{
-		int dof = 6;
-		int n_space_steps = m_problem->size(1);
-		const int numGlobalEntries = dof * n_space_steps;
-
-		m_internals->test();
-	}
-	*/
 };
 } // namespace Variational
 

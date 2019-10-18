@@ -27,7 +27,7 @@ protected:
 
 public:
 	Algebra<T_SCALAR> ( )
-	: m_rot(Eigen::Matrix<T_SCALAR,3,1>::Zero())
+	: m_rot(Eigen::Matrix<T_SCALAR,3,1>::Zero()), m_trans(Eigen::Matrix<T_SCALAR,3,1>::Zero())
 	{ }
 
 	Algebra<T_SCALAR> (const Eigen::Matrix<T_SCALAR,3,1>& rot, const Eigen::Matrix<T_SCALAR,3,1>& trans)
@@ -97,7 +97,10 @@ public:
 	/** Implements \f$xi.Ad_star(g) = Ad^*_g(xi)\f$ */
 	Algebra<T_SCALAR>
 	Ad_star (const Group<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(g.rotationMatrix().transpose()*m_rot-g.trans().cross(g.rotationMatrix().transpose()*m_trans),g.rotationMatrix().transpose()*m_trans); }
+	{
+		Group<T_SCALAR> f = g.inverse();
+		return Algebra<T_SCALAR>(f.rotationMatrix()*m_rot+f.trans().cross(f.rotationMatrix()*m_trans),f.rotationMatrix()*m_trans);
+	}
 
 	/* Other operations */
 
@@ -121,7 +124,7 @@ public:
 
 	Eigen::Matrix<T_SCALAR,3,1>
 	trans ( ) const
-	{ return m_rot; } 
+	{ return m_trans; } 
 
 	void
 	trans (const Eigen::Matrix<T_SCALAR,3,1>& vec)
@@ -135,8 +138,6 @@ public:
 	operator[] (size_t index)
 	{ return (index<3) ? m_rot[index] : m_trans[index-3]; }
 	
-	// Les fonctions de normalisation sont-elles vraiment utiles ?
-	/*
 	void
 	normalizeRotation ( )
 	{ m_rot.normalize(); }
@@ -151,16 +152,20 @@ public:
 
 	T_SCALAR
 	norm ( ) const
-	{ return m_rot.norm(); }
+	{
+		double n1 = m_rot.norm(), n2 = m_trans.norm();
+		return sqrt(n1*n1+n2*n2);
+	}
 
+	// vrai ?
 	T_SCALAR
 	angle ( ) const
 	{ return m_rot.norm(); }
 
+	// vrai ?
 	Eigen::Matrix<T_SCALAR,3,1>
 	axis ( ) const
 	{ return m_rot.normalized(); }
-	*/
 
 	/**
 	 * Implements the exponential map \f$\exp:\mathfrak{so}(3)\rightarrow SO(3)\f$ evalutated at `*this`.
@@ -347,6 +352,10 @@ public:
 	static Algebra<T_SCALAR>
 	Zero ( )
 	{ return Algebra(Eigen::Matrix<T_SCALAR,6,1>::Zero()); }
+
+	static Algebra<T_SCALAR>
+	Random ( )
+	{ return Algebra(Eigen::Matrix<T_SCALAR,6,1>::Random()); }
 };
 
 } // namespace SO3

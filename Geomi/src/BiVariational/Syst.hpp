@@ -61,9 +61,17 @@ public:
 	vel ( ) const
 	{ return m_vel; }
 
+	T_VEL
+	vel (int i) const
+	{ return m_vel[i]; }
+
 	void
-	vel (VelVec v)
-	{ m_vel = v; }
+	vel (VelVec vel)
+	{ m_vel = vel; }
+
+	void
+	vel (int i, T_VEL v)
+	{ m_vel[i] = v; }
 };
 
 } // namespace BiVariational
