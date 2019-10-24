@@ -63,6 +63,10 @@ public:
 	dLdv1 (const Algebra g)
 	{ return m_Constraint.asDiagonal()*(g.toVector()-Algebra::GeneratorVector(5)); }
 
+	Eigen::Matrix<double,6,6>
+	d2Ldv0 (const Algebra g)
+	{ return m_Inertia.asDiagonal(); }
+
 	double
 	coeffCFL (double young, double poisson, double rho, double alpha=2.0)
 	{ return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
@@ -165,14 +169,14 @@ main (int argc, char* argv[])
 	double young = 5.0e3;
 	double poisson = 0.35;
 	std::cout << "Condition CFL: h = s*" << problem.coeffCFL(young,poisson,rho) << std::endl;
-	//problem.setInertia(area,rho);
-	//problem.setConstraint(area,young,poisson);
+	problem.setInertia(area,rho);
+	problem.setConstraint(area,young,poisson);
 
 	int n_time_steps = 5, n_space_steps = 4;
 	problem.setSize(n_time_steps,n_space_steps);
 
 	// linspace
-	double h = 0.05, s = 0.1;
+	double h = 0.001, s = 0.1;
 	problem.baselinstep(0.0,h,0.0,s);
 	
 	Eigen::Matrix<double,6,1> v_eta0;

@@ -42,7 +42,7 @@ public:
 		printParams.set("MyPID", m_comm->MyPID());
 		printParams.set("Output Precision", 3);
 		printParams.set("Output Processor", 0);
-		bool verbose = false;
+		bool verbose = true;
 		if (verbose)
 			printParams.set("Output Information",
 					NOX::Utils::OuterIteration +
@@ -94,13 +94,19 @@ public:
 
 		
 		Teuchos::RCP<NOX::Epetra::Interface::Required> iReq = internals_rcp;
-		Teuchos::RCP<NOX::Epetra::Interface::Jacobian> iJac = MF;
+		Teuchos::RCP<NOX::Epetra::Interface::Jacobian> iJac = internals_rcp; //MF;
 		Teuchos::RCP<NOX::Epetra::Interface::Preconditioner> iPrec = FD;
 		Teuchos::RCP<NOX::Epetra::LinearSystemAztecOO> linSys
 			= Teuchos::rcp(new NOX::Epetra::LinearSystemAztecOO(
 						printParams,
 						linearSolverParameters,
+						iJac, internals_rcp->jacobian(), iPrec, FD, *m_soln));
+		/*
+			= Teuchos::rcp(new NOX::Epetra::LinearSystemAztecOO(
+						printParams,
+						linearSolverParameters,
 						iJac, MF, iPrec, FD, *m_soln));
+						*/
 
 		NOX::Epetra::Vector initialGuess(m_soln,NOX::Epetra::Vector::CreateView);
 		//Teuchos::RCP<NOX::Epetra::Group> grpPtr =
@@ -162,9 +168,8 @@ public:
 
 			if (status != NOX::StatusTest::Converged)
 				success = false;
-			else {
-				m_internals->setSolution(solution);
-			}
+			
+			m_internals->setSolution(solution);
 		} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
 
 		std::cout << "makeStep success: " << success << std::endl;

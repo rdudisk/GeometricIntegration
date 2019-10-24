@@ -23,8 +23,8 @@ public:
 	virtual Eigen::Matrix<double,T_Q::DOF,1>
 	dLdv1 (const T_VEL) = 0;
 
-	//virtual Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>
-	//JvdLdv (const T_VEL) = 0;
+	virtual Eigen::Matrix<double,T_Q::DOF,T_Q::DOF>
+	d2Ldv0 (const T_VEL) = 0;
 };
 
 } // namespace Abstract

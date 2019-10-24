@@ -3,15 +3,72 @@
 
 namespace BiVariational {
 
-template <typename T_SCALAR, typename T_Q, typename T_VEL>
-class StepInternals : public NOX::Epetra::Interface::Required
+class MyEpetraOperator : public Epetra_Operator
 {
+protected:
+	Epetra_VbrMatrix* m_jacobian;
+
+public:
+	MyEpetraOperator ( )
+	{ }
+
+	~MyEpetraOperator ( )
+	{ }
+
+	int
+	SetUseTranspose (bool useTranspose)
+	{ return m_jacobian->SetUseTranspose(useTranspose); }
+
+	int
+	Apply (const Epetra_MultiVector& X, Epetra_MultiVector& Y) const
+	{ return m_jacobian->Apply(X,Y); }
+
+	int
+	ApplyInverse (const Epetra_MultiVector& X, Epetra_MultiVector& Y) const
+	{ return m_jacobian->ApplyInverse(X,Y); }
+	
+	double
+	NormInf () const
+	{ return m_jacobian->NormInf(); }
+
+	const char*
+	Label () const
+	{ return m_jacobian->Label(); }
+
+	bool
+	UseTranspose () const
+	{ return m_jacobian->UseTranspose(); }
+
+	bool
+	HasNormInf () const
+	{ return m_jacobian->HasNormInf(); }
+
+	const Epetra_Comm&
+	Comm () const
+	{ return m_jacobian->Comm(); }
+
+	const Epetra_Map&
+	OperatorDomainMap () const
+	{ return m_jacobian->OperatorDomainMap(); }
+
+	const Epetra_Map&
+	OperatorRangeMap () const
+	{ return m_jacobian->OperatorRangeMap(); }
+};
+
+template <typename T_SCALAR, typename T_Q, typename T_VEL>
+class StepInternals : public NOX::Epetra::Interface::Required, public NOX::Epetra::Interface::Jacobian//, public MyEpetraOperator
+{
+	//using MyEpetraOperator::m_jacobian;
+
 private:
 	Abstract::LieProblem<T_SCALAR,T_Q,T_VEL>* m_problem;
 	Epetra_Map* m_map;
 	Epetra_Comm* m_comm;
 
 	Teuchos::RCP<Epetra_Vector> m_initialGuess;
+	//Teuchos::RCP<Epetra_VbrMatrix> m_jacobianMatrix;
+	Teuchos::RCP<Epetra_VbrMatrix> m_jacobian;
 
 	int m_numLocalSystems;
 	int m_time_index;
@@ -50,13 +107,36 @@ public:
 
 		m_map = new Epetra_Map(numGlobalEntries,numLocalEntries,gblIndList,indexBase,comm);
 
-		if (gblIndList != NULL) {
-			delete [] gblIndList;
-			gblIndList = NULL;
-		}
-
 		m_initialGuess = Teuchos::rcp(new Epetra_Vector(*m_map));
 		m_initialGuess->PutScalar(0.0);
+
+		// TODO Matrice: vérifier
+		int* gblBlockIndList = new int [m_numLocalSystems];
+		for (i=0; i<m_numLocalSystems; i++)
+			gblBlockIndList[i] = myPID + i*numProcs;
+		int* rowSizeList = new int [m_numLocalSystems];
+		for (i=0; i<m_numLocalSystems; i++)
+			rowSizeList[i] = DOF;
+		Epetra_BlockMap blockMap(n_space_steps,m_numLocalSystems,gblBlockIndList,rowSizeList,indexBase,comm);
+
+		m_jacobian = Teuchos::rcp(new Epetra_VbrMatrix(Copy,blockMap,1));
+		//m_jacobian = new Epetra_VbrMatrix(Copy,blockMap,1);
+
+		int globalNode;
+		int* indices = new int [1];
+		for (i=0; i<m_numLocalSystems; i++) {
+			globalNode = gblBlockIndList[i];
+			indices[0] = globalNode;
+			m_jacobian->BeginInsertGlobalValues(globalNode,1,indices);
+			double* values = new double [DOF*DOF];
+			for (j=0; j<DOF*DOF; j++) {
+				values[j] = 1.0*j;
+			}
+			m_jacobian->SubmitBlockEntry(values,6,6,6);
+			m_jacobian->EndSubmitEntries();
+		}
+
+		m_jacobian->FillComplete();
 
 		m_time_index = 0;
 
@@ -64,6 +144,11 @@ public:
 		mu.resize(n_space_steps-1);
 
 		m_initialized = false;
+
+		delete [] gblIndList;
+		delete [] gblBlockIndList;
+		delete [] rowSizeList;
+		delete [] indices;
 	}
 
 	~StepInternals ()
@@ -269,6 +354,91 @@ public:
 
 		return true;
 	}
+
+	bool computeJacobian (const Epetra_Vector& x, Epetra_Operator& Jac)
+	{
+		Epetra_VbrMatrix* tmp_matrix = dynamic_cast<Epetra_VbrMatrix*>(&Jac);
+		//m_jacobian =
+		int i,j,k,l;
+		int* gblIndList = m_map->MyGlobalElements();
+		int myPID = m_comm->MyPID();
+		int numProcs = m_comm->NumProc();
+
+		Eigen::Matrix<double,DOF,DOF> tmp_jac, A, jac_problem;
+		Eigen::Matrix<double,DOF,1> tmp_x;
+		T_VEL xi;
+
+		Eigen::Matrix<double,3,1>
+			E1 = SO3::Algebra<double>::GeneratorVector(0),
+			E2 = SO3::Algebra<double>::GeneratorVector(1),
+			E3 = SO3::Algebra<double>::GeneratorVector(2);
+		std::vector<Eigen::Matrix<double,3,1>> v_E;
+		v_E.push_back(E1); v_E.push_back(E2); v_E.push_back(E3);
+		Eigen::Matrix<double,3,3>
+			hat_E1 = SO3::Algebra<double>::GeneratorMatrix(0),
+			hat_E2 = SO3::Algebra<double>::GeneratorMatrix(1),
+			hat_E3 = SO3::Algebra<double>::GeneratorMatrix(2);
+		std::vector<Eigen::Matrix<double,3,3>> v_hat_E;
+		v_hat_E.push_back(hat_E1); v_hat_E.push_back(hat_E2); v_hat_E.push_back(hat_E3);
+
+		int time_index = m_time_index, space_index;
+		double s, h = m_problem->step_size(time_index,0,0);
+
+		int globalNode;
+		int* gblBlockIndList = new int [m_numLocalSystems];
+		for (i=0; i<m_numLocalSystems; i++)
+			gblBlockIndList[i] = myPID + i*numProcs;
+		int* indices = new int [1];
+		double* values = new double [DOF*DOF];
+
+		for (j=0; j<m_numLocalSystems; j++) {
+			space_index = gblIndList[j*DOF]/DOF;
+
+			for (i=0; i<DOF; i++)
+				tmp_x[i] = x[i+j*DOF];
+			xi = T_VEL(tmp_x);
+
+			if (space_index<m_problem->size(1)-1) {
+				jac_problem = m_problem->d2Ldv0(xi);
+				for (i=0; i<3; i++) {
+					// TODO: vérifier indices matrice
+					A.block(0,0,3,3) = (-h/2.0)*v_hat_E[i]+(h*h/2.0)*(v_E[i]*xi.rot().transpose()+xi.rot()*v_E[i].transpose());
+					A.block(0,3,3,3) = Eigen::Matrix<double,3,3>::Zero();
+					A.block(3,0,3,3) = (h*h/4.0)*v_hat_E[i]*SO3::Algebra<double>(xi.trans()).toRotationMatrix();
+					A.block(3,3,3,3) = (-h/2.0)*v_hat_E[i];
+					tmp_jac.col(i) = A.transpose()*m_problem->dLdv0(xi) + (h*xi).dCayRInv().transpose()*jac_problem.col(i);
+				}
+				for (i=3; i<DOF; i++) {
+					// TODO: vérifier indices matrice
+					A.block(0,0,3,6) = Eigen::Matrix<double,3,6>::Zero();
+					A.block(3,3,3,3) = Eigen::Matrix<double,3,3>::Zero();
+					A.block(3,0,3,3) = (-h/2.0)*(Eigen::Matrix<double,3,3>::Identity()-(h/2.0)*xi.rotationMatrix())*v_hat_E[i-3];
+					tmp_jac.col(i) = A.transpose()*m_problem->dLdv0(xi) + (h*xi).dCayRInv().transpose()*jac_problem.col(i);
+				}
+			}
+			else {
+					tmp_jac = Eigen::Matrix<double,6,6>::Identity();
+			}
+
+			/* Fill the actual matrix */
+			for (i=0; i<m_numLocalSystems; i++) {
+				globalNode = gblBlockIndList[i];
+				indices[0] = globalNode;
+				tmp_matrix->BeginReplaceGlobalValues(globalNode,1,indices);
+				values = tmp_jac.data();
+				tmp_matrix->SubmitBlockEntry(values,6,6,6);
+				tmp_matrix->EndSubmitEntries();
+			}
+
+			tmp_matrix->FillComplete();
+		}
+
+		return true;
+	}
+
+	Teuchos::RCP<Epetra_VbrMatrix>
+	jacobian () const
+	{ return m_jacobian; }
 
 };
 
