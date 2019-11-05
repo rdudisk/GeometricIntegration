@@ -18,9 +18,9 @@ The main modules are:
   implements variational and Lie-variational methods for Lagrangian systems.
 
 The design concepts of Geomi are the following:
-- Ease of use. ...
-  However, the library is customizable; in particular, developping new
-  integrators within the framework is relatively easy.
+- Ease of use.
+  However, the internals are still accessible and make the library customizable;
+  in particular, developping new integrators within the framework is relatively easy.
 - Performance. The choice of `C++` and template classes is aimed towards
   efficiency and speed.
   Although some of the integrators could be faster if implemented for specific
@@ -41,6 +41,13 @@ NOX is a package from the [Trilinos](https://trilinos.github.io/) project.
 To install Trilinos, run
 
     # apt-get install trilinos-all-dev trilinos-doc
+
+or
+
+	$ cd ~
+	$ git clone https://github.com/trilinos/Trilinos
+	$ cd Trilinos
+	$ # TODO
 
 ### Eigen 3
 
@@ -77,9 +84,10 @@ If you want to be able to compile the documentation, you need to install
 
 ## Examples
 
-For the `Variational` module, an
-[example](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/Kepler)
-is given for the two-bodies problem.
+For the `Variational` module, an example
+is given for the [two-bodies problem](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/Kepler),
+and another one for the [rigid body problem](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody/Variational)
+illustrating the Lie variational integrators.
 Regarding the `RKMK` module, a solution for the rigid body problem is given
 [here](https://github.com/rdudisk/GeometricIntegration/tree/master/examples/RigidBody/RKMK).
 
