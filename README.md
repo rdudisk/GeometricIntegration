@@ -38,7 +38,7 @@ Hints about the process are given for debian-based systems.
 ### NOX
 
 NOX is a package from the [Trilinos](https://trilinos.github.io/) project.
-To install Trilinos, run
+To install Trilinos on debian, run
 
     # apt-get install trilinos-all-dev trilinos-doc
 
@@ -47,7 +47,11 @@ or
 	$ cd ~
 	$ git clone https://github.com/trilinos/Trilinos
 	$ cd Trilinos
-	$ # TODO
+	$ mkdir build/ ; cd build/
+	$ cp GEOMI_SRC_DIR/misc/do-configure .
+	$ ./do-configure
+	$ make
+	# make install
 
 ### Eigen 3
 
@@ -69,11 +73,6 @@ If includes directives do not work when you compile, you probably need to
 create a link (you need to adapt depending on the actual installation directory)
 
     # ln -s /usr/include/eigen3/Eigen /usr/local/include/Eigen
-
-<!--
-	Nécessaire ? Essayer sans d'abord
-	# apt-get install libmrpt-dev
--->
 
 ### Doxygen
 
