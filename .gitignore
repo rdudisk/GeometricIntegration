@@ -4,12 +4,8 @@ libs/
 reissner/
 .*
 !.gitignore
-examples/Kepler/Kepler
-examples/Kepler/results.csv
-examples/RigidBody/Variational/RigidBody
-examples/RigidBody/Variational/results.csv
-examples/RigidBody/RKMK/RigidBody
-examples/RigidBody/RKMK/results.csv
 animation/img/*.png
 testing
 results.csv
+RigidBody
+Kepler
