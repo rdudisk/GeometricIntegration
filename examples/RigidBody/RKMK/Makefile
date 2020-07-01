@@ -1,6 +1,6 @@
 all: RigidBody
 
-include Makefile.export.NOX
+include /usr/local/trilinos/include/Makefile.export.NOX
 
 CXX=$(NOX_CXX_COMPILER)
 CC=$(NOX_C_COMPILER)
