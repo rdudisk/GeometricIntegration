@@ -12,8 +12,6 @@ class NormalStepInternals : public ::Abstract::NOXStep<T_VEL,1>
 
 private:
 	Abstract::Problem<T_SCALAR,T_Q,T_VEL>* m_problem;
-	Epetra_Map* m_map;
-	Epetra_Comm* m_comm;
 
 	Teuchos::RCP<Epetra_Vector> m_initialGuess;
 	//Teuchos::RCP<Epetra_VbrMatrix> m_jacobianMatrix;
