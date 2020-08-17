@@ -24,5 +24,8 @@ solveur.o: solveur.cpp
 classes.o: classes.cpp
 	$(CXX) $(CXX_FLAGS) -c classes.cpp -o classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I../../ $(DEFINES)
 
+test: solveur
+	date && ./solveur > log.txt && date
+
 clean:
 	/bin/rm *.o

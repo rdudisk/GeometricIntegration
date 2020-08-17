@@ -110,7 +110,7 @@ private:
 
 public:
 	RigidBody ()
-	{ m_Inertia = Eigen::Matrix<double,6,6>::Identity; m_Constraint = m_Inertia; }
+	{ m_Inertia = Eigen::Matrix<double,6,6>::Identity(); m_Constraint = m_Inertia; }
 	
 	Eigen::Matrix<double,6,6>& Inertia ();
 	void Inertia (Eigen::Matrix<double,6,6> val);
@@ -136,7 +136,7 @@ public:
 	: m_problem(problem) { }
 
 	void setData (double h, Vec6 mu);
-	void setx0 (Vec6 x0);
+	void setx0 (Algebra x0);
 	double h () const;
 	Vec6 mu () const;
 	const NOXVector<6> getInitialGuess ();

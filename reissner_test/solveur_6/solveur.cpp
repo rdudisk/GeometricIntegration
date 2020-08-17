@@ -103,6 +103,11 @@ main (int argc, char* argv[])
 			problem.vel_space(0,j,Algebra(E4));
 			problem.vel_space(1,j,Algebra(E4));
 		}
+		std::cout << "*******************"
+			<< "\nnode 0, " << j
+			<< "\n\tpos " << problem.pos(0,j).matrix()
+			<< "\n\tvel_time " << problem.vel_time(0,j)
+			<< "\n\tvel_space " << problem.vel_space(0,j) << std::endl;
 	}
 
 	// Integration
@@ -133,7 +138,7 @@ main (int argc, char* argv[])
 				//solveme->setOM((h/2.0)*(problem.vel_time(i-2,j).rot()),(h/2.0)*(problem.vel_time(i-1,j).rot()));
 			//else
 				//solveme->setOM((h/2.0)*(problem.vel_time(i-1,j).rot()),(h/2.0)*(problem.vel_time(i-1,j).rot()));
-			solveme->setx0(x0);
+			solveme->setx0(x0.toVector());
 
 			success = true;
 			verbose = false;
@@ -152,6 +157,11 @@ main (int argc, char* argv[])
 			if (success) std::cout << "success!" << std::endl;
 			else std::cout << "fail!" << std::endl;
 
+			std::cout << "*******************"
+				<< "\nnode 0, " << j
+				<< "\n\tpos " << problem.pos(0,j).matrix()
+				<< "\n\tvel_time " << problem.vel_time(0,j)
+				<< "\n\tvel_space " << problem.vel_space(0,j) << std::endl;
 			// Update
 			problem.vel_time(i,j,x1);
 			problem.pos(i+1,j,problem.pos(i,j)*(h*x1).cay());
