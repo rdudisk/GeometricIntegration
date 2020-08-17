@@ -98,8 +98,11 @@ public:
 	Algebra<T_SCALAR>
 	Ad_star (const Group<T_SCALAR>& g) const
 	{
-		Group<T_SCALAR> f = g.inverse();
-		return Algebra<T_SCALAR>(f.rotationMatrix()*m_rot+f.trans().cross(f.rotationMatrix()*m_trans),f.rotationMatrix()*m_trans);
+		//Group<T_SCALAR> f = g.inverse();
+		//return Algebra<T_SCALAR>(f.rotationMatrix()*m_rot+f.trans().cross(f.rotationMatrix()*m_trans),f.rotationMatrix()*m_trans);
+		return Algebra<T_SCALAR>(g.rotationMatrix().transpose()*
+				(m_rot-g.trans().cross(m_trans)),
+				g.rotationMatrix().transpose()*m_trans);
 	}
 
 	/* Other operations */
@@ -232,7 +235,7 @@ public:
 							+ (4.0/den)*(W+0.5*W*W);
 		M.block(0,3,3,1) = (4.0/den)*(Eigen::Matrix<T_SCALAR,3,3>::Identity()+0.5*W+0.25*m_rot*(m_rot.transpose()))*m_trans;
 		M.block(3,0,1,3) = Eigen::Matrix<T_SCALAR,1,3>::Zero();
-		M(4,4) = 1.0;
+		M(3,3) = 1.0;
 		return Group<T_SCALAR>(M);
 	}
 
@@ -250,11 +253,26 @@ public:
 		M.block(3,0,3,3) = -0.5*(Eigen::Matrix<T_SCALAR,3,3>::Identity()-0.5*this->rotationMatrix())*toRotationMatrix(m_trans);
 		M.block(3,3,3,3) -= 0.5*this->rotationMatrix();
 		return M;
+		/* Autre implémentation
+		Eigen::Matrix<T_SCALAR,6,6> M = Eigen::Matrix<T_SCALAR,6,6>::Zero();
+		Eigen::Matrix<T_SCALAR,3,3> I = Eigen::Matrix<T_SCALAR,3,3>::Identity();
+		M.block(0,0,3,3) = I-0.5*this->rotationMatrix()+0.25*m_rot*(m_rot.transpose());
+		M.block(3,0,3,3) = -0.5*(I-0.5*this->rotationMatrix())*toRotationMatrix(m_trans);
+		M.block(3,3,3,3) = I-0.5*this->rotationMatrix();
+		return M;*/
 	}
 
 	Algebra<T_SCALAR>
 	dCayRInv (const Algebra<T_SCALAR>& g) const
 	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.toVector()); }
+
+	Eigen::Matrix<T_SCALAR,6,6>
+	dCayRInvStar () const
+	{ return (this->dCayRInv()).transpose(); }
+
+	Algebra<T_SCALAR>
+	dCayRInvStar (const Algebra<T_SCALAR>& g) const
+	{ return Algebra<T_SCALAR>(this->dCayRInvStar()*g.toVector()); }
 
 	/**
 	 * \return the axis-angle representation of `*this`.
@@ -295,6 +313,15 @@ public:
 	NOXVector<6>
 	toNOXVector ( ) const
 	{ return NOXVector<6>(this->toVector()); }
+
+	Eigen::Matrix<T_SCALAR,4,4>
+	toMatrix ( ) const
+	{
+		Eigen::Matrix<T_SCALAR,4,4> M = Eigen::Matrix<T_SCALAR,4,4>::Zero();
+		M.block(0,0,3,3) = this->rotationMatrix();
+		M.block(0,3,3,1) = this->m_trans;
+		return M;
+	}
 
 	/**
 	 * Implements the three generators of the skew matrix representation of \f$\mathfrak{so}(3)\f$.
