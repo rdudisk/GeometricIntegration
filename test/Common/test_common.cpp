@@ -5,6 +5,8 @@
 
 #include "Geomi/Common"
 
+#include "lie/lie_SE3_operator.hpp"
+
 BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 {
 	int i,j;
@@ -58,8 +60,14 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 	typedef SE3::Group<double> SE3G;
 	typedef SE3::Algebra<double> SE3A;
 
+	typedef Lie::SE3::Group<double> SE3Gok;
+	typedef Lie::SE3::Algebra<double> SE3Aok;
+	typedef Lie::SE3::Operator<double> SE3Ook;
+
 	SE3G g1, g2;
 	SE3A a1, a2, a3, a4;
+	SE3Gok G1, G2;
+	SE3Aok A1, A2, A3, A4;
 
 	/* Group inverse */
 	g1 = SE3G::Random();
@@ -109,4 +117,49 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 	for (i=0; i<6; i++)
 		BOOST_TEST ( g1.isApprox(SE3G::Identity()) );
 
+	/* Cayley */
+
+	Eigen::Matrix<double,6,1> v = Eigen::Matrix<double,6,1>::Random().normalized();
+	a1 = SE3A(v);
+	A1 = SE3Aok(v);
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a1[i] == A1.vect()[i] );
+
+	for (i=0; i<4; i++)
+		for (j=0; j<4; j++)
+			BOOST_TEST ( (a1.toMatrix())(i,j) == (A1.matrix())(i,j) );
+
+	g1 = a1.cay();
+	G1 = SE3Ook::cay(A1);
+	
+	for (i=0; i<4; i++)
+		for (j=0; j<4; j++)
+			BOOST_TEST ( (g1.matrix())(i,j) == (G1.matrix())(i,j) );
+
+	a1 = SE3A::cay_inv(g1);
+	A1 = SE3Ook::cay_inv(G1);
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a1[i] == A1.vect()[i] );
+
+	a1 = SE3A(v);
+	A1 = SE3Aok(v);
+	v = Eigen::Matrix<double,6,1>::Random().normalized();
+	a2 = SE3A(v);
+	A2 = SE3Aok(v);
+
+	a3 = a1.dCayRInvStar(a2);
+	A3 = SE3Ook::dcay_inv_star(A1,A2);
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a3[i] == A3.vect()[i] );
+
+	/* Ad */
+
+	A3 = SE3Ook::Ad_star(G1,A2);
+	a3 = a2.Ad_star(g1);
+
+	for (i=0; i<6; i++)
+		BOOST_TEST ( a3[i] == A3.vect()[i] );
 }
