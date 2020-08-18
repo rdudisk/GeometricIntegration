@@ -71,7 +71,7 @@ public:
 
 	void
 	operator*= (T_SCALAR s)
-	{ m_rot *= s; }
+	{ m_rot *= s; m_trans *= s; }
 	
 	/**
 	 * \return the dot product of `*this` by the scalar \p s.
