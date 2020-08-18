@@ -53,16 +53,6 @@ public:
 	void
 	operator+= (const Algebra<T_SCALAR>& g)
 	{ m_rot += g.rot(); m_trans += g.trans(); }
-
-	/**
-	 * \return the element representing the group identity for operation `+`.
-	 */
-	static Algebra<T_SCALAR>
-	Identity ( )
-	{
-		Algebra<T_SCALAR> res(Eigen::Matrix<T_SCALAR,6,1>::Zero());
-		return res;
-	}
 	
 	using LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,6,T_SCALAR>::operator+;
 	using LieAlgebraBase<Algebra<T_SCALAR>,Group<T_SCALAR>,6,T_SCALAR>::operator-;
@@ -86,22 +76,25 @@ public:
 	 * and \f$b\f$ is \p g.
 	 * \return the bracket operation between `*this` and \p g.
 	 */
+	// TODO: vérifier
 	Algebra<T_SCALAR>
 	bracket (const Algebra<T_SCALAR>& g) const
 	{ return Algebra<T_SCALAR>(m_rot.cross(g.v()),m_rot.cross(g.trans())-g.rot().cross(m_trans)); }
 
+	// TODO: vérifier
 	Algebra<T_SCALAR>
 	Ad (const Group<T_SCALAR>& g) const
 	{ return Algebra<T_SCALAR>(g.rotationMatrix()*m_rot,g.rotationMatrix()*m_trans+g.translationVector().cross(g.rotationMatrix()*m_rot)); }
 
 	/** Implements \f$xi.Ad_star(g) = Ad^*_g(xi)\f$ */
+	// TODO: améliorer
 	Algebra<T_SCALAR>
 	Ad_star (const Group<T_SCALAR>& g) const
 	{
 		//Group<T_SCALAR> f = g.inverse();
 		//return Algebra<T_SCALAR>(f.rotationMatrix()*m_rot+f.trans().cross(f.rotationMatrix()*m_trans),f.rotationMatrix()*m_trans);
 		return Algebra<T_SCALAR>(g.rotationMatrix().transpose()*
-				(m_rot-g.trans().cross(m_trans)),
+				(m_rot-g.translationVector().cross(m_trans)),
 				g.rotationMatrix().transpose()*m_trans);
 	}
 
@@ -109,28 +102,28 @@ public:
 
 	Eigen::Matrix<T_SCALAR,4,1>
 	operator* (const Eigen::Matrix<T_SCALAR,4,1>& vec) const
-	{ return this->toMatrix()*vec; }
+	{ return this->matrix()*vec; }
 
 	/* Accessors */
 
 	Eigen::Matrix<T_SCALAR,3,1>
-	rot ( ) const
+	rotationVector ( ) const
 	{ return m_rot; } 
 
 	void
-	rot (const Eigen::AngleAxis<T_SCALAR>& aa)
+	rotation (const Eigen::AngleAxis<T_SCALAR>& aa)
 	{ m_rot = aa.angle()*aa.axis(); }
 
 	void
-	rot (const Eigen::Matrix<T_SCALAR,3,1>& vec)
+	rotation (const Eigen::Matrix<T_SCALAR,3,1>& vec)
 	{ m_rot = vec; }
 
 	Eigen::Matrix<T_SCALAR,3,1>
-	trans ( ) const
+	translationVector ( ) const
 	{ return m_trans; } 
 
 	void
-	trans (const Eigen::Matrix<T_SCALAR,3,1>& vec)
+	translation (const Eigen::Matrix<T_SCALAR,3,1>& vec)
 	{ m_trans = vec; }
 
 	T_SCALAR const&
@@ -145,13 +138,14 @@ public:
 	normalizeRotation ( )
 	{ m_rot.normalize(); }
 
+	/*
 	Algebra<T_SCALAR>
 	normalizedRotation ( ) const
 	{
 		Algebra<T_SCALAR> res(*this);
 		res.normalizeRotation();
 		return res;
-	}
+	} */
 
 	T_SCALAR
 	norm ( ) const
@@ -160,6 +154,7 @@ public:
 		return sqrt(n1*n1+n2*n2);
 	}
 
+	/*
 	// vrai ?
 	T_SCALAR
 	angle ( ) const
@@ -169,6 +164,7 @@ public:
 	Eigen::Matrix<T_SCALAR,3,1>
 	axis ( ) const
 	{ return m_rot.normalized(); }
+	*/
 
 	/**
 	 * Implements the exponential map \f$\exp:\mathfrak{so}(3)\rightarrow SO(3)\f$ evalutated at `*this`.
@@ -230,12 +226,9 @@ public:
 		T_SCALAR	n =   m_rot.norm(),
 						den = 4.0+n*n;
 		Eigen::Matrix<T_SCALAR,3,3> W = this->rotationMatrix();
-		Eigen::Matrix<T_SCALAR,4,4> M;
-		M.block(0,0,3,3) = Eigen::Matrix<T_SCALAR,3,3>::Identity()
-							+ (4.0/den)*(W+0.5*W*W);
+		Eigen::Matrix<T_SCALAR,4,4> M = Eigen::Matrix<T_SCALAR,4,4>::Identity();
+		M.block(0,0,3,3) = Eigen::Matrix<T_SCALAR,3,3>::Identity() + (4.0/den)*(W+0.5*W*W);
 		M.block(0,3,3,1) = (4.0/den)*(Eigen::Matrix<T_SCALAR,3,3>::Identity()+0.5*W+0.25*m_rot*(m_rot.transpose()))*m_trans;
-		M.block(3,0,1,3) = Eigen::Matrix<T_SCALAR,1,3>::Zero();
-		M(3,3) = 1.0;
 		return Group<T_SCALAR>(M);
 	}
 
@@ -264,7 +257,7 @@ public:
 
 	Algebra<T_SCALAR>
 	dCayRInv (const Algebra<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.toVector()); }
+	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.vector()); }
 
 	Eigen::Matrix<T_SCALAR,6,6>
 	dCayRInvStar () const
@@ -272,7 +265,7 @@ public:
 
 	Algebra<T_SCALAR>
 	dCayRInvStar (const Algebra<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(this->dCayRInvStar()*g.toVector()); }
+	{ return Algebra<T_SCALAR>(this->dCayRInvStar()*g.vector()); }
 
 	/**
 	 * \return the axis-angle representation of `*this`.
@@ -283,8 +276,8 @@ public:
 	{ return Eigen::AngleAxis<T_SCALAR>(m_rot.norm(),m_rot.normalized()); }
 	*/
 
-	Eigen::Matrix<T_SCALAR,3,3>
-	toRotationMatrix (const Eigen::Matrix<T_SCALAR,3,1>& v) const
+	static Eigen::Matrix<T_SCALAR,3,3>
+	toRotationMatrix (const Eigen::Matrix<T_SCALAR,3,1>& v)
 	{
 		Eigen::Matrix<T_SCALAR,3,3> mat;
 		mat <<	T_SCALAR(0),		-v[2],	v[1],
@@ -302,7 +295,7 @@ public:
 	{ return Algebra<T_SCALAR>(Eigen::Matrix<T_SCALAR,3,1>(m(2,1),m(0,2),m(1,0)),m.block(0,3,3,1)); }
 
 	Eigen::Matrix<T_SCALAR,6,1>
-	toVector ( ) const
+	vector ( ) const
 	{ 
 		Eigen::Matrix<T_SCALAR,6,1> ret;
 		ret.head(3) = m_rot;
@@ -315,7 +308,7 @@ public:
 	{ return NOXVector<6>(this->toVector()); }
 
 	Eigen::Matrix<T_SCALAR,4,4>
-	toMatrix ( ) const
+	matrix ( ) const
 	{
 		Eigen::Matrix<T_SCALAR,4,4> M = Eigen::Matrix<T_SCALAR,4,4>::Zero();
 		M.block(0,0,3,3) = this->rotationMatrix();
@@ -335,6 +328,7 @@ public:
 	 *	\f[ \widehat\omega = \omega\cdot\left(\widehat J_0,\widehat J_1,\widehat J_2\right)^T. \f]
 	 * \return the `i`-th generator matrix.
 	 */
+	/*
 	static Eigen::Matrix<T_SCALAR,4,4>
 	GeneratorMatrix (int const i)
 	{
@@ -375,6 +369,26 @@ public:
 	static Algebra<T_SCALAR>
 	Generator (int const i)
 	{ return Algebra(Algebra::GeneratorVector(i)); }
+	*/
+
+	// TODO: check boudaries
+	static Algebra<T_SCALAR>
+	Generator (int const i)
+	{
+		Eigen::Matrix<T_SCALAR,6,1> v(Eigen::Matrix<T_SCALAR,6,1>::Zero());
+		v(i) = T_SCALAR(1);
+		return Algebra(v);
+	}
+
+	/**
+	 * \return the element representing the group identity for operation `+`.
+	 */
+	static Algebra<T_SCALAR>
+	Identity ( )
+	{
+		Algebra<T_SCALAR> res(Eigen::Matrix<T_SCALAR,6,1>::Zero());
+		return res;
+	}
 
 	static Algebra<T_SCALAR>
 	Zero ( )
@@ -391,7 +405,7 @@ template <typename T_SCALAR>
 std::ostream&
 operator<< (std::ostream& stream, SE3::Algebra<T_SCALAR> const& g)
 {
-	stream << g.toVector();
+	stream << g.vector();
 	return stream;
 }
 

@@ -218,13 +218,13 @@ SolveMe::computeF (NOXVector<3>& f, const NOXVector<3>& OM)
 	J2 = this->m_problem.Inertia().block(3,3,3,3);
 
 	double lambda = 1.0+pow(OM.norm(),2);
-	Eigen::Matrix<double,3,3> OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
+	Eigen::Matrix<double,3,3> OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
 	Eigen::Matrix<double,3,3> A = Eigen::Matrix<double,3,3>::Identity()+OM_hat;
 	Eigen::Matrix<double,3,3> Ainv =
 		(1.0/lambda)*(Eigen::Matrix<double,3,3>::Identity()-OM_hat+OM*OM.transpose());
 	Vec3 Gamma = J2.inverse()*Ainv*M2;
 	
-	f = lambda*Ainv.transpose()*J1*OM + A*SO3::Algebra<double>(Gamma).toRotationMatrix()*Ainv*M2 - M1;
+	f = lambda*Ainv.transpose()*J1*OM + A*SO3::Algebra<double>(Gamma).rotationMatrix()*Ainv*M2 - M1;
 
 	return true;
 }
@@ -239,20 +239,20 @@ SolveMe::computeJacobian (Eigen::Matrix<double,3,3>& J, const NOXVector<3>& OM)
 	Eigen::Matrix<double,3,1> V, Gamma;
 	J1 = this->m_problem.Inertia().block(0,0,3,3);
 	J2 = this->m_problem.Inertia().block(3,3,3,3);
-	OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
+	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
 	I = Eigen::Matrix<double,3,3>::Identity();
 	A = I+OM_hat+OM*OM.transpose();
 	B = I+OM_hat;
 	Binv = (1.0/lambda)*(I-OM_hat+OM*OM.transpose());
-	C = SO3::Algebra<double>(M2).toRotationMatrix() + OM*M2.transpose() + OM.transpose()*M2*I;
+	C = SO3::Algebra<double>(M2).rotationMatrix() + OM*M2.transpose() + OM.transpose()*M2*I;
 	Gamma = J2.inverse()*Binv*M2;
 	V = A.transpose()*M2;
 	dGdOM = (1.0/lambda)*J2.inverse()*(C-(1.0/(nOM2*lambda))*V*(OM.transpose()));
 	for (int j=0; j<3; j++)
-		Q.col(j) = SO3::Algebra<double>(dGdOM.col(j)).toRotationMatrix()*V;
-	J = A*J1 - SO3::Algebra<double>(J1*OM).toRotationMatrix()
+		Q.col(j) = SO3::Algebra<double>(dGdOM.col(j)).rotationMatrix()*V;
+	J = A*J1 - SO3::Algebra<double>(J1*OM).rotationMatrix()
 		+ OM*((J1*OM).transpose()) + ((OM.transpose())*J1*OM)*I
-		+ (1.0/lambda)*( -SO3::Algebra<double>(SO3::Algebra<double>(Gamma).toRotationMatrix()*(A.transpose())*M2).toRotationMatrix()
-				+B*(Q + SO3::Algebra<double>(Gamma).toRotationMatrix()*((-1.0/(nOM2*lambda))*(A.transpose()*M2*(OM.transpose())) + C)));
+		+ (1.0/lambda)*( -SO3::Algebra<double>(SO3::Algebra<double>(Gamma).rotationMatrix()*(A.transpose())*M2).rotationMatrix()
+				+B*(Q + SO3::Algebra<double>(Gamma).rotationMatrix()*((-1.0/(nOM2*lambda))*(A.transpose()*M2*(OM.transpose())) + C)));
 	return true;
 }

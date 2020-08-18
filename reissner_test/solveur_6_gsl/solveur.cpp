@@ -87,7 +87,7 @@ main (int argc, char* argv[])
 
 	g0 = Group::Identity();
 	problem.pos(0,0,g0);
-	g0.trans(2,h);
+	g0.translation(2,h);
 	problem.pos(1,0,g0);
 	std::cout << g0.matrix() << std::endl;
 
@@ -97,7 +97,7 @@ main (int argc, char* argv[])
 			problem.pos(1,j,problem.pos(1,j-1)*(l*e1).cay());
 		}
 		x0 = (1.0/h)*Algebra::cay_inv(problem.pos(0,j).inverse()*problem.pos(1,j));
-		mu0 = (h*x0).dCayRInv().transpose()*problem.Inertia()*x0.toVector();
+		mu0 = (h*x0).dCayRInv().transpose()*problem.Inertia()*x0.vector();
 		std::cout << "g_0^-1g_1" << std::endl << (problem.pos(0,j).inverse()*problem.pos(1,j)).matrix() << std::endl;
 		std::cout << "x0:" << std::endl << x0 << std::endl;
 		std::cout << "mu0:" << std::endl << mu0 << std::endl;
@@ -123,18 +123,18 @@ main (int argc, char* argv[])
 			if (j<n_space_steps-1) e1 = (1.0/l)*Algebra::cay_inv(problem.pos(i,j).inverse()*problem.pos(i,j+1));
 			else e1 = Algebra(E4);
 			problem.vel_space(i,j,e1);
-			sig1 = -((l*e1).dCayRInv().transpose()*problem.Constraint()*(e1.toVector()-E4));
+			sig1 = -((l*e1).dCayRInv().transpose()*problem.Constraint()*(e1.vector()-E4));
 			problem.mom_space(i,j,sig1);
 
 			x0 = problem.vel_time(i-1,j);
 			mu0 = problem.mom_time(i-1,j);
 
-			mu1 = Algebra::static_Ad_star((h*x0).cay(),Algebra(mu0)).toVector() - (h/l)*sig1;
+			mu1 = Algebra::static_Ad_star((h*x0).cay(),Algebra(mu0)).vector() - (h/l)*sig1;
 
 			if (j>0) {
 				e0 = problem.vel_space(i,j-1);
 				sig0 = problem.mom_space(i,j-1);
-				mu1 += (h/l)*Algebra::static_Ad_star((l*e0).cay(),Algebra(sig0)).toVector();
+				mu1 += (h/l)*Algebra::static_Ad_star((l*e0).cay(),Algebra(sig0)).vector();
 			}
 
 			problem.mom_time(i,j,mu1);

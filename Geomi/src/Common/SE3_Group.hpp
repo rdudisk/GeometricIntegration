@@ -41,6 +41,7 @@ public:
 	{
 		Eigen::Matrix<T_SCALAR,3,3> tmp = m.block(0,0,3,3);
 		m_q = Eigen::Quaternion<T_SCALAR>(tmp);
+		// Pourquoi est-ce que ça n'est pas fait directement ?
 	}
 
 	/*
@@ -72,15 +73,15 @@ public:
 	/* Accessors and setters */
 
 	Eigen::Matrix<T_SCALAR,3,1>
-	trans ( ) const
+	translationVector ( ) const
 	{ return m_trans; }
 
 	void
-	trans (const Eigen::Matrix<T_SCALAR,3,1>& v)
+	translation (const Eigen::Matrix<T_SCALAR,3,1>& v)
 	{ m_trans = v; }
 	
 	void
-	trans (const size_t i, const T_SCALAR s)
+	translation (const size_t i, const T_SCALAR s)
 	// TODO check index domain
 	{ m_trans[i] = s; }
 
@@ -92,12 +93,12 @@ public:
 	{ return m_q; }
 
 	void
-	setRotation (const Eigen::Quaternion<T_SCALAR>& q_)
+	rotation (const Eigen::Quaternion<T_SCALAR>& q_)
 	{ m_q = q_; m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	void
-	setRotation (	const T_SCALAR& w,
+	rotation (	const T_SCALAR& w,
 		const T_SCALAR& x,
 		const T_SCALAR& y,
 		const T_SCALAR& z)
@@ -105,30 +106,30 @@ public:
 
 	// see Eigen::Quaternion constructors
 	void
-	setRotation (const T_SCALAR* data)
+	rotation (const T_SCALAR* data)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(data); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	template<class Derived>
 	void
-	setRotation (const Eigen::QuaternionBase<Derived>& other)
+	rotation (const Eigen::QuaternionBase<Derived>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	void
-	setRotation (const Eigen::AngleAxis<T_SCALAR>& aa)
+	rotation (const Eigen::AngleAxis<T_SCALAR>& aa)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(aa); m_q.normalize(); }
 	
 	// see Eigen::Quaternion constructors
 	template<typename Derived>
 	void
-	setRotation (const Eigen::MatrixBase<Derived>& other)
+	rotation (const Eigen::MatrixBase<Derived>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	template<class OtherScalar, int OtherOptions>
 	void
-	setRotation (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
+	rotation (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	/*
@@ -166,7 +167,7 @@ public:
 	 * in which case the mutliplication is the group operation */
 	void
 	operator*= (Group<T_SCALAR> const& g)
-	{ m_trans += m_q.toRotationMatrix()*g.trans(); m_q *= g.quaternion(); m_q.normalize(); }
+	{ m_trans += m_q.toRotationMatrix()*g.translationVector(); m_q *= g.quaternion(); m_q.normalize(); }
 
 	/**
 	 * Implements the group operation on \f$SE(3)\f$.
@@ -234,7 +235,7 @@ public:
 
 };
 
-} // namespace SO3
+} // namespace SE3
 
 template <typename T_SCALAR>
 std::ostream
