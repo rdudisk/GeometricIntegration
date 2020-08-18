@@ -5,22 +5,17 @@
 #include "Geomi/src/Common/NOXVector.hpp"
 #include "Geomi/src/Common/Abstract_NOXStep.hpp"
 #include "Geomi/src/Common/NOXGroup.hpp"
-//#include "Geomi/src/Common/LieGroupBase.hpp"
-//#include "Geomi/src/Common/LieAlgebraBase.hpp"
-//#include "Geomi/src/Common/SO3_Group.hpp"
-//#include "Geomi/src/Common/SO3_Algebra.hpp"
-//#include "Geomi/src/Common/SE3_Group.hpp"
-//#include "Geomi/src/Common/SE3_Algebra.hpp"
-
+#include "Geomi/src/Common/LieGroupBase.hpp"
+#include "Geomi/src/Common/LieAlgebraBase.hpp"
+#include "Geomi/src/Common/SO3_Group.hpp"
+#include "Geomi/src/Common/SO3_Algebra.hpp"
+#include "Geomi/src/Common/SE3_Group.hpp"
+#include "Geomi/src/Common/SE3_Algebra.hpp"
 //#include "src/Common/csv.hpp"
 //#include "src/Common/Syst.hpp"
 //#include "src/Common/DiscSyst.hpp"
 //#include "src/Common/GaussLegendre.hpp"
 //#include "src/Common/LagrangeInterpolation.hpp"
-
-#include "lie/lie_SE3_group.hpp"
-#include "lie/lie_SE3_algebra.hpp"
-#include "lie/lie_SE3_operator.hpp"
 
 #include <NOX.H>
 #include <NOX_Common.H>
@@ -31,20 +26,15 @@
 #include "gsl/gsl_multiroots.h"
 
 typedef double					M;
-/*typedef SE3::Group<double>		Group;
-typedef SE3::Algebra<double>	Algebra;*/
+typedef SE3::Group<double>		Group;
+typedef SE3::Algebra<double>	Algebra;
 typedef Eigen::Matrix<double,6,1>	Vec6;
 typedef Eigen::Matrix<double,3,1>	Vec3;
-
-typedef Lie::SE3::Group<double>		Group;
-typedef Lie::SE3::Algebra<double>	Algebra;
-typedef Lie::SE3::Operator<double>	Operator;
-typedef Lie::SE3::Algebra<double>	CoAlgebra;
 
 class MultiSyst;
 class DiscMultiSyst;
 class RigidBody;
-//class SolveMe;
+class SolveMe;
 
 class MultiSyst
 {
@@ -54,8 +44,8 @@ protected:
 	Group	m_pos;
 	Algebra m_vel_time;
 	Algebra m_vel_space;
-	Algebra	m_mom_time;
-	Algebra	m_mom_space;
+	Vec6	m_mom_time;
+	Vec6	m_mom_space;
 
 public:
 	MultiSyst ( ) { }
@@ -71,10 +61,10 @@ public:
 	void vel_time (Algebra v);
 	Algebra vel_space ( ) const;
 	void vel_space (Algebra v);
-	Algebra mom_time ( ) const;
-	void mom_time (Algebra m);
-	Algebra mom_space ( ) const;
-	void mom_space (Algebra m);
+	Vec6 mom_time ( ) const;
+	void mom_time (Vec6 m);
+	Vec6 mom_space ( ) const;
+	void mom_space (Vec6 m);
 };
 
 
@@ -107,10 +97,11 @@ public:
 	void vel_time (const size_t& i, const size_t& j, const Algebra& v);
 	Algebra vel_space (const size_t& i, const size_t& j) const;
 	void vel_space (const size_t& i, const size_t& j, const Algebra& v);
-	Algebra mom_time (const size_t& i, const size_t& j) const;
-	void mom_time (const size_t& i, const size_t& j, const Algebra& m);
-	Algebra mom_space (const size_t& i, const size_t& j) const;
-	void mom_space (const size_t& i, const size_t& j, const Algebra& m);
+	Vec6 mom_time (const size_t& i, const size_t& j) const;
+	void mom_time (const size_t& i, const size_t& j, const Vec6& m);
+	Vec6 mom_space (const size_t& i, const size_t& j) const;
+	void mom_space (const size_t& i, const size_t& j, const Vec6& m);
+	static const unsigned int dof ( );
 	void baselinstep (M t_inf_lim, M t_step_size, M s_inf_lim, M s_step_size);
 };
 
@@ -134,7 +125,6 @@ public:
 	void writeCSVFile (const std::string filename, bool header = true);
 };
 
-/*
 class SolveMe : public ::Abstract::NOXStep<NOXVector<3>,1>
 {
 protected:
@@ -160,17 +150,17 @@ public:
 	const NOXVector<3> getInitialGuess ();
 	bool computeF (NOXVector<3>& f, const NOXVector<3>& OM);
 	bool computeJacobian (Eigen::Matrix<double,3,3>& J, const NOXVector<3>& OM);
-}; */
+};
 
 /* GSL Solver */
 
 struct params {
 	Eigen::Matrix<double,6,6> const J;
-	Algebra const mu;
+	Vec6 const mu;
 	M const l;
 };
 int chiToBeSolved (const gsl_vector* chi, void *p, gsl_vector* f);
-int solve_speed (Algebra const& mu, M l, Algebra const& chi_init,
+int solve_speed (Vec6 const& mu, M l, Algebra const& chi_init,
 				 Eigen::Matrix<M,6,6> const& J, Algebra* chi);
 
 #endif

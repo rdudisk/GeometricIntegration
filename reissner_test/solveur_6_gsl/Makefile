@@ -20,9 +20,9 @@ DEFINES= -DMYAPP_NOX
 solveur: solveur.o classes.o
 	$(CXX) $(CXX_FLAGS) -g solveur.o classes.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
 solveur.o: solveur.cpp classes.hpp
-	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I../../ $(DEFINES)
+	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
 classes.o: classes.cpp classes.hpp
-	$(CXX) $(CXX_FLAGS) -c classes.cpp -o classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I../../ $(DEFINES)
+	$(CXX) $(CXX_FLAGS) -c classes.cpp -o classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
 
 test: solveur
 	date && ./solveur > log.txt && date

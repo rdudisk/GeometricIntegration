@@ -71,7 +71,7 @@ main (int argc, char* argv[])
 	int i, j;
 	Group g0, g1;
 	Algebra x0, x1, e0, e1;
-	CoAlgebra mu0, mu1, sig0, sig1;
+	Vec6 mu0, mu1, sig0, sig1;
 	Vec3 OM;
 	bool verbose;
 	int success;
@@ -87,17 +87,22 @@ main (int argc, char* argv[])
 
 	g0 = Group::Identity();
 	problem.pos(0,0,g0);
-	g0.setTranslation(Vec3(0.0,0.0,h));
+	g0.trans(2,h);
 	problem.pos(1,0,g0);
+	std::cout << g0.matrix() << std::endl;
 
 	for (j=0; j<n_space_steps; j++) {
 		if (j>0) {
-			problem.pos(0,j,problem.pos(0,j-1)*Operator::cay(l*e0));
-			problem.pos(1,j,problem.pos(1,j-1)*Operator::cay(l*e1));
+			problem.pos(0,j,problem.pos(0,j-1)*(l*e0).cay());
+			problem.pos(1,j,problem.pos(1,j-1)*(l*e1).cay());
 		}
-		x0 = (1.0/h)*Operator::cay_inv(problem.pos(0,j).invert()*problem.pos(1,j));
+		x0 = (1.0/h)*Algebra::cay_inv(problem.pos(0,j).inverse()*problem.pos(1,j));
+		mu0 = (h*x0).dCayRInv().transpose()*problem.Inertia()*x0.toVector();
+		std::cout << "g_0^-1g_1" << std::endl << (problem.pos(0,j).inverse()*problem.pos(1,j)).matrix() << std::endl;
+		std::cout << "x0:" << std::endl << x0 << std::endl;
+		std::cout << "mu0:" << std::endl << mu0 << std::endl;
 		problem.vel_time(0,j,x0);
-		problem.mom_time(0,j,Operator::dcay_inv_star(h*x0,Algebra(problem.Inertia()*x0.vect())));
+		problem.mom_time(0,j,mu0);
 		if (j<n_space_steps-1) {
 			problem.vel_space(0,j,e0);
 			problem.vel_space(1,j,e1);
@@ -115,21 +120,21 @@ main (int argc, char* argv[])
 	
 	for (i=1; i<n_time_steps-1; i++) {
 		for (j=0; j<n_space_steps; j++) {
-			if (j<n_space_steps-1) e1 = (1.0/l)*Operator::cay_inv(problem.pos(i,j).invert()*problem.pos(i,j+1));
+			if (j<n_space_steps-1) e1 = (1.0/l)*Algebra::cay_inv(problem.pos(i,j).inverse()*problem.pos(i,j+1));
 			else e1 = Algebra(E4);
 			problem.vel_space(i,j,e1);
-			sig1 = (-1.0)*Operator::dcay_inv_star(l*e1,Algebra(problem.Constraint()*(e1.vect()-E4)));
+			sig1 = -((l*e1).dCayRInv().transpose()*problem.Constraint()*(e1.toVector()-E4));
 			problem.mom_space(i,j,sig1);
 
 			x0 = problem.vel_time(i-1,j);
 			mu0 = problem.mom_time(i-1,j);
 
-			mu1 = Operator::Ad_star(Operator::cay(h*x0),Algebra(mu0)) - (h/l)*sig1;
+			mu1 = Algebra::static_Ad_star((h*x0).cay(),Algebra(mu0)).toVector() - (h/l)*sig1;
 
 			if (j>0) {
 				e0 = problem.vel_space(i,j-1);
 				sig0 = problem.mom_space(i,j-1);
-				mu1 += (h/l)*Operator::Ad_star(Operator::cay(l*e0),Algebra(sig0));
+				mu1 += (h/l)*Algebra::static_Ad_star((l*e0).cay(),Algebra(sig0)).toVector();
 			}
 
 			problem.mom_time(i,j,mu1);
@@ -150,7 +155,7 @@ main (int argc, char* argv[])
 			*/
 
 			problem.vel_time(i,j,x1);
-			problem.pos(i+1,j,problem.pos(i,j)*Operator::cay(h*x1));
+			problem.pos(i+1,j,problem.pos(i,j)*(h*x1).cay());
 		}
 		// TODO: ceci n'est pas la bonne méthode, on fait ça en attendant mieux
 		//e1 = Algebra(E4);
