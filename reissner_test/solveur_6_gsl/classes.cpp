@@ -16,10 +16,10 @@ Algebra MultiSyst::vel_time ( ) const { return m_vel_time; }
 void MultiSyst::vel_time (Algebra v) { m_vel_time = v; }
 Algebra MultiSyst::vel_space ( ) const { return m_vel_space; }
 void MultiSyst::vel_space (Algebra v) { m_vel_space = v; }
-Algebra MultiSyst::mom_time ( ) const { return m_mom_time; }
-void MultiSyst::mom_time (Algebra m) { m_mom_time = m; }
-Algebra MultiSyst::mom_space ( ) const { return m_mom_space; }
-void MultiSyst::mom_space (Algebra m) { m_mom_space = m; }
+Vec6 MultiSyst::mom_time ( ) const { return m_mom_time; }
+void MultiSyst::mom_time (Vec6 m) { m_mom_time = m; }
+Vec6 MultiSyst::mom_space ( ) const { return m_mom_space; }
+void MultiSyst::mom_space (Vec6 m) { m_mom_space = m; }
 
 
 /* DiscMultiSyst */
@@ -71,11 +71,13 @@ void DiscMultiSyst::vel_time (const size_t& i, const size_t& j, const Algebra& v
 Algebra DiscMultiSyst::vel_space (const size_t& i, const size_t& j) const { return m_node[getIndex(i,j)].vel_space(); }
 void DiscMultiSyst::vel_space (const size_t& i, const size_t& j, const Algebra& v) { m_node[getIndex(i,j)].vel_space(v); }
 
-Algebra DiscMultiSyst::mom_time (const size_t& i, const size_t& j) const { return m_node[getIndex(i,j)].mom_time(); }
-void DiscMultiSyst::mom_time (const size_t& i, const size_t& j, const Algebra& m) { m_node[getIndex(i,j)].mom_time(m); }
+Vec6 DiscMultiSyst::mom_time (const size_t& i, const size_t& j) const { return m_node[getIndex(i,j)].mom_time(); }
+void DiscMultiSyst::mom_time (const size_t& i, const size_t& j, const Vec6& m) { m_node[getIndex(i,j)].mom_time(m); }
 
-Algebra DiscMultiSyst::mom_space (const size_t& i, const size_t& j) const { return m_node[getIndex(i,j)].mom_space(); }
-void DiscMultiSyst::mom_space (const size_t& i, const size_t& j, const Algebra& m) { m_node[getIndex(i,j)].mom_space(m); }
+Vec6 DiscMultiSyst::mom_space (const size_t& i, const size_t& j) const { return m_node[getIndex(i,j)].mom_space(); }
+void DiscMultiSyst::mom_space (const size_t& i, const size_t& j, const Vec6& m) { m_node[getIndex(i,j)].mom_space(m); }
+
+const unsigned int DiscMultiSyst::dof ( ) { return Group::DOF; }
 
 void DiscMultiSyst::baselinstep (M t_inf_lim, M t_step_size, M s_inf_lim, M s_step_size)
 {
@@ -127,14 +129,13 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 	double l = this->step_size(1);
 	Algebra xi, eta;
 	Group p;
-	Eigen::Matrix<double,3,1> x,u,v,c,d,E0,E2,E3;
-	E0 << 0, 0, 0;
+	Eigen::Matrix<double,3,1> x,u,v,c,d,E2,E3;
 	E2 << 0, l, 0;
 	E3 << 0, 0, l;
 	Eigen::Matrix<double,6,1> E4, v_xi, v_eps;
 	E4 << 0,0,0,1,0,0;
 	double kinetic, bending;
-	Vec6 momentum;
+	Algebra momentum;
 	
 	if (header)
 		of << "#i,j,t,s,x,y,z,u1,u2,u3,v1,v2,v3,k,b,m1,m2,m3,m4,m5,m6" << std::endl;
@@ -144,16 +145,16 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 		for (j=0; j<n_space; j++) {
 			S = j*l;
 			p = this->pos(i,j);
-			x = p*E0;
-			u = p*E2 - x;
-			v = p*E3 - x;
-			v_xi = this->vel_time(i,j).vect();
+			x = p.trans();
+			u = p.rotateVector(E2);
+			v = p.rotateVector(E3);
+			v_xi = this->vel_time(i,j).toVector();
 			// osef si j=n_space-1
-			v_eps = this->vel_space(i,j).vect();
+			v_eps = this->vel_space(i,j).toVector();
 			kinetic = 0.5*(v_xi.dot((this->Inertia())*v_xi));
 			if (j==n_space-1) bending = 0.0;
 			else bending = 0.5*((v_eps-E4).dot((this->Constraint())*(v_eps-E4)));
-			momentum = l*(Operator::Ad_star(p.invert(),this->mom_time(i,j)).vect());
+			momentum = l*Algebra::static_Ad_star(p.inverse(),Algebra(this->mom_time(i,j)));
 			/*
 			c = xi.trans();
 			d = eta.trans();
@@ -182,7 +183,7 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 /* SolveMe */
 
 /*
-
+ 
 void
 SolveMe::setData (double h, Vec3 mu1, Vec3 mu2)
 { m_h = h; M1 = mu1; M2 = mu2; }
@@ -215,17 +216,17 @@ SolveMe::computeF (NOXVector<3>& f, const NOXVector<3>& OM)
 	// de meme pour M1 et M2
 	Eigen::Matrix<double,3,3> J1, J2;
 	// TODO: verifier blocks //
-	J1 = this->m_problem.Inertia().block(0,0,3,3);
-	J2 = this->m_problem.Inertia().block(3,0,3,3);
+	J1 = this->m_problem.Inertia().block(0,0,3,1).asDiagonal();
+	J2 = this->m_problem.Inertia().block(3,0,3,1).asDiagonal();
 
 	double lambda = 1.0+pow(OM.norm(),2);
-	Eigen::Matrix<double,3,3> OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
+	Eigen::Matrix<double,3,3> OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
 	Eigen::Matrix<double,3,3> A = Eigen::Matrix<double,3,3>::Identity()+OM_hat;
 	Eigen::Matrix<double,3,3> Ainv =
 		(1.0/lambda)*(Eigen::Matrix<double,3,3>::Identity()-OM_hat+OM*OM.transpose());
 	Vec3 Gamma = J2.inverse()*Ainv*M2;
 	
-	f = lambda*Ainv.transpose()*J1*OM + A*SO3::Algebra<double>(Gamma).toRotationMatrix()*Ainv*M2 - M1;
+	f = lambda*Ainv.transpose()*J1*OM + A*SO3::Algebra<double>(Gamma).rotationMatrix()*Ainv*M2 - M1;
 
 	return true;
 }
@@ -238,23 +239,23 @@ SolveMe::computeJacobian (Eigen::Matrix<double,3,3>& J, const NOXVector<3>& OM)
 	double lambda = 1.0+nOM2;
 	Eigen::Matrix<double,3,3> J1, J2, A, B, Binv, C, Q, I, OM_hat, dGdOM;
 	Eigen::Matrix<double,3,1> V, Gamma;
-	J1 = this->m_problem.Inertia().block(0,0,3,1);
-	J2 = this->m_problem.Inertia().block(3,0,3,1);
-	OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
+	J1 = this->m_problem.Inertia().block(0,0,3,1).asDiagonal();
+	J2 = this->m_problem.Inertia().block(3,0,3,1).asDiagonal();
+	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
 	I = Eigen::Matrix<double,3,3>::Identity();
 	A = I+OM_hat+OM*OM.transpose();
 	B = I+OM_hat;
 	Binv = (1.0/lambda)*(I-OM_hat+OM*OM.transpose());
-	C = SO3::Algebra<double>(M2).toRotationMatrix() + OM*M2.transpose() + OM.transpose()*M2*I;
+	C = SO3::Algebra<double>(M2).rotationMatrix() + OM*M2.transpose() + OM.transpose()*M2*I;
 	Gamma = J2.inverse()*Binv*M2;
 	V = A.transpose()*M2;
 	dGdOM = (1.0/lambda)*J2.inverse()*(C-(1.0/(nOM2*lambda))*V*(OM.transpose()));
 	for (int j=0; j<3; j++)
-		Q.col(j) = SO3::Algebra<double>(dGdOM.col(j)).toRotationMatrix()*V;
-	J = A*J1 - SO3::Algebra<double>(J1*OM).toRotationMatrix()
+		Q.col(j) = SO3::Algebra<double>(dGdOM.col(j)).rotationMatrix()*V;
+	J = A*J1 - SO3::Algebra<double>(J1*OM).rotationMatrix()
 		+ OM*((J1*OM).transpose()) + ((OM.transpose())*J1*OM)*I
-		+ (1.0/lambda)*( -SO3::Algebra<double>(SO3::Algebra<double>(Gamma).toRotationMatrix()*(A.transpose())*M2).toRotationMatrix()
-				+B*(Q + SO3::Algebra<double>(Gamma).toRotationMatrix()*((-1.0/(nOM2*lambda))*(A.transpose()*M2*(OM.transpose())) + C)));
+		+ (1.0/lambda)*( -SO3::Algebra<double>(SO3::Algebra<double>(Gamma).rotationMatrix()*(A.transpose())*M2).rotationMatrix()
+				+B*(Q + SO3::Algebra<double>(Gamma).rotationMatrix()*((-1.0/(nOM2*lambda))*(A.transpose()*M2*(OM.transpose())) + C)));
 	return true;
 } */
 
@@ -265,21 +266,21 @@ int chiToBeSolved(const gsl_vector* chi, void *p, gsl_vector* f) {
 	
 	params *pp = (struct params *) p;
 	Eigen::Matrix<M,6,6> J = pp->J;
-	Vec6 mu = (pp->mu).vect();
+	Vec6 mu = pp->mu;
 	double l = pp->l;
 
 	Vec6 w;
 	for (i=0; i<6; i++) w(i) = gsl_vector_get(chi,i);
 
 	Algebra chi_g(w);
-	Vec6 res = (Operator::dcay_inv_star(l*chi_g,Algebra(J*chi_g.vect()))).vect() - mu;
+	Vec6 res = (l*chi_g).dCayRInv().transpose()*J*chi_g.toVector() - mu;
 
 	for (i=0; i<6; i++) gsl_vector_set(f,i,res(i));
 
 	return GSL_SUCCESS;
 }
 
-int solve_speed(Algebra const& mu, M l, Algebra const& chi_init,
+int solve_speed(Vec6 const& mu, M l, Algebra const& chi_init,
 				 Eigen::Matrix<M,6,6> const& J, Algebra* chi) {
 	const gsl_multiroot_fsolver_type *TT;
 	gsl_multiroot_fsolver *s;
@@ -292,7 +293,7 @@ int solve_speed(Algebra const& mu, M l, Algebra const& chi_init,
 	gsl_multiroot_function f;
 	f = { &chiToBeSolved, n, &p };
 
-	Vec6 chi_init_vect = chi_init.vect();
+	Vec6 chi_init_vect = chi_init.toVector();
 	gsl_vector *x = gsl_vector_alloc(n);
 	for(int j=0;j<n;j++) gsl_vector_set(x,j,chi_init_vect(j));
 
