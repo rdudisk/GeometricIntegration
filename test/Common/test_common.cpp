@@ -13,6 +13,7 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 
 	/* Lagrange polynomials tests */
 
+	/*
 	LagrangePolynomials lp;
 
 	std::vector<double> dates;
@@ -43,6 +44,7 @@ BOOST_AUTO_TEST_CASE ( common, * boost::unit_test::tolerance(1e-12) )
 				BOOST_TEST ( poly[i][j]==0.0 );
 		}
 	}
+	*/
 
 	/* SO(3) tests */
 
