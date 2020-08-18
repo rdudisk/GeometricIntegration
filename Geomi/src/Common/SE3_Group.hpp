@@ -88,16 +88,16 @@ public:
 	 * \return the quaternion representation of the rotation.
 	 */
 	Eigen::Quaternion<T_SCALAR>
-	q ( ) const
+	quaternion ( ) const
 	{ return m_q; }
 
 	void
-	q (const Eigen::Quaternion<T_SCALAR>& q_)
+	setRotation (const Eigen::Quaternion<T_SCALAR>& q_)
 	{ m_q = q_; m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	void
-	q (	const T_SCALAR& w,
+	setRotation (	const T_SCALAR& w,
 		const T_SCALAR& x,
 		const T_SCALAR& y,
 		const T_SCALAR& z)
@@ -105,30 +105,30 @@ public:
 
 	// see Eigen::Quaternion constructors
 	void
-	q (const T_SCALAR* data)
+	setRotation (const T_SCALAR* data)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(data); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	template<class Derived>
 	void
-	q (const Eigen::QuaternionBase<Derived>& other)
+	setRotation (const Eigen::QuaternionBase<Derived>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	void
-	q (const Eigen::AngleAxis<T_SCALAR>& aa)
+	setRotation (const Eigen::AngleAxis<T_SCALAR>& aa)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(aa); m_q.normalize(); }
 	
 	// see Eigen::Quaternion constructors
 	template<typename Derived>
 	void
-	q (const Eigen::MatrixBase<Derived>& other)
+	setRotation (const Eigen::MatrixBase<Derived>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	// see Eigen::Quaternion constructors
 	template<class OtherScalar, int OtherOptions>
 	void
-	q (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
+	setRotation (const Eigen::Quaternion<OtherScalar,OtherOptions>& other)
 	{ m_q = Eigen::Quaternion<T_SCALAR>(other); m_q.normalize(); }
 
 	/*
@@ -148,7 +148,8 @@ public:
 	 */
 	Group<T_SCALAR>
 	inverse( ) const
-	{ return Group<T_SCALAR>(m_q.inverse(),-m_q.toRotationMatrix().transpose()*m_trans); }
+	{ return Group<T_SCALAR>(m_q.inverse(),(-1.0)*(m_q.inverse().toRotationMatrix()*m_trans)); }
+	//{ return Group<T_SCALAR>(m_q.inverse(),-m_q.toRotationMatrix().transpose()*m_trans); }
 
 	/**
 	 * \return the element representing the group identity for operation `*`.
@@ -159,16 +160,16 @@ public:
 
 	static Group<T_SCALAR>
 	Random ( )
-	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::UnitRandom(),Eigen::Matrix<T_SCALAR,3,1>::Zero()); }
+	{ return Group<T_SCALAR>(Eigen::Quaternion<T_SCALAR>::UnitRandom(),Eigen::Matrix<T_SCALAR,3,1>::Random()); }
 
 	/* Group operation is '*' and not '+' since we are used to the matrix representation,
 	 * in which case the mutliplication is the group operation */
 	void
 	operator*= (Group<T_SCALAR> const& g)
-	{ m_q *= g.q(); m_q.normalize(); m_trans += g.trans(); }
+	{ m_trans += m_q.toRotationMatrix()*g.trans(); m_q *= g.quaternion(); m_q.normalize(); }
 
 	/**
-	 * Implements the group operation on \f$SO(3)\f$.
+	 * Implements the group operation on \f$SE(3)\f$.
 	 * The `*` operator has been chosen instead of the `+` operator since the usual
 	 * matrix and quaternion representations of rotations are groups defined with a
 	 * natural mutliplication operation.
@@ -227,7 +228,9 @@ public:
 
 	bool
 	isApprox (Group<T_SCALAR> const& g) const
-	{ return m_q.isApprox(g.q()) & m_trans.isApprox(g.trans()); }
+	{ return m_q.isApprox(g.quaternion()) & (m_trans-g.trans()).isMuchSmallerThan(1.0); }
+	// Avec cette implémentation, problème lorsque la translation est proche de zéro (voir doc Eigen)
+	//{ return m_q.isApprox(g.quaternion()) & (m_trans.isApprox(g.trans()); }
 
 };
 

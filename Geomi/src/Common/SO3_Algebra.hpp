@@ -108,11 +108,11 @@ public:
 
 	Algebra<T_SCALAR>
 	Ad (const Group<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(g.toRotationMatrix()*this->toVector()); }
+	{ return Algebra<T_SCALAR>(g.rotationMatrix()*this->vector()); }
 
 	Algebra<T_SCALAR>
 	Ad_star (const Group<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(g.toRotationMatrix().transpose()*this->toVector()); }
+	{ return Algebra<T_SCALAR>(g.rotationMatrix().transpose()*this->vector()); }
 
 	/* Other operations */
 
@@ -129,15 +129,15 @@ public:
 	/* Accessors */
 
 	Eigen::Matrix<T_SCALAR,3,1>
-	v ( ) const
+	vector ( ) const
 	{ return m_v; } 
 
 	void
-	v (const Eigen::AngleAxis<T_SCALAR>& aa)
+	set (const Eigen::AngleAxis<T_SCALAR>& aa)
 	{ m_v = aa.angle()*aa.axis(); }
 
 	void
-	v (const Eigen::Matrix<T_SCALAR,3,1>& vec)
+	set (const Eigen::Matrix<T_SCALAR,3,1>& vec)
 	{ m_v = vec; }
 
 	T_SCALAR const&
@@ -178,6 +178,7 @@ public:
 	 * \return the \ref Lie::SO3::Group<T> implementation of the Lie group \f$SO(3)\f$ element
 	 * that represents the exponential of `*this`.
 	 */
+	// TODO: vérifier implémentations
 	Group<T_SCALAR>
 	exp ( ) const
 	{
@@ -234,7 +235,7 @@ public:
 		//V << 1.0 - 2.0*n*n/den << m_v.normalized() * 4.0*n/den;
 		//return Group<T>(V);
 		//return Group<T_SCALAR>(Eigen::AngleAxis<T_SCALAR>(1.0-2.0*n*n/den,m_v.normalized()*4.0*n/den));
-		Eigen::Matrix<T_SCALAR,3,3> W = this->toRotationMatrix();
+		Eigen::Matrix<T_SCALAR,3,3> W = this->rotationMatrix();
 		Eigen::Matrix<T_SCALAR,3,3> M =
 			Eigen::Matrix<T_SCALAR,3,3>::Identity()
 			+ (4.0/den)*(W+0.5*W*W);
@@ -243,25 +244,25 @@ public:
 
 	static Algebra<T_SCALAR>
 	cay_inv (const Group<T_SCALAR>& g)
-	{ return fromRotationMatrix(2.0*(g.toRotationMatrix()-Eigen::Matrix<T_SCALAR,3,3>::Identity())*(g.toRotationMatrix()+Eigen::Matrix<T_SCALAR,3,3>::Identity()).inverse()); }
+	{ return fromRotationMatrix(2.0*(g.rotationMatrix()-Eigen::Matrix<T_SCALAR,3,3>::Identity())*(g.rotationMatrix()+Eigen::Matrix<T_SCALAR,3,3>::Identity()).inverse()); }
 
 	Eigen::Matrix<T_SCALAR,3,3>
 	dCayRInv () const
-	{ return Eigen::Matrix<T_SCALAR,3,3>::Identity()-0.5*this->toRotationMatrix()+0.25*this->toVector()*(this->toVector().transpose()); }
+	{ return Eigen::Matrix<T_SCALAR,3,3>::Identity()-0.5*this->rotationMatrix()+0.25*m_v*(m_v.transpose()); }
 
 	Algebra<T_SCALAR>
 	dCayRInv (const Algebra<T_SCALAR>& g) const
-	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.toVector()); }
+	{ return Algebra<T_SCALAR>(this->dCayRInv()*g.vector()); }
 
 	/**
 	 * \return the axis-angle representation of `*this`.
 	 */
 	Eigen::AngleAxis<T_SCALAR>
-	toAngleAxis ( ) const
+	angleAxis ( ) const
 	{ return Eigen::AngleAxis<T_SCALAR>(m_v.norm(),m_v.normalized()); }
 
 	Eigen::Matrix<T_SCALAR,3,3>
-	toRotationMatrix ( ) const
+	rotationMatrix ( ) const
 	{
 		Eigen::Matrix<T_SCALAR,3,3> mat;
 		mat <<	T_SCALAR(0),		-m_v[2],	m_v[1],
@@ -275,10 +276,6 @@ public:
 	{
 		return Algebra<T_SCALAR>(m(2,1),m(0,2),m(1,0));
 	}
-
-	Eigen::Matrix<T_SCALAR,3,1>
-	toVector ( ) const
-	{ return m_v; }
 
 	NOXVector<3>
 	toNOXVector ( ) const

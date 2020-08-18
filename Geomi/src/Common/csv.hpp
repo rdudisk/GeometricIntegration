@@ -64,7 +64,7 @@ std::string
 csvString (const SO3::Group<float> q, const std::string sep)
 {
 	std::ostringstream ss;
-	Eigen::Matrix<float,3,3> m = q.toRotationMatrix();
+	Eigen::Matrix<float,3,3> m = q.rotationMatrix();
 	for (int i=0; i<9; i++) {
 		ss << m(i/3,i%3);
 		if (i!=8)
@@ -79,7 +79,7 @@ std::string
 csvString (const SO3::Algebra<float> q, const std::string sep)
 {
 	std::ostringstream ss;
-	Eigen::Matrix<float,3,1> v = q.toVector();
+	Eigen::Matrix<float,3,1> v = q.vector();
 	for (int i=0; i<3; i++) {
 		ss << v[i];
 		if (i!=2)
@@ -94,7 +94,7 @@ std::string
 csvString (const SO3::Group<double> q, const std::string sep)
 {
 	std::ostringstream ss;
-	Eigen::Matrix<double,3,3> m = q.toRotationMatrix();
+	Eigen::Matrix<double,3,3> m = q.rotationMatrix();
 	for (int i=0; i<9; i++) {
 		ss << m(i/3,i%3);
 		if (i!=8)
@@ -109,7 +109,7 @@ std::string
 csvString (const SO3::Algebra<double> q, const std::string sep)
 {
 	std::ostringstream ss;
-	Eigen::Matrix<double,3,1> v = q.toVector();
+	Eigen::Matrix<double,3,1> v = q.vector();
 	for (int i=0; i<3; i++) {
 		ss << v[i];
 		if (i!=2)
