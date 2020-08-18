@@ -105,17 +105,17 @@ public:
 class RigidBody : public DiscMultiSyst
 {
 private:
-	Eigen::Matrix<double,6,1> m_Inertia;
-	Eigen::Matrix<double,6,1> m_Constraint;
+	Eigen::Matrix<double,6,6> m_Inertia;
+	Eigen::Matrix<double,6,6> m_Constraint;
 
 public:
 	RigidBody ()
-	{ m_Inertia << 1, 1, 1, 1, 1, 1; m_Constraint << 1, 1, 1, 1, 1, 1; }
+	{ m_Inertia = Eigen::Matrix<double,6,6>::Identity(); m_Constraint = m_Inertia; }
 	
-	Eigen::Matrix<double,6,1>& Inertia ();
-	void Inertia (Eigen::Matrix<double,6,1> val);
-	Eigen::Matrix<double,6,1>& Constraint ();
-	void Constraint (Eigen::Matrix<double,6,1> val);
+	Eigen::Matrix<double,6,6>& Inertia ();
+	void Inertia (Eigen::Matrix<double,6,6> val);
+	Eigen::Matrix<double,6,6>& Constraint ();
+	void Constraint (Eigen::Matrix<double,6,6> val);
 	void setInertia (double area, double rho);
 	void setConstraint (double area, double young, double poisson);
 	double coeffCFL (double young, double poisson, double rho, double alpha=3.0);

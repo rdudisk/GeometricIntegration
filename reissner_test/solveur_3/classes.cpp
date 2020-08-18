@@ -90,22 +90,26 @@ void DiscMultiSyst::baselinstep (M t_inf_lim, M t_step_size, M s_inf_lim, M s_st
 
 /* RigidBody */
 
-Eigen::Matrix<double,6,1>& RigidBody::Inertia () { return m_Inertia; }
-void RigidBody::Inertia (Eigen::Matrix<double,6,1> val) { m_Inertia = val; }
-Eigen::Matrix<double,6,1>& RigidBody::Constraint () { return m_Constraint; }
-void RigidBody::Constraint (Eigen::Matrix<double,6,1> val) { m_Constraint = val; }
+Eigen::Matrix<double,6,6>& RigidBody::Inertia () { return m_Inertia; }
+void RigidBody::Inertia (Eigen::Matrix<double,6,6> val) { m_Inertia = val; }
+Eigen::Matrix<double,6,6>& RigidBody::Constraint () { return m_Constraint; }
+void RigidBody::Constraint (Eigen::Matrix<double,6,6> val) { m_Constraint = val; }
 
 void RigidBody::setInertia (double area, double rho)
 {	// la formule n'est peut-être pas exacte, mais donne un ordre de grandeur
 	double lm = area*rho; // masse lineaire
-	m_Inertia << 0.5*lm*area, 0.25*lm*area, 0.25*lm*area, lm, lm, lm;
+	Vec6 v;
+	v << 0.5*lm*area, 0.25*lm*area, 0.25*lm*area, lm, lm, lm;
+	m_Inertia = v.asDiagonal();
 }
 
 void RigidBody::setConstraint (double area, double young, double poisson)
 {
 	double G = young/(2.0+2.0*poisson);
-	m_Constraint << G*(m_Inertia[1]+m_Inertia[2]), young*m_Inertia[1], young*m_Inertia[2], 
-					young*area, G*area, G*area;
+	Vec6 v;
+	v<< G*(m_Inertia(1,1)+m_Inertia(2,2)), young*m_Inertia(2,2), young*m_Inertia(2,2), 
+		young*area, G*area, G*area;
+	m_Constraint = v.asDiagonal();
 }
 
 double RigidBody::coeffCFL (double young, double poisson, double rho, double alpha)
@@ -147,9 +151,9 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 			v_xi = this->vel_time(i,j).toVector();
 			// osef si j=n_space-1
 			v_eps = this->vel_space(i,j).toVector();
-			kinetic = 0.5*(v_xi.dot((this->Inertia().asDiagonal())*v_xi));
+			kinetic = 0.5*(v_xi.dot((this->Inertia())*v_xi));
 			if (j==n_space-1) bending = 0.0;
-			else bending = 0.5*((v_eps-E4).dot((this->Constraint().asDiagonal())*(v_eps-E4)));
+			else bending = 0.5*((v_eps-E4).dot((this->Constraint())*(v_eps-E4)));
 			momentum = l*Algebra::static_Ad_star(p.inverse(),Algebra(this->mom_time(i,j)));
 			/*
 			c = xi.trans();
@@ -210,8 +214,8 @@ SolveMe::computeF (NOXVector<3>& f, const NOXVector<3>& OM)
 	// de meme pour M1 et M2
 	Eigen::Matrix<double,3,3> J1, J2;
 	// TODO: verifier blocks //
-	J1 = this->m_problem.Inertia().block(0,0,3,1).asDiagonal();
-	J2 = this->m_problem.Inertia().block(3,0,3,1).asDiagonal();
+	J1 = this->m_problem.Inertia().block(0,0,3,3);
+	J2 = this->m_problem.Inertia().block(3,3,3,3);
 
 	double lambda = 1.0+pow(OM.norm(),2);
 	Eigen::Matrix<double,3,3> OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
@@ -233,8 +237,8 @@ SolveMe::computeJacobian (Eigen::Matrix<double,3,3>& J, const NOXVector<3>& OM)
 	double lambda = 1.0+nOM2;
 	Eigen::Matrix<double,3,3> J1, J2, A, B, Binv, C, Q, I, OM_hat, dGdOM;
 	Eigen::Matrix<double,3,1> V, Gamma;
-	J1 = this->m_problem.Inertia().block(0,0,3,1).asDiagonal();
-	J2 = this->m_problem.Inertia().block(3,0,3,1).asDiagonal();
+	J1 = this->m_problem.Inertia().block(0,0,3,3);
+	J2 = this->m_problem.Inertia().block(3,3,3,3);
 	OM_hat = SO3::Algebra<double>(OM).toRotationMatrix();
 	I = Eigen::Matrix<double,3,3>::Identity();
 	A = I+OM_hat+OM*OM.transpose();
