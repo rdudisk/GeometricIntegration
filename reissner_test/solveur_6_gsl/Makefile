@@ -18,14 +18,25 @@ LINK_FLAGS=$(NOX_EXTRA_LD_FLAGS)
 DEFINES= -DMYAPP_NOX
 
 solveur: solveur.o classes.o
-	$(CXX) $(CXX_FLAGS) -g solveur.o classes.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
+	$(CXX) $(CXX_FLAGS) -g tmp/solveur.o tmp/classes.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
 solveur.o: solveur.cpp classes.hpp
-	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
+	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o tmp/solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
 classes.o: classes.cpp classes.hpp
-	$(CXX) $(CXX_FLAGS) -c classes.cpp -o classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
+	$(CXX) $(CXX_FLAGS) -c classes.cpp -o tmp/classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
 
 test: solveur
 	date && ./solveur > log.txt && date
 
+animation:
+	echo "Creating plots... "
+	python anim/plot-reissner.py results.csv anim/img
+	echo "done\n"
+	echo "Creating movie..."
+	ffmpeg -y -framerate 25 -i anim/img/imgReissner%d.png movie.mp4
+	echo "done"
+
 clean:
-	/bin/rm *.o
+	/bin/rm tmp/*.o
+
+mrproper: clean
+	/bin/rm solveur log.txt results.csv movie.avi
