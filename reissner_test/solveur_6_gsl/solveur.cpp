@@ -27,7 +27,7 @@ main (int argc, char* argv[])
 	double l = 0.1;
 	int n_space_steps = 10;
 	double h = 0.0005; //l*problem.coeffCFL(young,poisson,rho,10.0);
-	int n_time_steps = 300;
+	int n_time_steps = 6000; //6000;
 	problem.setSize(n_time_steps,n_space_steps);
 	problem.baselinstep(0.0,h,0.0,l);
 
@@ -79,8 +79,8 @@ main (int argc, char* argv[])
 	// Initialisation
 
 	Eigen::Matrix<double,6,1> v_e0, v_e1, E4;
-	v_e0 << 1.0, 1.5, 1.0, 1.0, 0.0, 0.0;
-	v_e1 << 1.004, 1.52, 1.005, 1.0, 0.0, -0.01;
+	v_e0 << 1.0, 1.0, 1.5, 1.0, 0.0, 0.0;
+	v_e1 << 1.005, 1.004, 1.52, 1.0, 0.0, -0.01;
 	E4 << 0, 0, 0, 1, 0, 0;
 	e0 = Algebra(v_e0);
 	e1 = Algebra(v_e1);
