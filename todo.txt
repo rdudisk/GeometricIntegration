@@ -7,3 +7,4 @@
 [x] conversion des données entre Demoures et Carré
 [ ] traiter proprement l'extrémité de la poutre
 [ ] condition CFL
+[x] externaliser dans un XML (?) la configuration et les paramètres pour la poutre
