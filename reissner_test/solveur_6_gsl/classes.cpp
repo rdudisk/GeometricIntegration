@@ -138,19 +138,19 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 	Algebra momentum;
 	
 	if (header)
-		of << "#i,j,t,s,x,y,z,u1,u2,u3,v1,v2,v3,k,b,m1,m2,m3,m4,m5,m6" << std::endl;
+		of << "i,j,t,s,x,y,z,u1,u2,u3,v1,v2,v3,k,b,m1,m2,m3,m4,m5,m6" << std::endl;
 
 	for (i=0; i<n_time-1; i++) {
 		T = i*h;
 		for (j=0; j<n_space; j++) {
 			S = j*l;
 			p = this->pos(i,j);
-			x = p.trans();
+			x = p.translationVector();
 			u = p.rotateVector(E2);
 			v = p.rotateVector(E3);
-			v_xi = this->vel_time(i,j).toVector();
+			v_xi = this->vel_time(i,j).vector();
 			// osef si j=n_space-1
-			v_eps = this->vel_space(i,j).toVector();
+			v_eps = this->vel_space(i,j).vector();
 			kinetic = 0.5*(v_xi.dot((this->Inertia())*v_xi));
 			if (j==n_space-1) bending = 0.0;
 			else bending = 0.5*((v_eps-E4).dot((this->Constraint())*(v_eps-E4)));
@@ -167,8 +167,8 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 				<< T << "," << S << ","
 				<< x[0] << "," << x[1] << "," << x[2] << ","
 				<< u[0] << "," << u[1] << "," << u[2] << ","
-				<< v[0] << "," << v[1] << "," << v[2];
-				//<< "," << kinetic << "," << bending;
+				<< v[0] << "," << v[1] << "," << v[2]
+				<< "," << kinetic << "," << bending;
 			for (int k=0; k<6; k++)
 				of << "," << momentum[k];
 			of << std::endl;
@@ -273,7 +273,7 @@ int chiToBeSolved(const gsl_vector* chi, void *p, gsl_vector* f) {
 	for (i=0; i<6; i++) w(i) = gsl_vector_get(chi,i);
 
 	Algebra chi_g(w);
-	Vec6 res = (l*chi_g).dCayRInv().transpose()*J*chi_g.toVector() - mu;
+	Vec6 res = (l*chi_g).dCayRInv().transpose()*J*chi_g.vector() - mu;
 
 	for (i=0; i<6; i++) gsl_vector_set(f,i,res(i));
 
@@ -293,7 +293,7 @@ int solve_speed(Vec6 const& mu, M l, Algebra const& chi_init,
 	gsl_multiroot_function f;
 	f = { &chiToBeSolved, n, &p };
 
-	Vec6 chi_init_vect = chi_init.toVector();
+	Vec6 chi_init_vect = chi_init.vector();
 	gsl_vector *x = gsl_vector_alloc(n);
 	for(int j=0;j<n;j++) gsl_vector_set(x,j,chi_init_vect(j));
 
