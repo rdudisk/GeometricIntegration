@@ -1,0 +1,9 @@
+[ ] tests des implémentations de Lie
+[ ] tests des autres classes de Common
+[ ] implémentation de Reissner avec NOX dimension 6
+[ ] implémentation de Reissner avec NOX dimension 3
+[ ] sortir exp et cay dans des classes S[OE]3::exp et S[OE]3::cay
+[x] visualisation des resultats de Reissner
+[x] conversion des données entre Demoures et Carré
+[ ] traiter proprement l'extrémité de la poutre
+[ ] condition CFL
