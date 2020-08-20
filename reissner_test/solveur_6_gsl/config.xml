@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+<params>
+	<young>5.0e3</young>
+	<poisson>0.35</poisson>
+	<rho>1.0e3</rho>
+	<diameter>0.01</diameter>
+</params>
+<integration>
+	<space-step>0.1</space-step>
+	<time-step>0.0005</time-step>
+	<n-space-step>10</n-space-step>
+	<n-time-step>6000</n-time-step>
+</integration>
+</config>
