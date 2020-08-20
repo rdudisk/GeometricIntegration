@@ -273,7 +273,7 @@ int chiToBeSolved(const gsl_vector* chi, void *p, gsl_vector* f) {
 	for (i=0; i<6; i++) w(i) = gsl_vector_get(chi,i);
 
 	Algebra chi_g(w);
-	Vec6 res = (l*chi_g).dCayRInv().transpose()*J*chi_g.vector() - mu;
+	Vec6 res = Cay::inv_right_diff_star(l*chi_g,Algebra(J*chi_g.vector())).vector() - mu;
 
 	for (i=0; i<6; i++) gsl_vector_set(f,i,res(i));
 

@@ -17,12 +17,14 @@ LINK_FLAGS=$(NOX_EXTRA_LD_FLAGS)
 
 DEFINES= -DMYAPP_NOX
 
-solveur: solveur.o classes.o
-	$(CXX) $(CXX_FLAGS) -g tmp/solveur.o tmp/classes.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
-solveur.o: solveur.cpp classes.hpp
+solveur: tmp/solveur.o tmp/classes.o tmp/pugixml.o
+	$(CXX) $(CXX_FLAGS) -g tmp/solveur.o tmp/classes.o tmp/pugixml.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
+tmp/solveur.o: solveur.cpp
 	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o tmp/solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
-classes.o: classes.cpp classes.hpp
+tmp/classes.o: classes.cpp classes.hpp
 	$(CXX) $(CXX_FLAGS) -c classes.cpp -o tmp/classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/reissner-reborn/Geomi $(DEFINES)
+tmp/pugixml.o: pugixml.cpp
+	g++ -O3 -c pugixml.c -o tmp/pugixml.o
 
 test: solveur
 	date && ./solveur > log.txt && date
@@ -36,7 +38,7 @@ animation:
 	echo "done"
 
 clean:
-	/bin/rm tmp/*.o
+	/bin/rm -f tmp/solveur.o tmp/classes.o
 
 mrproper: clean
 	/bin/rm solveur log.txt results.csv movie.avi

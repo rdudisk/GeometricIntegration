@@ -11,6 +11,7 @@
 #include "Geomi/src/Common/SO3_Algebra.hpp"
 #include "Geomi/src/Common/SE3_Group.hpp"
 #include "Geomi/src/Common/SE3_Algebra.hpp"
+#include "Geomi/src/Common/SE3_Cay.hpp"
 //#include "src/Common/csv.hpp"
 //#include "src/Common/Syst.hpp"
 //#include "src/Common/DiscSyst.hpp"
@@ -28,6 +29,7 @@
 typedef double					M;
 typedef SE3::Group<double>		Group;
 typedef SE3::Algebra<double>	Algebra;
+namespace Cay = SE3::Cay;
 typedef Eigen::Matrix<double,6,1>	Vec6;
 typedef Eigen::Matrix<double,3,1>	Vec3;
 

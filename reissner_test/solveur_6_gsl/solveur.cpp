@@ -8,26 +8,42 @@
 #include <NOX_Utils.H>
 #include <Teuchos_StandardCatchMacros.hpp>
 
+#include <pugixml.hpp>
+
 int
 main (int argc, char* argv[])
 {
 	/* Setting up the problem ************************************************/
+	
+
+	pugi::xml_document doc;
+	if (!doc.load_file("config.xml")) {
+		std::cout << "Unable to open config.xml\nExiting" << std::endl;
+		return -1;
+	}
+
+	double diameter, rho, young, poisson, area;
+
+	pugi::xml_node xml_params = doc.child("config").child("params");
+	young = std::stod(xml_params.child("young").child_value());
+	poisson = std::stod(xml_params.child("poisson").child_value());
+	rho = std::stod(xml_params.child("rho").child_value());
+	diameter = std::stod(xml_params.child("diameter").child_value());
+	area = diameter*diameter;
+
+	double l, h;
+	int n_space_steps, n_time_steps;
+
+	pugi::xml_node xml_integration = doc.child("config").child("integration");
+	l = std::stod(xml_integration.child("space-step").child_value());
+	h = std::stod(xml_integration.child("time-step").child_value());
+	n_space_steps = std::stoi(xml_integration.child("n-space-step").child_value());
+	n_time_steps = std::stoi(xml_integration.child("n-time-step").child_value());
 
 	RigidBody problem;
 
-	double diameter = 0.01;
-	double area = diameter*diameter;
-	double rho = 1.0e3;
-	double young = 5.0e3;
-	double poisson = 0.35;
 	problem.setInertia(area,rho);
 	problem.setConstraint(area,young,poisson);
-
-	// linspace
-	double l = 0.1;
-	int n_space_steps = 10;
-	double h = 0.0005; //l*problem.coeffCFL(young,poisson,rho,10.0);
-	int n_time_steps = 6000; //6000;
 	problem.setSize(n_time_steps,n_space_steps);
 	problem.baselinstep(0.0,h,0.0,l);
 
@@ -89,18 +105,17 @@ main (int argc, char* argv[])
 	problem.pos(0,0,g0);
 	g0.translation(2,h);
 	problem.pos(1,0,g0);
-	std::cout << g0.matrix() << std::endl;
 
 	for (j=0; j<n_space_steps; j++) {
 		if (j>0) {
-			problem.pos(0,j,problem.pos(0,j-1)*(l*e0).cay());
-			problem.pos(1,j,problem.pos(1,j-1)*(l*e1).cay());
+			problem.pos(0,j,problem.pos(0,j-1)*Cay::eval(l*e0));
+			problem.pos(1,j,problem.pos(1,j-1)*Cay::eval(l*e1));
 		}
-		x0 = (1.0/h)*Algebra::cay_inv(problem.pos(0,j).inverse()*problem.pos(1,j));
-		mu0 = (h*x0).dCayRInv().transpose()*problem.Inertia()*x0.vector();
-		std::cout << "g_0^-1g_1" << std::endl << (problem.pos(0,j).inverse()*problem.pos(1,j)).matrix() << std::endl;
-		std::cout << "x0:" << std::endl << x0 << std::endl;
-		std::cout << "mu0:" << std::endl << mu0 << std::endl;
+		x0 = (1.0/h)*Cay::inv(problem.pos(0,j).inverse()*problem.pos(1,j));
+		mu0 = Cay::inv_right_diff_star(h*x0,Algebra(problem.Inertia()*x0.vector())).vector();
+		//std::cout << "g_0^-1g_1" << std::endl << (problem.pos(0,j).inverse()*problem.pos(1,j)).matrix() << std::endl;
+		//std::cout << "x0:" << std::endl << x0 << std::endl;
+		//std::cout << "mu0:" << std::endl << mu0 << std::endl;
 		problem.vel_time(0,j,x0);
 		problem.mom_time(0,j,mu0);
 		if (j<n_space_steps-1) {
@@ -120,21 +135,21 @@ main (int argc, char* argv[])
 	
 	for (i=1; i<n_time_steps-1; i++) {
 		for (j=0; j<n_space_steps; j++) {
-			if (j<n_space_steps-1) e1 = (1.0/l)*Algebra::cay_inv(problem.pos(i,j).inverse()*problem.pos(i,j+1));
+			if (j<n_space_steps-1) e1 = (1.0/l)*Cay::inv(problem.pos(i,j).inverse()*problem.pos(i,j+1));
 			else e1 = Algebra(E4);
 			problem.vel_space(i,j,e1);
-			sig1 = -((l*e1).dCayRInv().transpose()*problem.Constraint()*(e1.vector()-E4));
+			sig1 = (-1.0)*Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector();
 			problem.mom_space(i,j,sig1);
 
 			x0 = problem.vel_time(i-1,j);
 			mu0 = problem.mom_time(i-1,j);
 
-			mu1 = Algebra::static_Ad_star((h*x0).cay(),Algebra(mu0)).vector() - (h/l)*sig1;
+			mu1 = Algebra::static_Ad_star(Cay::eval(h*x0),Algebra(mu0)).vector() - (h/l)*sig1;
 
 			if (j>0) {
 				e0 = problem.vel_space(i,j-1);
 				sig0 = problem.mom_space(i,j-1);
-				mu1 += (h/l)*Algebra::static_Ad_star((l*e0).cay(),Algebra(sig0)).vector();
+				mu1 += (h/l)*Algebra::static_Ad_star(Cay::eval(l*e0),Algebra(sig0)).vector();
 			}
 
 			problem.mom_time(i,j,mu1);
@@ -155,7 +170,7 @@ main (int argc, char* argv[])
 			*/
 
 			problem.vel_time(i,j,x1);
-			problem.pos(i+1,j,problem.pos(i,j)*(h*x1).cay());
+			problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 		}
 		// TODO: ceci n'est pas la bonne méthode, on fait ça en attendant mieux
 		//e1 = Algebra(E4);
@@ -164,10 +179,11 @@ main (int argc, char* argv[])
 		//problem.vel_time(i+1,n_space_steps-1,x1);
 		//mu1 = (h*x1).dCayRInv().transpose()*problem.Inertia().asDiagonal()*x1.toVector();
 
+		/*
 		if (success) {
 			std::cout << "** ARRET **" << std::endl;
 			break;
-		}
+		}*/
 	}
 
 	/* Output results ********************************************************/
