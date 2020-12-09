@@ -53,6 +53,8 @@ or
 	$ make
 	# make install
 
+For more information on Trilions NOX installation process, see [this page](https://www.docs.trilinos.org/files/TrilinosBuildReference.html).
+
 ### Eigen 3
 
 Eigen is a C++ library for linear algebra.
