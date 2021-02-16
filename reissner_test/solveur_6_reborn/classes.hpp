@@ -156,7 +156,7 @@ public:
 	//virtual void updateCSV (int current_i0, double w_resample) { };
 };
 
-class RigidBody : public SparseDiscMultiSyst
+class RigidBody : public DiscMultiSyst
 {
 private:
 	Eigen::Matrix<double,6,6> m_Inertia;
@@ -173,9 +173,8 @@ public:
 	void setInertia (double area, double rho);
 	void setConstraint (double area, double young, double poisson);
 	double coeffCFL (double young, double poisson, double rho, double alpha=3.0);
-	void updateCSV (int current_i0, double w_resample = 0.0);
-	//void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
-	//
+	//void updateCSV (int current_i0, double w_resample = 0.0);
+	void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
 };
 
 class SolveMe : public ::Abstract::NOXStep<NOXVector<6>,1>

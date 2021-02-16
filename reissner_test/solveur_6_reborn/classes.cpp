@@ -191,6 +191,7 @@ void RigidBody::setConstraint (double area, double young, double poisson)
 double RigidBody::coeffCFL (double young, double poisson, double rho, double alpha)
 { return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
 
+/*
 void
 RigidBody::updateCSV (int i, double w_resample)
 {
@@ -252,8 +253,8 @@ RigidBody::updateCSV (int i, double w_resample)
 
 	m_last_i = i;
 }
+*/
 
-/*
 void
 RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 {
@@ -316,7 +317,6 @@ RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 
 	of.close();
 }
-*/
 
 /* SolveMe */
 

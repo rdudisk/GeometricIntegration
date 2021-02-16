@@ -66,9 +66,16 @@ main (int argc, char* argv[])
 
 	problem.setInertia(area,rho);
 	problem.setConstraint(area,young,poisson);
+	problem.setSize(n_time_steps,n_space_steps);
+	problem.baselinstep(0.0,h,0.0,l);
+
+	/*
+	problem.setInertia(area,rho);
+	problem.setConstraint(area,young,poisson);
 	problem.setSize(n_space_steps);
 	problem.setStepSize(h,l);
 	problem.setCSV("results.csv");
+	*/
 
 	/* Setting up solver ******************************************************/
 
@@ -146,7 +153,7 @@ main (int argc, char* argv[])
 		problem.pos(1,j,problem.pos(0,j)*Cay::eval(h*problem.vel_time(0,j)));
 	}
 	
-	problem.updateCSV(0,w_resample);
+	//problem.updateCSV(0,w_resample);
 
 	/* Integration loop *******************************************************/
 
@@ -240,11 +247,13 @@ main (int argc, char* argv[])
 				problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 			}
 
-			problem.updateCSV(i,w_resample);
+			//problem.updateCSV(i,w_resample);
 		}
 	}
 
-	problem.endCSV();
+	//problem.endCSV();
+	
+	problem.writeCSVFile("results.csv",true,300);
 
 	return 0;
 }

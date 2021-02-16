@@ -157,18 +157,27 @@ def main():
         time_list  = []
         space_list = []
         reader = csv.DictReader(f)
+        last_i = -1
         for e in reader:
             i,j = [int(e.pop(k)) for k in ['i','j']]
             t = float(e.pop('t'))
-            if time_list==[] or len(time_list)<i:
+            if last_i<i:
+                # cloture du dictionnaire precedent
+                # if not len(time_list)==0:
+                    # time_list[-1]['k']=K
+                    # time_list[-1]['b']=B
+                    # time_list[-1]['e']=K+B
+                # K=B=0.0
+                # ouverture du nouveau dictionnaire
                 time_list.append({'t':t,'k':0.0,'b':0.0,'e':0.0,'m':[0.0]*6,'space_list':[]})
-            for k in ['k','b']:
-                time_list[-1][k] += float(e.pop(k))
+                last_i = i
+            time_list[-1]['k'] += float(e.pop('k'))
+            time_list[-1]['b'] += float(e.pop('b'))
             time_list[-1]['e'] = time_list[-1]['k']+time_list[-1]['b']
             for n in range(6):
                 time_list[-1]['m'][n] += float(e.pop('m{}'.format(n+1)))
             e = dict([k, float(v)] for k,v in e.items())
-            time_list[-1]['space_list'].append({'s':e['s'],'X':(e['x'],e['y'],e['z']),'U':(e['u1'],e['u2'],e['u3']),'V':(e['v1'],e['v2'],e['v3'])})
+            time_list[-1]['space_list'].append({'s':e['s'],'X':(e['x'],e['y'],e['z']),'U':(e['u1'],e['u2'],e['u3']),'V':(e['v1'],e['v2'],e['v3'])})#,'k':e['k'],'b':e['b']})
 
     # x_max = max([ d['x'] for d in l[0]])
     # x_min = min([ d['x'] for d in l[0]])
