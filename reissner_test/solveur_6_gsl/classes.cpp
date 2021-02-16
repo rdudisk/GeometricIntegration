@@ -116,7 +116,7 @@ double RigidBody::coeffCFL (double young, double poisson, double rho, double alp
 { return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
 
 void
-RigidBody::writeCSVFile (const std::string filename, bool header)
+RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 {
 	std::ofstream of;
 	of.open(filename,std::ios_base::trunc);
@@ -140,7 +140,13 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 	if (header)
 		of << "i,j,t,s,x,y,z,u1,u2,u3,v1,v2,v3,k,b,m1,m2,m3,m4,m5,m6" << std::endl;
 
-	for (i=0; i<n_time-1; i++) {
+	int i_step;
+	if (resample==0) 
+		i_step = 1;
+	else
+		i_step = n_time/resample;
+
+	for (i=0; i<n_time-1; i+=i_step) {
 		T = i*h;
 		for (j=0; j<n_space; j++) {
 			S = j*l;

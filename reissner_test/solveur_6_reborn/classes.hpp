@@ -1,6 +1,8 @@
 #ifndef CLASSES_HPP
 #define CLASSES_HPP
 
+#include <fstream>
+
 #include "Geomi/src/Common/utils.hpp"
 #include "Geomi/src/Common/NOXVector.hpp"
 #include "Geomi/src/Common/Abstract_NOXStep.hpp"
@@ -107,7 +109,54 @@ public:
 	void baselinstep (M t_inf_lim, M t_step_size, M s_inf_lim, M s_step_size);
 };
 
-class RigidBody : public DiscMultiSyst
+class SparseDiscMultiSyst
+{
+protected:
+	std::vector<MultiSyst> m_node;
+	size_t m_size[2];
+	M m_step_size[2];
+	std::ofstream csv_file;
+	int m_last_i;
+	const int TIME_SIZE=4;
+
+public:
+	SparseDiscMultiSyst ( )
+	{
+		m_size[0] = TIME_SIZE;
+		m_size[1] = 0;
+		m_step_size[0] = 0.0;
+		m_step_size[1] = 0.0;
+		m_node.clear();
+		m_last_i = -1;
+	}
+	~SparseDiscMultiSyst ( ) { }
+
+	void setSize (const size_t j);
+	void setStepSize (const M h, const M l);
+	MultiSyst const& operator[] (size_t index) const;
+	MultiSyst& operator[] (size_t index);
+	size_t size(const size_t dir) const;
+	const size_t getIndex (const size_t i, const size_t j) const;
+	//M step_size (const size_t dir) const;
+	M base_time (const size_t& i) const;
+	M base_space (const size_t& j) const;
+	Group pos (const size_t& i, const size_t& j) const;
+	void pos (const size_t& i, const size_t& j, const Group& p);
+	Algebra vel_time (const size_t& i, const size_t& j) const;
+	void vel_time (const size_t& i, const size_t& j, const Algebra& v);
+	Algebra vel_space (const size_t& i, const size_t& j) const;
+	void vel_space (const size_t& i, const size_t& j, const Algebra& v);
+	Vec6 mom_time (const size_t& i, const size_t& j) const;
+	void mom_time (const size_t& i, const size_t& j, const Vec6& m);
+	Vec6 mom_space (const size_t& i, const size_t& j) const;
+	void mom_space (const size_t& i, const size_t& j, const Vec6& m);
+	static const unsigned int dof ( );
+	void setCSV (const std::string filename);
+	void endCSV ();
+	//virtual void updateCSV (int current_i0, double w_resample) { };
+};
+
+class RigidBody : public SparseDiscMultiSyst
 {
 private:
 	Eigen::Matrix<double,6,6> m_Inertia;
@@ -124,18 +173,19 @@ public:
 	void setInertia (double area, double rho);
 	void setConstraint (double area, double young, double poisson);
 	double coeffCFL (double young, double poisson, double rho, double alpha=3.0);
-	void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
+	void updateCSV (int current_i0, double w_resample = 0.0);
+	//void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
+	//
 };
 
-class SolveMe : public ::Abstract::NOXStep<NOXVector<3>,1>
+class SolveMe : public ::Abstract::NOXStep<NOXVector<6>,1>
 {
 protected:
 	double m_h;
 	typedef Eigen::Matrix<double,3,1> Vec3;
-	Vec3 M1; // partie rotation de (h/2)*mu
-	Vec3 M2; // partie translation de (h/2)*mu
-	Vec3 m_OM0; // (h/2)*om0
-	Vec3 m_OM1; // (h/2)*om1
+	typedef Eigen::Matrix<double,6,1> Vec6;
+	Vec6 m_M; // partie rotation de (h/2)*mu
+	Vec6 m_X0; // (h/2)*om0
 
 	RigidBody& m_problem;
 
@@ -143,15 +193,12 @@ public:
 	SolveMe (RigidBody& problem)
 	: m_problem(problem) { }
 
-	void setData (double h, Vec3 mu1, Vec3 mu2);
-	void setData (double h, Eigen::Matrix<double,6,1> mu);
-	void setOM (Vec3 om0, Vec3 om1);
-	double h () const;
-	Vec3 mu1 () const;
-	Vec3 mu2 () const;
-	const NOXVector<3> getInitialGuess ();
-	bool computeF (NOXVector<3>& f, const NOXVector<3>& OM);
-	bool computeJacobian (Eigen::Matrix<double,3,3>& J, const NOXVector<3>& OM);
+	void setData (double h, Vec6 mu, Vec6 xi);
+	//double h () const;
+	//Vec6 M () const;
+	const NOXVector<6> getInitialGuess ();
+	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
+	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
 };
 
 /* GSL Solver */

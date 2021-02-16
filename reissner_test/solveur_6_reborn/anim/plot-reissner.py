@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
 import csv
+from itertools import count
 
 def create_plot3D_reissner(ll,limsX,limsY,limsZ,i,opath):
     data = defaultdict(list)
@@ -69,52 +70,30 @@ def create_plot3D_reissner(ll,limsX,limsY,limsZ,i,opath):
     # plt.close(fig)
     plt.show()
 
-def create_plot_energy(l,tmax,i,opath):
+def plot_energy(time_list,tmax,i,opath):
 
-    t = []
-    k = []
-    b = []
-    m1 = []
-    m2 = []
-    m3 = []
-    m4 = []
-    m5 = []
-    m6 = []
-    for ll in l:
-        t.append(ll[0]['t'])
-        k.append(sum([d['k'] for d in ll]))
-        b.append(sum([d['b'] for d in ll]))
-        m1.append(sum([d['m1'] for d in ll]))
-        m2.append(sum([d['m2'] for d in ll]))
-        m3.append(sum([d['m3'] for d in ll]))
-        m4.append(sum([d['m4'] for d in ll]))
-        m5.append(sum([d['m5'] for d in ll]))
-        m6.append(sum([d['m6'] for d in ll]))
+    t = [x['t'] for x in time_list]
+    e = [x['e'] for x in time_list]
+    k = [x['k'] for x in time_list]
+    b = [x['b'] for x in time_list]
+    tmp_m = [x['m'] for x in time_list]
+    m = []
+    for i in range(6):
+        m.append([x[i] for x in tmp_m])
 
-    E = [sum(e) for e in zip(k,b)]
-    limsE = (min(E+k+b),max(E+k+b))
-    all_m = m1+m2+m3+m4+m5+m6
+    limsE = (min(e+k+b),max(e+k+b))
+    all_m = [x for mx in m for x in mx]
     limsM = (min(all_m),max(all_m))
     
-    # Efact = 1.0 #100
-    # Jfact = 1.0 #1.0/100
-    # limsE = (limsE[0]*Efact,limsE[1]*Efact)
-    # limsJ = (limsJ[0]*Jfact,limsJ[1]*Jfact)
-
     dlimsE = 0.1*(limsE[1]-limsE[0])
     limsE = (limsE[0]-dlimsE,limsE[1]+dlimsE)
     filename = opath+"/imgEnergy{}.png".format(i)
     fig = plt.figure(figsize=(4.25,3),dpi=100)
-    #ax = fig.gca()
-    l1,l2,l3 = plt.plot(t,k,t,b,t,E)
-    #ax.set_zticks([])
+    l1,l2,l3 = plt.plot(t,k,t,b,t,e)
     plt.axis((0,tmax,limsE[0],limsE[1]))
     plt.xlabel("Time")
     plt.title("Energy ($J$)")
-    #plt.title("Energy")
-    plt.legend((l3,l1,l2),('$E_{tot}=E_{cin}+E_{pot}$','$E_{cin}$','$E_{pot}$'),loc='upper right')
-    #ax.dist=5
-    #ax.w_zaxis.set_pane_color((1,1,1,1))
+    #plt.legend((l3,l1,l2),('$E_{tot}=E_{cin}+E_{pot}$','$E_{cin}$','$E_{pot}$'),loc='upper right')
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
 
@@ -122,16 +101,12 @@ def create_plot_energy(l,tmax,i,opath):
     limsM = (limsM[0]-dlimsM,limsM[1]+dlimsM)
     filename = opath+"/imgMomenta{}.png".format(i)
     fig = plt.figure(figsize=(4.25,3),dpi=100)
-    #ax = fig.gca()
-    l1,l2,l3,l4,l5,l6 = plt.plot(t,m1,t,m2,t,m3,t,m4,t,m5,t,m6)
-    #ax.set_zticks([])
+    # l1,l2,l3,l4,l5,l6 = [plt.plot(t,m[i]) for i in range(6)]
+    l1,l2,l3,l4,l5,l6 = plt.plot(t,m[0],t,m[1],t,m[2],t,m[3],t,m[4],t,m[5])
     plt.axis((0,tmax,limsM[0],limsM[1]))
     plt.xlabel("Time")
     plt.title("Angular momentum $L$ ($kg.m^2.s^{-1}$)\nand momentum $p$ ($kg.m.s^{-1}$)")
-    #plt.title("Momenta")
     plt.legend((l1,l2,l3,l4,l5,l6),('$L_x$','$L_y$','$L_z$','$p_x$','$p_y$','$p_z$'),loc='upper right')
-    #ax.dist=5
-    #ax.w_zaxis.set_pane_color((1,1,1,1))
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
 
@@ -161,61 +136,73 @@ def main():
     # f = open(sys.argv[1],'r')
     # f.readline() # suppression de la ligne de commentaires
 
-    realtime = False
+    # The structure of time_list is as follows:
+    # time_list[i] holds the data for reissner beam at time index i
+    # as a dictionnary with following keys:
+    #  't'          (float) the date (equal to h*i)
+    #  'k'          (float) total kinetic energy
+    #  'k'          (float) "     bending "
+    #  'e'          (float) total energy
+    #  'm'          (list)  six elements list representing momenta,
+    #                       each element is a float corresponding to one component
+    #  'space_list' (list)  beam section related data (see below)
+    # Each space_list holds the data for all the sections for time index i.
+    # An element of space_list at index j is a dictionnary with the following keys:
+    #  's'          (float)  the abscissa (equal to l*j)
+    #  'X'          (tuplet) three elements tuplet, 3D position of section centroid
+    #  'U'          (tuplet) three elements tuplet, 3D vector E2
+    #  'V'          (tuplet) three elements tuplet, 3D vector E3
 
-    first = True
-
-    l = []
-    ll = []
-    t = -1
     with open(fname,newline='') as f:
+        time_list  = []
+        space_list = []
         reader = csv.DictReader(f)
-        for row in reader:
-            r = dict([key, float(v)] for key, v in row.items())
-            if first:
-                t = r['t']
-                first = False
-            if (r['t']!=t):
-                l.append(ll)
-                ll = []
-                t = r['t']
-            ll.append(r)
-        l.append(ll) # derniere liste
-    
-    # x_max = max([ d['x'] for ll in l for d in ll])
-    # x_min = min([ d['x'] for ll in l for d in ll])
-    # y_max = max([ d['y'] for ll in l for d in ll])
-    # y_min = min([ d['y'] for ll in l for d in ll])
-    # z_max = max([ d['z'] for ll in l for d in ll])
-    # z_min = min([ d['z'] for ll in l for d in ll])
-    x_max = max([ d['x'] for d in l[0]])
-    x_min = min([ d['x'] for d in l[0]])
-    y_max = max([ d['y'] for d in l[0]])
-    y_min = min([ d['y'] for d in l[0]])
-    z_max = max([ d['z'] for d in l[0]])
-    z_min = min([ d['z'] for d in l[0]])
-    x_lims = (x_min,x_max)
-    y_lims = (y_min,y_max)
-    z_lims = (z_min,z_max)
+        for e in reader:
+            i,j = [int(e.pop(k)) for k in ['i','j']]
+            t = float(e.pop('t'))
+            if time_list==[] or len(time_list)<i:
+                time_list.append({'t':t,'k':0.0,'b':0.0,'e':0.0,'m':[0.0]*6,'space_list':[]})
+            for k in ['k','b']:
+                time_list[-1][k] += float(e.pop(k))
+            time_list[-1]['e'] = time_list[-1]['k']+time_list[-1]['b']
+            for n in range(6):
+                time_list[-1]['m'][n] += float(e.pop('m{}'.format(n+1)))
+            e = dict([k, float(v)] for k,v in e.items())
+            time_list[-1]['space_list'].append({'s':e['s'],'X':(e['x'],e['y'],e['z']),'U':(e['u1'],e['u2'],e['u3']),'V':(e['v1'],e['v2'],e['v3'])})
 
-    t_max = max([ d['t'] for ll in l for d in ll])
+    # x_max = max([ d['x'] for d in l[0]])
+    # x_min = min([ d['x'] for d in l[0]])
+    # y_max = max([ d['y'] for d in l[0]])
+    # y_min = min([ d['y'] for d in l[0]])
+    # z_max = max([ d['z'] for d in l[0]])
+    # z_min = min([ d['z'] for d in l[0]])
+    # x_lims = (x_min,x_max)
+    # y_lims = (y_min,y_max)
+    # z_lims = (z_min,z_max)
 
-    if (realtime):
-        l_resamp = []
-        ts = t_max/100.0
+    t_max = time_list[-1]['t']
+
+    ### Plotting ###############################################################
+
+    # number of time samples to use
+    # no resampling if equal to 0
+    n_samples = 300
+
+    if (n_samples):
+        time_list_resamp = []
+        ts = t_max/n_samples
         k = 0
-        for i in range(len(l)):
+        for frame in time_list:
             t = k*ts
-            if (l[i][0]['t'] >= t):
-                l_resamp.append(l[i])
+            if (frame['t'] >= t):
+                time_list_resamp.append(frame)
                 k += 1
-        l = l_resamp
+        time_list = time_list_resamp
     
-    for i in range(len(l)):
-        create_plot2D_reissner(l[i],i,opath)
-    # create_plot3D_reissner(l[i],x_lims,y_lims,z_lims,i,opath)
+    # for i in range(len(time_list)):
+        # create_plot2D_reissner(time_list[i],i,opath)
     
-    create_plot_energy(l,t_max,0,opath)
+    plot_energy(time_list,t_max,0,opath)
 
 if __name__ == "__main__":
     main()

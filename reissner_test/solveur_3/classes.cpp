@@ -145,12 +145,12 @@ RigidBody::writeCSVFile (const std::string filename, bool header)
 		for (j=0; j<n_space; j++) {
 			S = j*l;
 			p = this->pos(i,j);
-			x = p.trans();
+			x = p.translationVector();
 			u = p.rotateVector(E2);
 			v = p.rotateVector(E3);
-			v_xi = this->vel_time(i,j).toVector();
+			v_xi = this->vel_time(i,j).vector();
 			// osef si j=n_space-1
-			v_eps = this->vel_space(i,j).toVector();
+			v_eps = this->vel_space(i,j).vector();
 			kinetic = 0.5*(v_xi.dot((this->Inertia())*v_xi));
 			if (j==n_space-1) bending = 0.0;
 			else bending = 0.5*((v_eps-E4).dot((this->Constraint())*(v_eps-E4)));
