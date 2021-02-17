@@ -189,7 +189,7 @@ void RigidBody::setConstraint (double radius, double young, double poisson)
 	double area = RigidBody::compute_area(radius);
 	double G = young/(2.0+2.0*poisson);
 	Vec6 v;
-	v<< G*m_Inertia(1,1), young*m_Inertia(2,2), young*m_Inertia(3,3), 
+	v<< G*m_Inertia(0,0), young*m_Inertia(1,1), young*m_Inertia(2,2), 
 		young*area, G*area, G*area;
 	m_Constraint = v.asDiagonal();
 }

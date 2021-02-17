@@ -10,8 +10,8 @@
 </params>
 <integration>
 	<space-step>0.1</space-step>
-	<time-step>1.0e-10</time-step>
+	<time-step>10.0e-8</time-step>
 	<n-space-step>10</n-space-step>
-	<n-time-step>1000000000</n-time-step>
+	<n-time-step>10000000</n-time-step>
 </integration>
 </config>
