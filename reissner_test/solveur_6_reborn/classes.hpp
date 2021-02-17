@@ -156,7 +156,7 @@ public:
 	//virtual void updateCSV (int current_i0, double w_resample) { };
 };
 
-class RigidBody : public DiscMultiSyst
+class RigidBody : public SparseDiscMultiSyst
 {
 private:
 	Eigen::Matrix<double,6,6> m_Inertia;
@@ -173,8 +173,8 @@ public:
 	void setInertia (double area, double rho);
 	void setConstraint (double area, double young, double poisson);
 	double coeffCFL (double young, double poisson, double rho, double alpha=3.0);
-	//void updateCSV (int current_i0, double w_resample = 0.0);
-	void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
+	void updateCSV (int current_i0, double w_resample = 0.0);
+	//void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
 };
 
 class SolveMe : public ::Abstract::NOXStep<NOXVector<6>,1>
@@ -200,15 +200,28 @@ public:
 	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
 };
 
-/* GSL Solver */
+/* Discplacement */
 
-struct params {
-	Eigen::Matrix<double,6,6> const J;
-	Vec6 const mu;
-	M const l;
+class Displacement
+{
+protected:
+	static const int BUFF_SIZE=4096;
+	std::vector<double> m_buffer;
+	int i;
+	std::ofstream of;
+
+public:
+	Displacement (double Fs, std::string filename)
+	{
+		i=0;
+		m_buffer.resize(BUFF_SIZE);
+		this->of.open(filename,std::ios_base::trunc);
+		of << "y" << std::endl << Fs << std::endl;
+	}
+
+	void flush ();
+	void insert(double y);
+	void close();
 };
-int chiToBeSolved (const gsl_vector* chi, void *p, gsl_vector* f);
-int solve_speed (Vec6 const& mu, M l, Algebra const& chi_init,
-				 Eigen::Matrix<M,6,6> const& J, Algebra* chi);
 
 #endif

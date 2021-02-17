@@ -64,18 +64,21 @@ main (int argc, char* argv[])
 
 	RigidBody problem;
 
+	/*
 	problem.setInertia(area,rho);
 	problem.setConstraint(area,young,poisson);
 	problem.setSize(n_time_steps,n_space_steps);
 	problem.baselinstep(0.0,h,0.0,l);
+	*/
 
-	/*
 	problem.setInertia(area,rho);
 	problem.setConstraint(area,young,poisson);
 	problem.setSize(n_space_steps);
 	problem.setStepSize(h,l);
 	problem.setCSV("results.csv");
-	*/
+
+	Displacement displacement(1.0/h,"displacement.csv");
+	int listening_index = 3;
 
 	/* Setting up solver ******************************************************/
 
@@ -146,6 +149,9 @@ main (int argc, char* argv[])
 			problem.mom_space(0,j,sig0);
 		}
 	}
+	
+	displacement.insert(problem.pos(0,listening_index).translationVector()[1]);
+
 
 	// Updating position for i=1
 	
@@ -153,7 +159,7 @@ main (int argc, char* argv[])
 		problem.pos(1,j,problem.pos(0,j)*Cay::eval(h*problem.vel_time(0,j)));
 	}
 	
-	//problem.updateCSV(0,w_resample);
+	problem.updateCSV(0,w_resample);
 
 	/* Integration loop *******************************************************/
 
@@ -246,14 +252,17 @@ main (int argc, char* argv[])
 				// Updating position
 				problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 			}
+		} // loop j
 
-			//problem.updateCSV(i,w_resample);
-		}
-	}
+		problem.updateCSV(i,w_resample);
+		displacement.insert(problem.pos(i,listening_index).translationVector()[1]);
+	} // loop i
 
-	//problem.endCSV();
+	problem.endCSV();
+	displacement.flush();
+	displacement.close();
 	
-	problem.writeCSVFile("results.csv",true,300);
+	//problem.writeCSVFile("results.csv",true,300);
 
 	return 0;
 }

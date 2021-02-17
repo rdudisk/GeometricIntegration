@@ -191,7 +191,6 @@ void RigidBody::setConstraint (double area, double young, double poisson)
 double RigidBody::coeffCFL (double young, double poisson, double rho, double alpha)
 { return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
 
-/*
 void
 RigidBody::updateCSV (int i, double w_resample)
 {
@@ -253,8 +252,8 @@ RigidBody::updateCSV (int i, double w_resample)
 
 	m_last_i = i;
 }
-*/
 
+/*
 void
 RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 {
@@ -317,6 +316,7 @@ RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 
 	of.close();
 }
+*/
 
 /* SolveMe */
 
@@ -394,4 +394,29 @@ SolveMe::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
 	J.block(3,3,3,3) = (2.0/m_h)*JF2_G;
 
 	return true;
+}
+
+void
+Displacement::flush ()
+{
+	for (int j=0; j<i; j++) {
+		of << m_buffer[j] << std::endl;
+	}
+}
+
+void
+Displacement::insert (double y)
+{
+	m_buffer[i] = y;
+	i++;
+	if (i==BUFF_SIZE) {
+		this->flush();
+		i=0;
+	}
+}
+
+void
+Displacement::close ()
+{
+	this->of.close();
 }

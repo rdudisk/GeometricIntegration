@@ -6,12 +6,12 @@
 	<rho>7.8e3</rho>
 	<diameter>0.003</diameter>
 	<kfactor>3.0</kfactor>
-	<ffactor>5000.0</ffactor>
+	<ffactor>5000000.0</ffactor>
 </params>
 <integration>
 	<space-step>0.1</space-step>
-	<time-step>1.0e-8</time-step>
+	<time-step>10.0e-8</time-step>
 	<n-space-step>10</n-space-step>
-	<n-time-step>1500000</n-time-step>
+	<n-time-step>10000000</n-time-step>
 </integration>
 </config>
