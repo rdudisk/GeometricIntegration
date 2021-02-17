@@ -4,13 +4,13 @@
 	<young>2.0e11</young>
 	<poisson>0.35</poisson>
 	<rho>7.8e3</rho>
-	<diameter>0.003</diameter>
+	<radius>0.0015</radius>
 	<kfactor>3.0</kfactor>
-	<ffactor>5000000.0</ffactor>
+	<ffactor>5000.0</ffactor>
 </params>
 <integration>
-	<space-step>0.1</space-step>
-	<time-step>10.0e-8</time-step>
+	<space-step>0.02</space-step>
+	<time-step>1.0e-11</time-step>
 	<n-space-step>10</n-space-step>
 	<n-time-step>10000000</n-time-step>
 </integration>

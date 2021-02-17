@@ -22,15 +22,14 @@ main (int argc, char* argv[])
 		return -1;
 	}
 
-	double diameter, rho, young, poisson, area, k_factor, f_factor, l, h;
+	double radius, rho, young, poisson, k_factor, f_factor, l, h;
 	int    n_space_steps, n_time_steps;
 
 	pugi::xml_node xml_params = doc.child("config").child("params");
 	young    = std::stod(xml_params.child("young").child_value());
 	poisson  = std::stod(xml_params.child("poisson").child_value());
 	rho      = std::stod(xml_params.child("rho").child_value());
-	diameter = std::stod(xml_params.child("diameter").child_value());
-	area     = diameter*diameter;
+	radius   = std::stod(xml_params.child("radius").child_value());
 	k_factor = std::stod(xml_params.child("kfactor").child_value());
 	f_factor = std::stod(xml_params.child("ffactor").child_value());
 
@@ -42,18 +41,14 @@ main (int argc, char* argv[])
 
 	/* Checking up CFL condition requirement **********************************/
 
-	double cfl, cfl_factor, lame_lambda, lame_mu;
-
-	lame_lambda = young*poisson/((1.0+poisson)*(1.0-2.0*poisson));
-	lame_mu     = young/(2.0*(1.0+poisson));
-	cfl_factor  = 0.1;
-	cfl	        = cfl_factor*l/sqrt((lame_lambda+2.0*lame_mu)/rho);
+	double alpha = 0.1;
+	double h_cfl=l*RigidBody::coeffCFL(young, poisson, rho, alpha);
 	
-	if (h>=cfl) {
+	if (h>=h_cfl) {
 		std::string response;
-		std::cout << "Warning: CFL condition not verified (factor=0.1):" << std::endl
+		std::cout << "Warning: CFL condition not verified (factor=" << alpha << "):" << std::endl
 			      << "\th = " << h << std::endl
-				  << "\tlimit = " << cfl << std::endl
+				  << "\tlimit = " << h_cfl << std::endl
 				  << "Do you want to continue ? [yn] ";
 		std::cin >> response;
 		if (response!="y")
@@ -71,8 +66,8 @@ main (int argc, char* argv[])
 	problem.baselinstep(0.0,h,0.0,l);
 	*/
 
-	problem.setInertia(area,rho);
-	problem.setConstraint(area,young,poisson);
+	problem.setInertia(radius,rho);
+	problem.setConstraint(radius,young,poisson);
 	problem.setSize(n_space_steps);
 	problem.setStepSize(h,l);
 	problem.setCSV("results.csv");
@@ -171,6 +166,7 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,6,1> Kvector;
 	Kvector << 0.0, 0.0, 0.0, 1.0, 1.0, 1.0;
 	Kmatrix = k_factor*Kvector.asDiagonal();
+	double area = RigidBody::compute_area(radius);
 	double F_constant = f_factor/(rho*area);
 	double F_duration = 0.01;
 	Eigen::Matrix<double,6,1> Fvector;

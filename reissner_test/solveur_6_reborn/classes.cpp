@@ -166,30 +166,45 @@ void SparseDiscMultiSyst::endCSV ()
 
 /* RigidBody */
 
+double RigidBody::compute_area (double radius)
+{ return M_PI*radius*radius; }
+
 Eigen::Matrix<double,6,6>& RigidBody::Inertia () { return m_Inertia; }
 void RigidBody::Inertia (Eigen::Matrix<double,6,6> val) { m_Inertia = val; }
 Eigen::Matrix<double,6,6>& RigidBody::Constraint () { return m_Constraint; }
 void RigidBody::Constraint (Eigen::Matrix<double,6,6> val) { m_Constraint = val; }
 
-void RigidBody::setInertia (double area, double rho)
-{	// la formule n'est peut-être pas exacte, mais donne un ordre de grandeur
-	double lm = area*rho; // masse lineaire
+void RigidBody::setInertia (double radius, double rho)
+{
+	double area = RigidBody::compute_area(radius);
+	double lm = area*rho; // masse lineique
+	double Ia = 0.5*lm*area;
 	Vec6 v;
-	v << 0.5*lm*area, 0.25*lm*area, 0.25*lm*area, lm, lm, lm;
+	v << Ia, 0.5*Ia, 0.5*Ia, lm, lm, lm;
 	m_Inertia = v.asDiagonal();
 }
 
-void RigidBody::setConstraint (double area, double young, double poisson)
+void RigidBody::setConstraint (double radius, double young, double poisson)
 {
+	double area = RigidBody::compute_area(radius);
 	double G = young/(2.0+2.0*poisson);
 	Vec6 v;
-	v<< G*(m_Inertia(1,1)+m_Inertia(2,2)), young*m_Inertia(2,2), young*m_Inertia(2,2), 
+	v<< G*m_Inertia(1,1), young*m_Inertia(2,2), young*m_Inertia(3,3), 
 		young*area, G*area, G*area;
 	m_Constraint = v.asDiagonal();
 }
 
 double RigidBody::coeffCFL (double young, double poisson, double rho, double alpha)
-{ return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
+{
+	double cfl, cfl_factor, lame_lambda, lame_mu;
+
+	lame_lambda = young*poisson/((1.0+poisson)*(1.0-2.0*poisson));
+	lame_mu     = young/(2.0*(1.0+poisson));
+	cfl	        = alpha/sqrt((lame_lambda+2.0*lame_mu)/rho);
+
+	return cfl;
+	//return 1.0/(alpha*sqrt(young*(1.0-poisson)/(rho*(1.0+poisson)*(1.0-2.0*poisson)))); }
+}
 
 void
 RigidBody::updateCSV (int i, double w_resample)
