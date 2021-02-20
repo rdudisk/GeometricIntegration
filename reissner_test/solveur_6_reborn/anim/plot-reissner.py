@@ -74,7 +74,7 @@ def create_plot3D_reissner(ll,limsX,limsY,limsZ,i,opath):
     # plt.close(fig)
     plt.show()
 
-def plot_energy(time_list,tmax,i,opath):
+def plot_energy(time_list,opath):
 
     t = [x['t'] for x in time_list]
     e = [x['e'] for x in time_list]
@@ -88,17 +88,19 @@ def plot_energy(time_list,tmax,i,opath):
     limsE = (min(e+k+b),max(e+k+b))
     all_m = [x for mx in m for x in mx]
     limsM = (min(all_m),max(all_m))
+    tmin = t[0]
+    tmax = t[-1]
     
     ### Plot energy ###
 
-    filename = opath+"/imgEnergy{}.png".format(i)
+    filename = opath+"/imgEnergy.png".format(i)
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
     l1,l2,l3 = plt.plot(t,k,t,b,t,e)
 
     dlimsE = 0.1*(limsE[1]-limsE[0])
     limsE = (limsE[0]-dlimsE,limsE[1]+dlimsE)
-    plt.axis((0,tmax,limsE[0],limsE[1]))
+    plt.axis((tmin,tmax,limsE[0],limsE[1]))
 
     plt.xlabel("Time")
     plt.title("Energy ($J$)")
@@ -106,22 +108,47 @@ def plot_energy(time_list,tmax,i,opath):
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
 
+    n_samples = 500
+    t_resamp = [tmin+float(i)*tmax/float(n_samples) for i in range(n_samples)]
+    e = np.interp(t_resamp,t,e)
+    k = np.interp(t_resamp,t,k)
+    b = np.interp(t_resamp,t,b)
+
+    o = open('energy.csv','w')
+    o.write('t,e,k,b\n')
+    for i in range(len(t)):
+        o.write('{},{},{},{}\n'.format(t_resamp[i],e[i],k[i],b[i]))
+    o.close()
+
     ### Plot momenta ###
 
-    filename = opath+"/imgMomenta{}.png".format(i)
+    filename = opath+"/imgMomenta.png".format(i)
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
     l1,l2,l3,l4,l5,l6 = plt.plot(t,m[0],t,m[1],t,m[2],t,m[3],t,m[4],t,m[5])
 
     dlimsM = 0.1*(limsM[1]-limsM[0])
     limsM = (limsM[0]-dlimsM,limsM[1]+dlimsM)
-    plt.axis((0,tmax,limsM[0],limsM[1]))
+    plt.axis((tmin,tmax,limsM[0],limsM[1]))
 
     plt.xlabel("Time")
     plt.title("Angular momentum $L$ ($kg.m^2.s^{-1}$)\nand momentum $p$ ($kg.m.s^{-1}$)")
     plt.legend((l1,l2,l3,l4,l5,l6),('$L_x$','$L_y$','$L_z$','$p_x$','$p_y$','$p_z$'),loc='upper right')
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
+
+    m1 = np.interp(t_resamp,t,m[0])
+    m2 = np.interp(t_resamp,t,m[1])
+    m3 = np.interp(t_resamp,t,m[2])
+    m4 = np.interp(t_resamp,t,m[3])
+    m5 = np.interp(t_resamp,t,m[4])
+    m6 = np.interp(t_resamp,t,m[5])
+
+    o = open('momenta.csv','w')
+    o.write('t,m1,m2,m3,m4,m5,m6\n')
+    for i in range(len(t)):
+        o.write('{},{},{},{},{},{},{}\n'.format(t_resamp[i],m1[i],m2[i],m3[i],m4[i],m5[i],m6[i]))
+    o.close()
 
 
 def create_plot2D_reissner(l,i,opath):
@@ -145,7 +172,8 @@ def create_plot2D_reissner(l,i,opath):
 def resample_audio(y,Fs=44100.0):
     current_Fs = y.pop(0)
 
-    sos = scipy.signal.butter(8,Fs/2.0,'lowpass',fs=current_Fs,output='sos')
+    # TODO: Fs ou Fs/2 ?
+    sos = scipy.signal.butter(8,Fs,'lowpass',fs=current_Fs,output='sos')
     y_filtered = scipy.signal.sosfilt(sos,y)
 
     current_N  = len(y_filtered)
@@ -179,6 +207,17 @@ def fft(y,Fs=44100.0):
 
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
+
+    n_samples = 500
+    freq_resamp = [float(i)*0.5*Fs/float(n_samples) for i in range(n_samples)]
+    fft = np.interp(freq_resamp,freq,fft)
+    freq = freq_resamp
+
+    o = open('fft.csv','w')
+    o.write('f,fft\n')
+    for i in range(len(fft)):
+        o.write('{},{}\n'.format(freq[i],fft[i]))
+    o.close()
 
 def old_listen_wave(time_list):
     listening_index = 3
@@ -316,7 +355,7 @@ def main():
     # for i in range(len(time_list)):
         # create_plot2D_reissner(time_list[i],i,opath)
     
-    plot_energy(time_list,t_max,0,opath)
+    plot_energy(time_list,opath)
 
 if __name__ == "__main__":
     main()

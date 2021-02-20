@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <config>
 <params>
-	<young>2.0e11</young>
+	<young>2.0e9</young>
 	<poisson>0.35</poisson>
 	<rho>7.8e3</rho>
 	<radius>0.0015</radius>
-	<kfactor>3.0</kfactor>
-	<ffactor>5000.0</ffactor>
+	<kfactor>1.5</kfactor>
+	<ffactor>50000.0</ffactor>
+	<pincement>0.3</pincement>
 </params>
 <integration>
-	<space-step>0.1</space-step>
+	<space-step>0.009</space-step>
 	<time-step>10.0e-8</time-step>
-	<n-space-step>10</n-space-step>
+	<n-space-step>200</n-space-step>
 	<n-time-step>10000000</n-time-step>
 </integration>
 </config>

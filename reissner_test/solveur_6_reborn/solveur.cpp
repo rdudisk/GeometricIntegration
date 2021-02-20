@@ -22,16 +22,17 @@ main (int argc, char* argv[])
 		return -1;
 	}
 
-	double radius, rho, young, poisson, k_factor, f_factor, l, h;
+	double radius, rho, young, poisson, k_factor, f_factor, pincement, l, h;
 	int    n_space_steps, n_time_steps;
 
 	pugi::xml_node xml_params = doc.child("config").child("params");
-	young    = std::stod(xml_params.child("young").child_value());
-	poisson  = std::stod(xml_params.child("poisson").child_value());
-	rho      = std::stod(xml_params.child("rho").child_value());
-	radius   = std::stod(xml_params.child("radius").child_value());
-	k_factor = std::stod(xml_params.child("kfactor").child_value());
-	f_factor = std::stod(xml_params.child("ffactor").child_value());
+	young     = std::stod(xml_params.child("young").child_value());
+	poisson   = std::stod(xml_params.child("poisson").child_value());
+	rho       = std::stod(xml_params.child("rho").child_value());
+	radius    = std::stod(xml_params.child("radius").child_value());
+	k_factor  = std::stod(xml_params.child("kfactor").child_value());
+	f_factor  = std::stod(xml_params.child("ffactor").child_value());
+	pincement = std::stod(xml_params.child("pincement").child_value());
 
 	pugi::xml_node xml_integration = doc.child("config").child("integration");
 	l = std::stod(xml_integration.child("space-step").child_value());
@@ -139,10 +140,13 @@ main (int argc, char* argv[])
 			problem.vel_time(0,j,x0);
 			problem.mom_time(0,j,mu0);
 		}
-		if (j<n_space_steps-1) {
-			problem.vel_space(0,j,e0);
-			problem.mom_space(0,j,sig0);
-		}
+	}
+
+	for (j=0; j<n_space_steps-1; j++) {
+		e0   = (1.0/l)*Cay::inv(problem.pos(0,j).inverse()*problem.pos(0,j+1));
+		sig0 = (-1.0)*Cay::inv_right_diff_star(l*e0,Algebra(problem.Constraint()*(e0.vector()-E4))).vector();
+		problem.vel_space(0,j,e0);
+		problem.mom_space(0,j,sig0);
 	}
 	
 	displacement.insert(problem.pos(0,listening_index).translationVector()[1]);
@@ -172,13 +176,14 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,6,1> Fvector;
 	Fvector << 0.0, 0.0, 0.0, 0.0, F_constant, 0.0;
 	double i_double;
+	int indice_pincement = (int) (pincement*((float)n_space_steps));
 	
 	for (i=1; i<n_time_steps-1; i++) {
 		for (j=0; j<n_space_steps; j++) {
 			if (j<n_space_steps-1) {
 				// Updating space velocity and momentum
-				e1   = (1.0/l)*Cay::inv(problem.pos(i,j).inverse()*problem.pos(i,j+1));
-				sig1 = (-1.0)*Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector();
+				e1   = (1.0/l)*(Cay::inv(problem.pos(i,j).inverse()*problem.pos(i,j+1)));
+				sig1 = (-1.0)*(Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector());
 				problem.vel_space(i,j,e1);
 				problem.mom_space(i,j,sig1);
 			}
@@ -208,7 +213,7 @@ main (int argc, char* argv[])
 				mu1 -= h*l*Kmatrix*x0.vector();
 				// Adding external control forces
 				i_double = (double) i;
-				if (j==3 && i_double*h < F_duration)
+				if (j==indice_pincement && i_double*h < F_duration)
 					mu1 += h*l*(i_double*h/F_duration)*Fvector;
 
 				// Solving for x1
