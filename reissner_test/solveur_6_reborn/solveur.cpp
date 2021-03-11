@@ -74,7 +74,15 @@ main (int argc, char* argv[])
 	problem.setCSV("results.csv");
 
 	Displacement displacement(1.0/h,"displacement.csv");
-	int listening_index = 3;
+
+	// TODO: clean that up
+	double area = RigidBody::compute_area(radius);
+	double F_constant = f_factor/(rho*area);
+	double F_duration = 0.01;
+	Eigen::Matrix<double,6,1> Fvector;
+	Fvector << 0.0, 0.0, 0.0, 0.0, F_constant, 0.0;
+	int indice_pincement = (int) (pincement*((float)n_space_steps));
+	int indice_ecoute = indice_pincement;
 
 	/* Setting up solver ******************************************************/
 
@@ -105,6 +113,36 @@ main (int argc, char* argv[])
 
 	m_grp = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*solveme));
 	m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
+
+	/* Solver for boudary j=M *************************************************/
+
+	Teuchos::RCP<Teuchos::ParameterList>			m_solver2ParametersPtr;
+	Teuchos::RCP<NOX::StatusTest::Combo>			m_statusTests2;
+	Teuchos::RCP<NOXGroup<NOXVector<6>,1>>			m_grp2;
+	Teuchos::RCP<NOX::Solver::Generic>				m_solver2;
+
+	SolveBoundary* solvebound = new SolveBoundary(problem);
+
+	m_solver2ParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
+	Teuchos::ParameterList& solver2Parameters = *m_solver2ParametersPtr;
+
+	solver2Parameters.set("Nonlinear Solver","Line Search Based");
+	Teuchos::ParameterList& lineSearchParameters2 = solver2Parameters.sublist("Line Search");
+	lineSearchParameters2.set("Method","Full Step");
+
+	if (true) { // true = silent
+		Teuchos::ParameterList& printParams2 = solver2Parameters.sublist("Printing");
+		printParams2.set("Output Information",
+			NOX::Utils::TestDetails +
+			NOX::Utils::Error);
+	}
+
+	Teuchos::RCP<NOX::StatusTest::NormF> statusTest2A = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-12,NOX::StatusTest::NormF::Scaled));
+	Teuchos::RCP<NOX::StatusTest::MaxIters> statusTest2B = Teuchos::rcp(new NOX::StatusTest::MaxIters(1000));
+	m_statusTests2 = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTest2A,statusTest2B));
+
+	m_grp2 = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*solvebound));
+	m_solver2 = NOX::Solver::buildSolver(m_grp2,m_statusTests2,m_solver2ParametersPtr);
 
 	/* Initialization *********************************************************/
 
@@ -149,7 +187,7 @@ main (int argc, char* argv[])
 		problem.mom_space(0,j,sig0);
 	}
 	
-	displacement.insert(problem.pos(0,listening_index).translationVector()[1]);
+	displacement.insert(problem.pos(0,indice_ecoute).translationVector()[1]);
 
 
 	// Updating position for i=1
@@ -170,13 +208,7 @@ main (int argc, char* argv[])
 	Eigen::Matrix<double,6,1> Kvector;
 	Kvector << 0.0, 0.0, 0.0, 1.0, 1.0, 1.0;
 	Kmatrix = k_factor*Kvector.asDiagonal();
-	double area = RigidBody::compute_area(radius);
-	double F_constant = f_factor/(rho*area);
-	double F_duration = 0.01;
-	Eigen::Matrix<double,6,1> Fvector;
-	Fvector << 0.0, 0.0, 0.0, 0.0, F_constant, 0.0;
 	double i_double;
-	int indice_pincement = (int) (pincement*((float)n_space_steps));
 	
 	for (i=1; i<n_time_steps-1; i++) {
 		for (j=0; j<n_space_steps; j++) {
@@ -190,7 +222,7 @@ main (int argc, char* argv[])
 			//else
 				//e1 = Algebra(E4);
 
-			if (j==0 || j==(n_space_steps-1)) {
+			if (j==0) {
 				// Updating time velocity and momentum
 				x1  = Algebra::Zero();
 				mu1 = Vec6::Zero();
@@ -199,6 +231,44 @@ main (int argc, char* argv[])
 
 				// Updating position
 				problem.pos(i+1,j,problem.pos(i,j));
+			}
+			else if (j==(n_space_steps-1)) {
+				// solve for epsilon(i+1,M-1)
+				solvebound->setData(l,
+						problem.pos(i+1,j-1).rotationMatrix(),
+						problem.pos(i+1,j-1).translationVector()-problem.pos(i,j).translationVector(),
+						E4,
+						problem.vel_space(i,j-1).vector());
+				try {
+					m_solver2->reset(solvebound->getInitialGuess());
+					NOX::StatusTest::StatusType status = m_solver2->solve();
+					const NOXGroup<NOXVector<6>,1>& solnGrp = dynamic_cast<const NOXGroup<NOXVector<6>,1>&>(m_solver2->getSolutionGroup());
+					const NOXVector<6>& c_e = dynamic_cast<const NOXVector<6>&>(solnGrp.getX());
+
+					if (status == NOX::StatusTest::Failed || status == NOX::StatusTest::Unconverged)
+						success = false;
+					else success = true;
+
+					e1 = Algebra(c_e);
+				} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
+				if (!success) {
+					std::cout << "Failed solving epsilon" << std::endl;
+					return 0;
+				}
+
+				// Updating space velocity and momentum
+				sig1 = (-1.0)*(Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector());
+				problem.vel_space(i+1,j-1,e1);
+				problem.mom_space(i+1,j-1,sig1);
+
+				// Updating position
+				problem.pos(i+1,j,problem.pos(i+1,j-1)*Cay::eval(l*e1));
+
+				// Updating time velocity and momentum
+				x1  = (1.0/h)*(Cay::inv(problem.pos(i,j).inverse()*problem.pos(i+1,j)));
+				mu1 = Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*(x1.vector()))).vector();
+				problem.vel_time(i,j,x1);
+				problem.mom_time(i,j,mu1);
 			}
 			else {
 				x0   = problem.vel_time(i-1,j);
@@ -256,7 +326,7 @@ main (int argc, char* argv[])
 		} // loop j
 
 		problem.updateCSV(i,w_resample);
-		displacement.insert(problem.pos(i,listening_index).translationVector()[1]);
+		displacement.insert(problem.pos(i,indice_ecoute).translationVector()[1]);
 	} // loop i
 
 	problem.endCSV();

@@ -411,6 +411,87 @@ SolveMe::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
 	return true;
 }
 
+/* SolveBoundary **************************************************************/
+
+void
+SolveBoundary::setData (double l, Eigen::Matrix<double,3,3> R, Vec3 delta_r, Vec6 epsilon0, Vec6 epsilon_init)
+{ m_l = l; m_R = R; m_delta_r = delta_r; m_epsilon0 = epsilon0; m_epsilon_init = epsilon_init; }
+
+const NOXVector<6>
+SolveBoundary::getInitialGuess ()
+{
+	NOXVector<6> ret = m_epsilon_init;
+	return ret;
+}
+
+bool
+SolveBoundary::computeF (NOXVector<6>& f, const NOXVector<6>& X)
+{
+	// voir cahier 6 pp. 155-157
+	Eigen::Matrix<double,3,1> OM, G, om, g, OM0, G0;
+	Eigen::Matrix<double,3,3> om_hat, g_hat, Id, C1, C2, Ainv;
+	double lambda_inv, l;
+	l      = this->m_l;
+	OM     = X.head(3);
+	G      = X.tail(3);
+	OM0    = this->m_epsilon0.head(3);
+	G0     = this->m_epsilon0.tail(3);
+	om     = 0.5*l*OM;
+	g      = 0.5*l*G;
+	om_hat = SO3::Algebra<double>(om).rotationMatrix();
+	g_hat  = SO3::Algebra<double>(g).rotationMatrix();
+	Id     = Eigen::Matrix<double,3,3>::Identity();
+	C1     = this->m_problem.Inertia().block(0,0,3,3);
+	C2     = this->m_problem.Inertia().block(3,3,3,3);
+	lambda_inv = 1.0/(1.0+om.dot(om));
+	Ainv   = lambda_inv*(Id+om_hat+om*om.transpose());
+
+	f.head(3) = (Id-om_hat+om*om.transpose())*C1*(OM-OM0) -(Id-om_hat)*g_hat*C2*(G-G0);
+	f.tail(3) = this->m_R*Ainv*g+this->m_delta_r;
+
+	return true;
+}
+
+bool
+SolveBoundary::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
+{
+	// voir cahier 6 p. 110
+	Eigen::Matrix<double,3,1> OM, G, om, g, OM0, G0;
+	Eigen::Matrix<double,3,3> om_hat, g_hat, OM_hat, G_hat, Id, C1, C2, Ainv;
+	double lambda_inv, l;
+	l      = this->m_l;
+	OM     = X.head(3);
+	G      = X.tail(3);
+	om     = 0.5*l*OM;
+	g      = 0.5*l*G;
+	OM0    = this->m_epsilon0.head(3);
+	G0     = this->m_epsilon0.tail(3);
+	om_hat = SO3::Algebra<double>(om).rotationMatrix();
+	g_hat  = SO3::Algebra<double>(g).rotationMatrix();
+	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
+	G_hat  = SO3::Algebra<double>(G).rotationMatrix();
+	Id     = Eigen::Matrix<double,3,3>::Identity();
+	C1     = this->m_problem.Inertia().block(0,0,3,3);
+	C2     = this->m_problem.Inertia().block(3,3,3,3);
+	lambda_inv = 1.0/(1.0+om.dot(om));
+	Ainv   = lambda_inv*(Id+om_hat+om*om.transpose());
+
+	J.block(0,0,3,3) = C1+0.5*l*(SO3::Algebra<double>(C1*(OM-OM0)).rotationMatrix() -OM_hat*C1)
+		+0.25*l*l*(OM*((C1*(OM-OM0)).transpose())+(OM.transpose())*(C1*(OM-OM0))*Id+(OM*(OM.transpose()))*C1)
+		-0.25*l*l*(SO3::Algebra<double>(G_hat*C2*(G-G0)).rotationMatrix());
+
+	J.block(0,3,3,3) = 0.5*l*(Id-om_hat)*(SO3::Algebra<double>(C2*(G-G0)).rotationMatrix()-G_hat*C2);
+	
+	J.block(3,0,3,3) = lambda_inv*this->m_R*(0.25*l*l*(OM*G.transpose()+(OM.transpose()*G)*Id)-g_hat)
+		-(lambda_inv*lambda_inv/OM.dot(OM))*this->m_R*(Id+om_hat+om*om.transpose())*G*OM.transpose();
+
+	J.block(3,3,3,3) = this->m_R*Ainv;
+
+	return true;
+}
+
+/* Displacement ***************************************************************/
+
 void
 Displacement::flush ()
 {

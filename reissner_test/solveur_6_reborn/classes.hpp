@@ -201,6 +201,29 @@ public:
 	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
 };
 
+class SolveBoundary : public ::Abstract::NOXStep<NOXVector<6>,1>
+{
+protected:
+	double m_l;
+	typedef Eigen::Matrix<double,3,1> Vec3;
+	typedef Eigen::Matrix<double,6,1> Vec6;
+	Eigen::Matrix<double,3,3> m_R;
+	Vec3 m_delta_r;
+	Vec6 m_epsilon0;
+	Vec6 m_epsilon_init;
+
+	RigidBody& m_problem;
+
+public:
+	SolveBoundary (RigidBody& problem)
+	: m_problem(problem) { }
+
+	void setData (double l, Eigen::Matrix<double,3,3> R, Vec3 delta_r, Vec6 epsilon0, Vec6 epsilon_init);
+	const NOXVector<6> getInitialGuess ();
+	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
+	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
+};
+
 /* Discplacement */
 
 class Displacement
