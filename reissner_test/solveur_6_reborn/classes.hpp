@@ -14,11 +14,6 @@
 #include "Geomi/src/Common/SE3_Group.hpp"
 #include "Geomi/src/Common/SE3_Algebra.hpp"
 #include "Geomi/src/Common/SE3_Cay.hpp"
-//#include "src/Common/csv.hpp"
-//#include "src/Common/Syst.hpp"
-//#include "src/Common/DiscSyst.hpp"
-//#include "src/Common/GaussLegendre.hpp"
-//#include "src/Common/LagrangeInterpolation.hpp"
 
 #include <NOX.H>
 #include <NOX_Common.H>
@@ -153,7 +148,6 @@ public:
 	static const unsigned int dof ( );
 	void setCSV (const std::string filename);
 	void endCSV ();
-	//virtual void updateCSV (int current_i0, double w_resample) { };
 };
 
 class RigidBody : public SparseDiscMultiSyst
@@ -175,7 +169,103 @@ public:
 	void setConstraint (double area, double young, double poisson);
 	static double coeffCFL (double young, double poisson, double rho, double alpha=3.0);
 	void updateCSV (int current_i0, double w_resample = 0.0);
-	//void writeCSVFile (const std::string filename, bool header = true, int resample = 0);
+};
+
+class InverseLegendre : public ::Abstract::NOXStep<NOXVector<6>,1>
+{
+protected:
+	Teuchos::RCP<Teuchos::ParameterList>	m_solverParametersPtr;
+	Teuchos::RCP<NOX::StatusTest::Combo>	m_statusTests;
+	Teuchos::RCP<NOXGroup<NOXVector<6>,1>>	m_grp;
+	Teuchos::RCP<NOX::Solver::Generic>		m_solver;
+
+	double m_h;
+	typedef Eigen::Matrix<double,3,1> Vec3;
+	typedef Eigen::Matrix<double,6,1> Vec6;
+	Vec6 m_M; // partie rotation de (h/2)*mu
+	Vec6 m_X0; // (h/2)*om0
+	Algebra m_xsol;
+
+	RigidBody& m_problem;
+
+public:
+	InverseLegendre (RigidBody& problem)
+	: m_problem(problem)
+	{
+		m_solverParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
+		Teuchos::ParameterList& solverParameters = *m_solverParametersPtr;
+
+		solverParameters.set("Nonlinear Solver","Line Search Based");
+		Teuchos::ParameterList& lineSearchParameters = solverParameters.sublist("Line Search");
+		lineSearchParameters.set("Method","Full Step");
+
+		if (true) { // true = silent
+			Teuchos::ParameterList& printParams = solverParameters.sublist("Printing");
+			printParams.set("Output Information", NOX::Utils::TestDetails + NOX::Utils::Error);
+		}
+
+		Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-12,NOX::StatusTest::NormF::Scaled));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(1000));
+		m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
+
+		m_grp = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*this));
+		m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
+	}
+
+	void setData (double h, Vec6 mu, Vec6 xi);
+	const NOXVector<6> getInitialGuess ();
+	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
+	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
+	Algebra getAlgebraSolution ();
+	bool computeSolution ();
+};
+
+class RestrictedInverseLegendre : public ::Abstract::NOXStep<NOXVector<2>,1>
+{
+protected:
+	Teuchos::RCP<Teuchos::ParameterList>	m_solverParametersPtr;
+	Teuchos::RCP<NOX::StatusTest::Combo>	m_statusTests;
+	Teuchos::RCP<NOXGroup<NOXVector<2>,1>>	m_grp;
+	Teuchos::RCP<NOX::Solver::Generic>		m_solver;
+
+	double m_h;
+	typedef Eigen::Matrix<double,3,1> Vec3;
+	typedef Eigen::Matrix<double,6,1> Vec6;
+	Vec6 m_mu;
+	Algebra m_xsol;
+
+	RigidBody& m_problem;
+
+public:
+	RestrictedInverseLegendre (RigidBody& problem)
+	: m_problem(problem)
+	{
+		m_solverParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
+		Teuchos::ParameterList& solverParameters = *m_solverParametersPtr;
+
+		solverParameters.set("Nonlinear Solver","Line Search Based");
+		Teuchos::ParameterList& lineSearchParameters = solverParameters.sublist("Line Search");
+		lineSearchParameters.set("Method","Full Step");
+
+		if (true) { // true = silent
+			Teuchos::ParameterList& printParams = solverParameters.sublist("Printing");
+			printParams.set("Output Information", NOX::Utils::TestDetails + NOX::Utils::Error);
+		}
+
+		Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-12,NOX::StatusTest::NormF::Scaled));
+		Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(1000));
+		m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
+
+		m_grp = Teuchos::rcp(new NOXGroup<NOXVector<2>,1>(*this));
+		m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
+	}
+
+	void setData (double h, Vec6 mu);
+	const NOXVector<2> getInitialGuess ();
+	bool computeF (NOXVector<2>& f, const NOXVector<2>& X);
+	bool computeJacobian (Eigen::Matrix<double,2,2>& J, const NOXVector<2>& X);
+	Algebra getAlgebraSolution ();
+	bool computeSolution ();
 };
 
 class SolveMe : public ::Abstract::NOXStep<NOXVector<6>,1>
@@ -201,30 +291,7 @@ public:
 	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
 };
 
-class SolveBoundary : public ::Abstract::NOXStep<NOXVector<6>,1>
-{
-protected:
-	double m_l;
-	typedef Eigen::Matrix<double,3,1> Vec3;
-	typedef Eigen::Matrix<double,6,1> Vec6;
-	Eigen::Matrix<double,3,3> m_R;
-	Vec3 m_delta_r;
-	Vec6 m_epsilon0;
-	Vec6 m_epsilon_init;
-
-	RigidBody& m_problem;
-
-public:
-	SolveBoundary (RigidBody& problem)
-	: m_problem(problem) { }
-
-	void setData (double l, Eigen::Matrix<double,3,3> R, Vec3 delta_r, Vec6 epsilon0, Vec6 epsilon_init);
-	const NOXVector<6> getInitialGuess ();
-	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
-	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
-};
-
-/* Discplacement */
+/* Displacement */
 
 class Displacement
 {

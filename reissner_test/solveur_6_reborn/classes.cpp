@@ -333,6 +333,212 @@ RigidBody::writeCSVFile (const std::string filename, bool header, int resample)
 }
 */
 
+/* InverseLegendre */
+
+void
+InverseLegendre::setData (double h, Vec6 mu, Vec6 xi)
+{ m_h = h; m_M = 0.5*h*mu; m_X0 = 0.5*h*xi; }
+
+//double SolveMe::h () const { return m_h; }
+//Vec6 SolveMe::M () const { return m_M; }
+
+const NOXVector<6>
+InverseLegendre::getInitialGuess ()
+{
+	//NOXVector<3> ret((1.0+1.0/this->m_h)*this->m_OM1-(1.0/this->m_h)*this->m_OM0);
+	//NOXVector<3> ret(2*m_OM1-m_OM0);
+	//NOXVector<6> ret(m_X0);
+	NOXVector<6> ret = this->m_problem.Inertia().inverse()*this->m_M;
+	return ret;
+}
+
+bool
+InverseLegendre::computeF (NOXVector<6>& f, const NOXVector<6>& X)
+{
+	// Achtung! X = (h/2)*xi
+	// de meme pour M
+	Eigen::Matrix<double,3,1> F1, F2, OM, G;
+	Eigen::Matrix<double,3,3> Id, J1, J2, OM_hat, G_hat;
+	OM     = X.head(3);
+	G      = X.tail(3);
+	Id     = Eigen::Matrix<double,3,3>::Identity();
+	J1     = this->m_problem.Inertia().block(0,0,3,3);
+	J2     = this->m_problem.Inertia().block(3,3,3,3);
+	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
+	G_hat  = SO3::Algebra<double>(G).rotationMatrix();
+
+	F1     = (Id+OM_hat+OM*OM.transpose())*J1*OM + (Id+OM_hat)*G_hat*J2*G;
+	F2     = (Id+OM_hat)*J2*G;
+	
+	f.head(3) = (2.0/m_h)*F1;
+	f.tail(3) = (2.0/m_h)*F2;
+	f -= (2.0/m_h)*this->m_M;
+
+	return true;
+}
+
+bool
+InverseLegendre::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
+{
+	// voir cahier 6 p. 110
+	Eigen::Matrix<double,3,1> OM, G;
+	Eigen::Matrix<double,3,3> JF1_OM, JF1_G, JF2_OM, JF2_G, Id, J1, J2, OM_hat, G_hat;
+	OM     = X.head(3);
+	G      = X.tail(3);
+	Id     = Eigen::Matrix<double,3,3>::Identity();
+	J1     = this->m_problem.Inertia().block(0,0,3,3);
+	J2     = this->m_problem.Inertia().block(3,3,3,3);
+	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
+	G_hat  = SO3::Algebra<double>(G).rotationMatrix();
+	
+	JF1_OM  = (Id+OM_hat+OM*OM.transpose())*J1;
+	JF1_OM -= SO3::Algebra<double>(J1*OM).rotationMatrix();
+	JF1_OM += OM*(J1*OM).transpose();
+	JF1_OM += (OM.transpose()*J1*OM)*Id;
+	JF1_OM -= SO3::Algebra<double>(G_hat*J2*G).rotationMatrix();
+
+	JF1_G   = (Id+OM_hat)*(G_hat*J2 -SO3::Algebra<double>(J2*G).rotationMatrix());
+
+	JF2_OM  = (-1.0)*SO3::Algebra<double>(J2*G).rotationMatrix();
+
+	JF2_G   = (Id+OM_hat)*J2;
+
+	J.block(0,0,3,3) = (2.0/m_h)*JF1_OM;
+	J.block(0,3,3,3) = (2.0/m_h)*JF1_G;
+	J.block(3,0,3,3) = (2.0/m_h)*JF2_OM;
+	J.block(3,3,3,3) = (2.0/m_h)*JF2_G;
+
+	return true;
+}
+
+bool
+InverseLegendre::computeSolution () {
+	bool success, verbose;
+	verbose = false;
+	try {
+		m_solver->reset(this->getInitialGuess());
+		NOX::StatusTest::StatusType status = this->m_solver->solve();
+		const NOXGroup<NOXVector<6>,1>& solnGrp = dynamic_cast<const NOXGroup<NOXVector<6>,1>&>(this->m_solver->getSolutionGroup());
+		const NOXVector<6>& c_x = dynamic_cast<const NOXVector<6>&>(solnGrp.getX());
+
+		if (status == NOX::StatusTest::Failed || status == NOX::StatusTest::Unconverged)
+			success = false;
+		else success = true;
+
+		this->m_xsol = Algebra((2.0/m_h)*c_x);
+	} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
+	//if (success) {
+		//std::cout << "Success with" << std::endl;
+		//std::cout << "M:  " << 0.5*h*mu1 << std::endl;
+		//std::cout << "X0: " << 0.5*h*x0 << std::endl;
+		//std::cout << "X:  " << 0.5*h*x1 << std::endl;
+	//}
+	if (!success) {
+		std::cout << "Fail with" << std::endl;
+		std::cout << "M:  " << m_M << std::endl;
+		std::cout << "X0: " << m_X0 << std::endl;
+		std::cout << "X:  " << 0.5*m_h*m_xsol.vector() << std::endl;
+	}
+	return success;
+}
+
+Algebra
+InverseLegendre::getAlgebraSolution () {
+	return this->m_xsol;
+}
+
+/* RestrictedInverseLegendre */
+
+void
+RestrictedInverseLegendre::setData (double h, Vec6 mu)
+{ m_h = h; m_mu = mu; }
+
+const NOXVector<2>
+RestrictedInverseLegendre::getInitialGuess ()
+{
+	NOXVector<2> ret;
+	ret[0] = m_mu[1]/m_problem.Inertia()(1,1);
+	ret[1] = m_mu[2]/m_problem.Inertia()(2,2);
+	return ret;
+}
+
+bool
+RestrictedInverseLegendre::computeF (NOXVector<2>& f, const NOXVector<2>& x)
+{
+	// voir cahier 6 p. 170
+	double j2,j3,w2,w3,m2,m3,h2,h_coeff;
+	j2     = this->m_problem.Inertia()(1,1);
+	j3     = this->m_problem.Inertia()(2,2);
+	w2     = x[0];
+	w3     = x[1];
+	m2     = m_mu[1];
+	m3     = m_mu[2];
+	h_coeff = 0.25*m_h*m_h;
+
+	f[0] = j2*w2*(1.0+h_coeff*w2*(w2+w3)) - m2;
+	f[1] = j3*w3*(1.0+h_coeff*w3*(w2+w3)) - m3;
+	
+	return true;
+}
+
+bool
+RestrictedInverseLegendre::computeJacobian (Eigen::Matrix<double,2,2>& J, const NOXVector<2>& x)
+{
+	// voir cahier 6 p. 171
+	double j2,j3,w2,w3,m2,m3,h2,h_coeff;
+	j2     = this->m_problem.Inertia()(1,1);
+	j3     = this->m_problem.Inertia()(2,2);
+	w2     = x[0];
+	w3     = x[1];
+	m2     = m_mu[1];
+	m3     = m_mu[2];
+	h_coeff = 0.25*m_h*m_h;
+
+	J(0,0) = j2*(1.0+h_coeff*w2*(2.0*w3+3.0*w2));
+	J(0,1) = j2*h_coeff*w2*w2;
+	J(1,0) = j3*h_coeff*w3*w3;
+	J(1,1) = j3*(1.0+h_coeff*w3*(2.0*w2+3.0*w3));
+
+	return true;
+}
+
+bool
+RestrictedInverseLegendre::computeSolution () {
+	bool success, verbose;
+	verbose = false;
+	try {
+		m_solver->reset(this->getInitialGuess());
+		NOX::StatusTest::StatusType status = this->m_solver->solve();
+		const NOXGroup<NOXVector<2>,1>& solnGrp = dynamic_cast<const NOXGroup<NOXVector<2>,1>&>(this->m_solver->getSolutionGroup());
+		const NOXVector<2>& c_x = dynamic_cast<const NOXVector<2>&>(solnGrp.getX());
+
+		if (status == NOX::StatusTest::Failed || status == NOX::StatusTest::Unconverged)
+			success = false;
+		else success = true;
+
+		Eigen::Matrix<double,6,1> v;
+		v << 0.0, c_x[0], c_x[1], 0.0, 0.0, 0.0;
+
+		this->m_xsol = Algebra(v);
+	} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
+	//if (success) {
+		//std::cout << "Success with" << std::endl;
+		//std::cout << "M:  " << 0.5*h*mu1 << std::endl;
+		//std::cout << "X0: " << 0.5*h*x0 << std::endl;
+		//std::cout << "X:  " << 0.5*h*x1 << std::endl;
+	//}
+	if (!success) {
+		std::cout << "Fail!" << std::endl;
+	}
+	return success;
+}
+
+Algebra
+RestrictedInverseLegendre::getAlgebraSolution () {
+	return this->m_xsol;
+}
+
+
 /* SolveMe */
 
 void
@@ -407,85 +613,6 @@ SolveMe::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
 	J.block(0,3,3,3) = (2.0/m_h)*JF1_G;
 	J.block(3,0,3,3) = (2.0/m_h)*JF2_OM;
 	J.block(3,3,3,3) = (2.0/m_h)*JF2_G;
-
-	return true;
-}
-
-/* SolveBoundary **************************************************************/
-
-void
-SolveBoundary::setData (double l, Eigen::Matrix<double,3,3> R, Vec3 delta_r, Vec6 epsilon0, Vec6 epsilon_init)
-{ m_l = l; m_R = R; m_delta_r = delta_r; m_epsilon0 = epsilon0; m_epsilon_init = epsilon_init; }
-
-const NOXVector<6>
-SolveBoundary::getInitialGuess ()
-{
-	NOXVector<6> ret = m_epsilon_init;
-	return ret;
-}
-
-bool
-SolveBoundary::computeF (NOXVector<6>& f, const NOXVector<6>& X)
-{
-	// voir cahier 6 pp. 155-157
-	Eigen::Matrix<double,3,1> OM, G, om, g, OM0, G0;
-	Eigen::Matrix<double,3,3> om_hat, g_hat, Id, C1, C2, Ainv;
-	double lambda_inv, l;
-	l      = this->m_l;
-	OM     = X.head(3);
-	G      = X.tail(3);
-	OM0    = this->m_epsilon0.head(3);
-	G0     = this->m_epsilon0.tail(3);
-	om     = 0.5*l*OM;
-	g      = 0.5*l*G;
-	om_hat = SO3::Algebra<double>(om).rotationMatrix();
-	g_hat  = SO3::Algebra<double>(g).rotationMatrix();
-	Id     = Eigen::Matrix<double,3,3>::Identity();
-	C1     = this->m_problem.Inertia().block(0,0,3,3);
-	C2     = this->m_problem.Inertia().block(3,3,3,3);
-	lambda_inv = 1.0/(1.0+om.dot(om));
-	Ainv   = lambda_inv*(Id+om_hat+om*om.transpose());
-
-	f.head(3) = (Id-om_hat+om*om.transpose())*C1*(OM-OM0) -(Id-om_hat)*g_hat*C2*(G-G0);
-	f.tail(3) = this->m_R*Ainv*g+this->m_delta_r;
-
-	return true;
-}
-
-bool
-SolveBoundary::computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X)
-{
-	// voir cahier 6 p. 110
-	Eigen::Matrix<double,3,1> OM, G, om, g, OM0, G0;
-	Eigen::Matrix<double,3,3> om_hat, g_hat, OM_hat, G_hat, Id, C1, C2, Ainv;
-	double lambda_inv, l;
-	l      = this->m_l;
-	OM     = X.head(3);
-	G      = X.tail(3);
-	om     = 0.5*l*OM;
-	g      = 0.5*l*G;
-	OM0    = this->m_epsilon0.head(3);
-	G0     = this->m_epsilon0.tail(3);
-	om_hat = SO3::Algebra<double>(om).rotationMatrix();
-	g_hat  = SO3::Algebra<double>(g).rotationMatrix();
-	OM_hat = SO3::Algebra<double>(OM).rotationMatrix();
-	G_hat  = SO3::Algebra<double>(G).rotationMatrix();
-	Id     = Eigen::Matrix<double,3,3>::Identity();
-	C1     = this->m_problem.Inertia().block(0,0,3,3);
-	C2     = this->m_problem.Inertia().block(3,3,3,3);
-	lambda_inv = 1.0/(1.0+om.dot(om));
-	Ainv   = lambda_inv*(Id+om_hat+om*om.transpose());
-
-	J.block(0,0,3,3) = C1+0.5*l*(SO3::Algebra<double>(C1*(OM-OM0)).rotationMatrix() -OM_hat*C1)
-		+0.25*l*l*(OM*((C1*(OM-OM0)).transpose())+(OM.transpose())*(C1*(OM-OM0))*Id+(OM*(OM.transpose()))*C1)
-		-0.25*l*l*(SO3::Algebra<double>(G_hat*C2*(G-G0)).rotationMatrix());
-
-	J.block(0,3,3,3) = 0.5*l*(Id-om_hat)*(SO3::Algebra<double>(C2*(G-G0)).rotationMatrix()-G_hat*C2);
-	
-	J.block(3,0,3,3) = lambda_inv*this->m_R*(0.25*l*l*(OM*G.transpose()+(OM.transpose()*G)*Id)-g_hat)
-		-(lambda_inv*lambda_inv/OM.dot(OM))*this->m_R*(Id+om_hat+om*om.transpose())*G*OM.transpose();
-
-	J.block(3,3,3,3) = this->m_R*Ainv;
 
 	return true;
 }

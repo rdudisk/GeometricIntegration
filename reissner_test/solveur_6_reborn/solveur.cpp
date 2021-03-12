@@ -114,35 +114,10 @@ main (int argc, char* argv[])
 	m_grp = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*solveme));
 	m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
 
-	/* Solver for boudary j=M *************************************************/
+	/* Inverse Legendre *******************************************************/
 
-	Teuchos::RCP<Teuchos::ParameterList>			m_solver2ParametersPtr;
-	Teuchos::RCP<NOX::StatusTest::Combo>			m_statusTests2;
-	Teuchos::RCP<NOXGroup<NOXVector<6>,1>>			m_grp2;
-	Teuchos::RCP<NOX::Solver::Generic>				m_solver2;
-
-	SolveBoundary* solvebound = new SolveBoundary(problem);
-
-	m_solver2ParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
-	Teuchos::ParameterList& solver2Parameters = *m_solver2ParametersPtr;
-
-	solver2Parameters.set("Nonlinear Solver","Line Search Based");
-	Teuchos::ParameterList& lineSearchParameters2 = solver2Parameters.sublist("Line Search");
-	lineSearchParameters2.set("Method","Full Step");
-
-	if (true) { // true = silent
-		Teuchos::ParameterList& printParams2 = solver2Parameters.sublist("Printing");
-		printParams2.set("Output Information",
-			NOX::Utils::TestDetails +
-			NOX::Utils::Error);
-	}
-
-	Teuchos::RCP<NOX::StatusTest::NormF> statusTest2A = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-12,NOX::StatusTest::NormF::Scaled));
-	Teuchos::RCP<NOX::StatusTest::MaxIters> statusTest2B = Teuchos::rcp(new NOX::StatusTest::MaxIters(1000));
-	m_statusTests2 = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTest2A,statusTest2B));
-
-	m_grp2 = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*solvebound));
-	m_solver2 = NOX::Solver::buildSolver(m_grp2,m_statusTests2,m_solver2ParametersPtr);
+	InverseLegendre inv_leg(problem);
+	RestrictedInverseLegendre restr_inv_leg(problem);
 
 	/* Initialization *********************************************************/
 
@@ -223,52 +198,67 @@ main (int argc, char* argv[])
 				//e1 = Algebra(E4);
 
 			if (j==0) {
+				x0   = problem.vel_time(i-1,j);
+				mu0  = problem.mom_time(i-1,j);
+				sig1 = problem.mom_space(i,j);
+
+				mu1 =  Algebra::static_Ad_star(Cay::eval(h*x0),Algebra(mu0)).vector();
+				mu1 += (-2.0*h/l)*sig1;
+
+				//mu1[0] = 0.0;
+				//mu1[3] = 0.0; mu1[4] = 0.0; mu1[5] = 0.0;
+
+				// solve for x1
+				restr_inv_leg.setData(h,mu1);
+				success = restr_inv_leg.computeSolution();
+
+				x1  = restr_inv_leg.getAlgebraSolution();
+				mu1 = (Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*x1.vector()))).vector();
+				// this line should be unnecessary
+				//x1[0] = 0.0; x1[3] = 0.0; x1[4] = 0.0; x1[5] = 0.0;
+
 				// Updating time velocity and momentum
-				x1  = Algebra::Zero();
-				mu1 = Vec6::Zero();
-				problem.vel_time(i,j,x1);
 				problem.mom_time(i,j,mu1);
+				if (!success) {
+					x1 = x0;
+					return 0;
+				}	
+				problem.vel_time(i,j,x1);
 
 				// Updating position
-				problem.pos(i+1,j,problem.pos(i,j));
+				problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 			}
 			else if (j==(n_space_steps-1)) {
-				// solve for epsilon(i+1,M-1)
-				solvebound->setData(l,
-						problem.pos(i+1,j-1).rotationMatrix(),
-						problem.pos(i+1,j-1).translationVector()-problem.pos(i,j).translationVector(),
-						E4,
-						problem.vel_space(i,j-1).vector());
-				try {
-					m_solver2->reset(solvebound->getInitialGuess());
-					NOX::StatusTest::StatusType status = m_solver2->solve();
-					const NOXGroup<NOXVector<6>,1>& solnGrp = dynamic_cast<const NOXGroup<NOXVector<6>,1>&>(m_solver2->getSolutionGroup());
-					const NOXVector<6>& c_e = dynamic_cast<const NOXVector<6>&>(solnGrp.getX());
+				x0   = problem.vel_time(i-1,j);
+				mu0  = problem.mom_time(i-1,j);
+				e0   = problem.vel_space(i,j-1);
+				sig0 = problem.mom_space(i,j-1);
 
-					if (status == NOX::StatusTest::Failed || status == NOX::StatusTest::Unconverged)
-						success = false;
-					else success = true;
+				mu1 =  Algebra::static_Ad_star(Cay::eval(h*x0),Algebra(mu0)).vector();
+				mu1 += (2.0*h/l)*(Algebra::static_Ad_star(Cay::eval(l*e0),Algebra(sig0)).vector());
 
-					e1 = Algebra(c_e);
-				} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
-				if (!success) {
-					std::cout << "Failed solving epsilon" << std::endl;
-					return 0;
-				}
+				//mu1[0] = 0.0;
+				mu1[3] = 0.0; mu1[4] = 0.0; mu1[5] = 0.0;
 
-				// Updating space velocity and momentum
-				sig1 = (-1.0)*(Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector());
-				problem.vel_space(i+1,j-1,e1);
-				problem.mom_space(i+1,j-1,sig1);
+				// solve for x1
+				restr_inv_leg.setData(h,mu1);
+				success = restr_inv_leg.computeSolution();
 
-				// Updating position
-				problem.pos(i+1,j,problem.pos(i+1,j-1)*Cay::eval(l*e1));
+				x1  = restr_inv_leg.getAlgebraSolution();
+				mu1 = (Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*x1.vector()))).vector();
+				// this line should be unnecessary
+				//x1[0] = 0.0; x1[3] = 0.0; x1[4] = 0.0; x1[5] = 0.0;
 
 				// Updating time velocity and momentum
-				x1  = (1.0/h)*(Cay::inv(problem.pos(i,j).inverse()*problem.pos(i+1,j)));
-				mu1 = Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*(x1.vector()))).vector();
-				problem.vel_time(i,j,x1);
 				problem.mom_time(i,j,mu1);
+				if (!success) {
+					x1 = x0;
+					return 0;
+				}	
+				problem.vel_time(i,j,x1);
+
+				// Updating position
+				problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 			}
 			else {
 				x0   = problem.vel_time(i-1,j);
@@ -287,6 +277,7 @@ main (int argc, char* argv[])
 					mu1 += h*l*(i_double*h/F_duration)*Fvector;
 
 				// Solving for x1
+				/*
 				solveme->setData(h,mu1,x0.vector());
 				try {
 					m_solver->reset(solveme->getInitialGuess());
@@ -312,12 +303,18 @@ main (int argc, char* argv[])
 					std::cout << "X0: " << 0.5*h*x0 << std::endl;
 					std::cout << "X:  " << 0.5*h*x1 << std::endl;
 					return 0;
-				}
+				} */
+
+				inv_leg.setData(h,mu1,x0.vector());
+				success = inv_leg.computeSolution();
+				x1 = inv_leg.getAlgebraSolution();
 
 				// Updating time velocity and momentum
 				problem.mom_time(i,j,mu1);
-				if (!success)
+				if (!success) {
 					x1 = x0;
+					return 0;
+				}	
 				problem.vel_time(i,j,x1);
 
 				// Updating position

@@ -197,12 +197,15 @@ def fft(y,Fs=44100.0):
     fft = scipy.fft.rfft(y)
     fft = abs(fft)
 
+    # peaks, _ = scipy.signal.find_peaks(fft,distance=150)
+
     freq = [float(i) for i in range(len(fft))]
 
     filename = "out/fft.png"
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
     plt.plot(freq,fft)
+    # plt.plot(peaks,fft[peaks])
     plt.yscale('log')
 
     fig.savefig(filename,bbox_inches='tight')
