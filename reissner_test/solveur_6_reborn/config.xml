@@ -3,16 +3,19 @@
 <params>
 	<young>2.0e11</young>
 	<poisson>0.35</poisson>
+	<shear>7.9e10</shear>
 	<rho>7.8e3</rho>
 	<radius>0.0015</radius>
-	<kfactor>0.0</kfactor> <!-- 1.5 -->
-	<ffactor>50000.0</ffactor>
+	<kfactor>0</kfactor> <!-- 1.5 -->
+	<ffactor>10.0</ffactor>
 	<pincement>0.3</pincement>
+	<tension>2161.0</tension> <!-- 2161 Newton -->
+	<length>1.8</length>
 </params>
 <integration>
-	<space-step>0.045</space-step>
-	<time-step>10.0e-8</time-step>
-	<n-space-step>40</n-space-step>
+	<!-- space-step>0.09</space-step -->
+	<time-step>4.5e-7</time-step>
+	<n-space-step>160</n-space-step>
 	<n-time-step>10000000</n-time-step>
 </integration>
 </config>

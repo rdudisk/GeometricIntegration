@@ -2,7 +2,7 @@
 #include <cmath>
 #include <string>
 
-#include "classes.hpp"
+#include "header.hpp"
 
 #include <NOX.H>
 #include <NOX_Common.H>
@@ -22,97 +22,78 @@ main (int argc, char* argv[])
 		return -1;
 	}
 
-	double radius, rho, young, poisson, k_factor, f_factor, pincement, l, h;
+	double radius, rho, young, shear, k_factor, f_factor, pincement, tension, length_T0, h;
 	int    n_space_steps, n_time_steps;
 
 	pugi::xml_node xml_params = doc.child("config").child("params");
 	young     = std::stod(xml_params.child("young").child_value());
-	poisson   = std::stod(xml_params.child("poisson").child_value());
+	shear     = std::stod(xml_params.child("shear").child_value());
 	rho       = std::stod(xml_params.child("rho").child_value());
 	radius    = std::stod(xml_params.child("radius").child_value());
 	k_factor  = std::stod(xml_params.child("kfactor").child_value());
 	f_factor  = std::stod(xml_params.child("ffactor").child_value());
 	pincement = std::stod(xml_params.child("pincement").child_value());
+	tension   = std::stod(xml_params.child("tension").child_value());
+	length_T0 = std::stod(xml_params.child("length").child_value());
 
 	pugi::xml_node xml_integration = doc.child("config").child("integration");
-	l = std::stod(xml_integration.child("space-step").child_value());
 	h = std::stod(xml_integration.child("time-step").child_value());
+	/* n_space_steps = nombre d'intervalles
+	 * le nombre de points spatiaux est donc n_space_steps+1
+	 */
 	n_space_steps = std::stoi(xml_integration.child("n-space-step").child_value());
 	n_time_steps  = std::stoi(xml_integration.child("n-time-step").child_value());
 
+	double l, length_default, area, alpha;
+	area           = RigidBody::compute_area(radius);
+	alpha          = tension/(young*area);
+	length_default = length_T0/(1.0+alpha);
+	l              = length_default/n_space_steps;
+	//l              = length_T0/n_space_steps;
+	std::cout << "L_t0: " << length_T0 << std::endl;
+	std::cout << "L   : " << length_default << std::endl;
+	std::cout << "Theoretical f0: " << (0.5/length_T0)*sqrt(tension/(rho*area*(1+alpha))) << std::endl;
+
 	/* Checking up CFL condition requirement **********************************/
 
-	double alpha = 0.1;
-	double h_cfl=l*RigidBody::coeffCFL(young, poisson, rho, alpha);
+	double alpha_cfl = 0.1;
+	double h_cfl=l*RigidBody::coeffCFL(young, shear, rho, alpha_cfl);
 	
 	if (h>=h_cfl) {
 		std::string response;
-		std::cout << "Warning: CFL condition not verified (factor=" << alpha << "):" << std::endl
+		std::cout << "Warning: CFL condition not verified (factor=" << alpha_cfl << "):" << std::endl
 			      << "\th = " << h << std::endl
-				  << "\tlimit = " << h_cfl << std::endl
-				  << "Do you want to continue ? [yn] ";
+				  << "\tlimit = " << h_cfl << std::endl;
+		/*		  << "Do you want to continue ? [yn] ";
 		std::cin >> response;
 		if (response!="y")
-			return 0;
+			return 0;*/
 	}
 
 	/* Instantiate Reissner beam problem **************************************/
 
 	RigidBody problem;
 
-	/*
-	problem.setInertia(area,rho);
-	problem.setConstraint(area,young,poisson);
-	problem.setSize(n_time_steps,n_space_steps);
-	problem.baselinstep(0.0,h,0.0,l);
-	*/
-
-	problem.setInertia(radius,rho);
-	problem.setConstraint(radius,young,poisson);
-	problem.setSize(n_space_steps);
+	problem.setTensors(radius,rho,young,shear);
+	problem.setSize(n_space_steps+1);
 	problem.setStepSize(h,l);
 	problem.setCSV("results.csv");
 
-	Displacement displacement(1.0/h,"displacement.csv");
+	Displacement displacement_x(1.0/h,"displacement-x.csv");
+	Displacement displacement_y(1.0/h,"displacement-y.csv");
+	Displacement displacement_z(1.0/h,"displacement-z.csv");
 
 	// TODO: clean that up
-	double area = RigidBody::compute_area(radius);
 	double F_constant = f_factor/(rho*area);
 	double F_duration = 0.01;
 	Eigen::Matrix<double,6,1> Fvector;
 	Fvector << 0.0, 0.0, 0.0, 0.0, F_constant, 0.0;
+	//Fvector << 0.0, 0.0, 0.0, F_constant, 0.0, 0.0;
 	int indice_pincement = (int) (pincement*((float)n_space_steps));
 	int indice_ecoute = indice_pincement;
-
-	/* Setting up solver ******************************************************/
-
-	Teuchos::RCP<Teuchos::ParameterList>			m_solverParametersPtr;
-	Teuchos::RCP<NOX::StatusTest::Combo>			m_statusTests;
-	Teuchos::RCP<NOXGroup<NOXVector<6>,1>>			m_grp;
-	Teuchos::RCP<NOX::Solver::Generic>				m_solver;
-
-	SolveMe* solveme = new SolveMe(problem);
-
-	m_solverParametersPtr = Teuchos::rcp(new Teuchos::ParameterList);
-	Teuchos::ParameterList& solverParameters = *m_solverParametersPtr;
-
-	solverParameters.set("Nonlinear Solver","Line Search Based");
-	Teuchos::ParameterList& lineSearchParameters = solverParameters.sublist("Line Search");
-	lineSearchParameters.set("Method","Full Step");
-
-	if (true) { // true = silent
-		Teuchos::ParameterList& printParams = solverParameters.sublist("Printing");
-		printParams.set("Output Information",
-			NOX::Utils::TestDetails +
-			NOX::Utils::Error);
-	}
-
-	Teuchos::RCP<NOX::StatusTest::NormF> statusTestA = Teuchos::rcp(new NOX::StatusTest::NormF(1.0e-12,NOX::StatusTest::NormF::Scaled));
-	Teuchos::RCP<NOX::StatusTest::MaxIters> statusTestB = Teuchos::rcp(new NOX::StatusTest::MaxIters(1000));
-	m_statusTests = Teuchos::rcp(new NOX::StatusTest::Combo(NOX::StatusTest::Combo::OR,statusTestA,statusTestB));
-
-	m_grp = Teuchos::rcp(new NOXGroup<NOXVector<6>,1>(*solveme));
-	m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
+	Eigen::Matrix<double,3,1> listenVector;
+	listenVector << 0.0, 0.0, 1.0;
+	double elongation_factor = 1.0+(tension/(area*young));
 
 	/* Inverse Legendre *******************************************************/
 
@@ -129,22 +110,33 @@ main (int argc, char* argv[])
 	Group   g0;
 	Algebra x0,  x1,  e0,   e1;
 	Vec6    mu0, mu1, sig0, sig1;
-	Eigen::Matrix<double,6,1> E4;
+	Eigen::Matrix<double,6,1> E0, E4, eps_ref;
 
 	// Setting up a equilibrium reference beam with null speed
 	
 	g0   = Group::Identity();
 	E4   << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0;
-	e0   = Algebra(E4);
+	//E0   << 0.01, -0.03, 0.02, 0.98, 0.0, 0.01;
+	//e0   = elongation_factor*Algebra(E4);
+	//eps_ref = E4*length_default;
+	eps_ref = E4;
+	//e0   = Algebra(E0);
 	x0   = Algebra::Zero();
 	x1   = Algebra::Zero();
-	x1[4]= 0.01*h;
+	//x1[4]= 0.01*h;
 	mu0  = Vec6::Zero();
 	sig0 = Vec6::Zero();
 
-	for (j=0; j<n_space_steps; j++) {
-		g0.translation(0,j*l);
+	// init position
+	problem.pos(0,0,g0);
+	for (j=1; j<=n_space_steps; j++) {
+		g0.translation(0,length_T0*float(j)/float(n_space_steps));
 		problem.pos(0,j,g0);
+		//problem.pos(0,j,problem.pos(0,j-1)*Cay::eval(l*e0));
+	}
+
+	// init time velocity and momentum
+	for (j=0; j<=n_space_steps; j++) {
 		if (false) { //(j==3) {
 			problem.vel_time(0,j,x1);
 			problem.mom_time(0,j,Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*(x1.vector()))).vector());
@@ -155,19 +147,23 @@ main (int argc, char* argv[])
 		}
 	}
 
-	for (j=0; j<n_space_steps-1; j++) {
+	// init space velocity and momentum
+	for (j=0; j<n_space_steps; j++) {
 		e0   = (1.0/l)*Cay::inv(problem.pos(0,j).inverse()*problem.pos(0,j+1));
-		sig0 = (-1.0)*Cay::inv_right_diff_star(l*e0,Algebra(problem.Constraint()*(e0.vector()-E4))).vector();
+		sig0 = (-1.0)*Cay::inv_right_diff_star(l*e0,Algebra(problem.Constraint()*(e0.vector()-eps_ref))).vector();
 		problem.vel_space(0,j,e0);
 		problem.mom_space(0,j,sig0);
 	}
 	
-	displacement.insert(problem.pos(0,indice_ecoute).translationVector()[1]);
+	double displacement_x0 = problem.pos(0,indice_ecoute).translationVector()[0];
+	displacement_x.insert(problem.pos(0,indice_ecoute).translationVector()[0]-displacement_x0);
+	displacement_y.insert(problem.pos(0,indice_ecoute).translationVector()[1]);
+	displacement_z.insert(problem.pos(0,indice_ecoute).translationVector()[2]);
+	//displacement.insert(1-problem.pos(0,indice_ecoute).rotateVector(listenVector)[2]);
 
 
 	// Updating position for i=1
-	
-	for (j=0; j<n_space_steps; j++) {
+	for (j=0; j<=n_space_steps; j++) {
 		problem.pos(1,j,problem.pos(0,j)*Cay::eval(h*problem.vel_time(0,j)));
 	}
 	
@@ -186,11 +182,11 @@ main (int argc, char* argv[])
 	double i_double;
 	
 	for (i=1; i<n_time_steps-1; i++) {
-		for (j=0; j<n_space_steps; j++) {
-			if (j<n_space_steps-1) {
+		for (j=0; j<=n_space_steps; j++) {
+			if (j<n_space_steps) {
 				// Updating space velocity and momentum
 				e1   = (1.0/l)*(Cay::inv(problem.pos(i,j).inverse()*problem.pos(i,j+1)));
-				sig1 = (-1.0)*(Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-E4))).vector());
+				sig1 = (-1.0)*(Cay::inv_right_diff_star(l*e1,Algebra(problem.Constraint()*(e1.vector()-eps_ref))).vector());
 				problem.vel_space(i,j,e1);
 				problem.mom_space(i,j,sig1);
 			}
@@ -205,17 +201,15 @@ main (int argc, char* argv[])
 				mu1 =  Algebra::static_Ad_star(Cay::eval(h*x0),Algebra(mu0)).vector();
 				mu1 += (-2.0*h/l)*sig1;
 
-				//mu1[0] = 0.0;
-				//mu1[3] = 0.0; mu1[4] = 0.0; mu1[5] = 0.0;
-
 				// solve for x1
 				restr_inv_leg.setData(h,mu1);
 				success = restr_inv_leg.computeSolution();
+				//inv_leg.setData(h,mu1);
+				//success = inv_leg.computeSolution();
 
 				x1  = restr_inv_leg.getAlgebraSolution();
 				mu1 = (Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*x1.vector()))).vector();
-				// this line should be unnecessary
-				//x1[0] = 0.0; x1[3] = 0.0; x1[4] = 0.0; x1[5] = 0.0;
+				//x1  = inv_leg.getAlgebraSolution();
 
 				// Updating time velocity and momentum
 				problem.mom_time(i,j,mu1);
@@ -228,7 +222,7 @@ main (int argc, char* argv[])
 				// Updating position
 				problem.pos(i+1,j,problem.pos(i,j)*Cay::eval(h*x1));
 			}
-			else if (j==(n_space_steps-1)) {
+			else if (j==n_space_steps) {
 				x0   = problem.vel_time(i-1,j);
 				mu0  = problem.mom_time(i-1,j);
 				e0   = problem.vel_space(i,j-1);
@@ -238,16 +232,17 @@ main (int argc, char* argv[])
 				mu1 += (2.0*h/l)*(Algebra::static_Ad_star(Cay::eval(l*e0),Algebra(sig0)).vector());
 
 				//mu1[0] = 0.0;
-				mu1[3] = 0.0; mu1[4] = 0.0; mu1[5] = 0.0;
+				//mu1[3] = 0.0; mu1[4] = 0.0; mu1[5] = 0.0;
 
 				// solve for x1
 				restr_inv_leg.setData(h,mu1);
 				success = restr_inv_leg.computeSolution();
+				//inv_leg.setData(h,mu1);
+				//success = inv_leg.computeSolution();
 
 				x1  = restr_inv_leg.getAlgebraSolution();
 				mu1 = (Cay::inv_right_diff_star(h*x1,Algebra(problem.Inertia()*x1.vector()))).vector();
-				// this line should be unnecessary
-				//x1[0] = 0.0; x1[3] = 0.0; x1[4] = 0.0; x1[5] = 0.0;
+				//x1  = inv_leg.getAlgebraSolution();
 
 				// Updating time velocity and momentum
 				problem.mom_time(i,j,mu1);
@@ -274,38 +269,9 @@ main (int argc, char* argv[])
 				// Adding external control forces
 				i_double = (double) i;
 				if (j==indice_pincement && i_double*h < F_duration)
-					mu1 += h*l*(i_double*h/F_duration)*Fvector;
+					mu1 += h*(i_double*h/F_duration)*Fvector;
 
-				// Solving for x1
-				/*
-				solveme->setData(h,mu1,x0.vector());
-				try {
-					m_solver->reset(solveme->getInitialGuess());
-					NOX::StatusTest::StatusType status = m_solver->solve();
-					const NOXGroup<NOXVector<6>,1>& solnGrp = dynamic_cast<const NOXGroup<NOXVector<6>,1>&>(m_solver->getSolutionGroup());
-					const NOXVector<6>& c_x = dynamic_cast<const NOXVector<6>&>(solnGrp.getX());
-
-					if (status == NOX::StatusTest::Failed || status == NOX::StatusTest::Unconverged)
-						success = false;
-					else success = true;
-
-					x1 = Algebra((2.0/h)*c_x);
-				} TEUCHOS_STANDARD_CATCH_STATEMENTS(verbose, std::cerr, success);
-				//if (success) {
-					//std::cout << "Success with" << std::endl;
-					//std::cout << "M:  " << 0.5*h*mu1 << std::endl;
-					//std::cout << "X0: " << 0.5*h*x0 << std::endl;
-					//std::cout << "X:  " << 0.5*h*x1 << std::endl;
-				//}
-				if (!success) {
-					std::cout << "Fail with" << std::endl;
-					std::cout << "M:  " << 0.5*h*mu1 << std::endl;
-					std::cout << "X0: " << 0.5*h*x0 << std::endl;
-					std::cout << "X:  " << 0.5*h*x1 << std::endl;
-					return 0;
-				} */
-
-				inv_leg.setData(h,mu1,x0.vector());
+				inv_leg.setData(h,mu1);
 				success = inv_leg.computeSolution();
 				x1 = inv_leg.getAlgebraSolution();
 
@@ -323,14 +289,19 @@ main (int argc, char* argv[])
 		} // loop j
 
 		problem.updateCSV(i,w_resample);
-		displacement.insert(problem.pos(i,indice_ecoute).translationVector()[1]);
+		displacement_x.insert(problem.pos(i,indice_ecoute).translationVector()[0]-displacement_x0);
+		displacement_y.insert(problem.pos(i,indice_ecoute).translationVector()[1]);
+		displacement_z.insert(problem.pos(i,indice_ecoute).translationVector()[2]);
+		//displacement.insert(1-problem.pos(0,indice_ecoute).rotateVector(listenVector)[2]);
 	} // loop i
 
 	problem.endCSV();
-	displacement.flush();
-	displacement.close();
+	displacement_x.flush();
+	displacement_x.close();
+	displacement_y.flush();
+	displacement_y.close();
+	displacement_z.flush();
+	displacement_z.close();
 	
-	//problem.writeCSVFile("results.csv",true,300);
-
 	return 0;
 }

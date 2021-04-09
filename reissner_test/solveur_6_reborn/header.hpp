@@ -30,11 +30,6 @@ namespace Cay = SE3::Cay;
 typedef Eigen::Matrix<double,6,1>	Vec6;
 typedef Eigen::Matrix<double,3,1>	Vec3;
 
-class MultiSyst;
-class DiscMultiSyst;
-class RigidBody;
-class SolveMe;
-
 class MultiSyst
 {
 protected:
@@ -64,44 +59,6 @@ public:
 	void mom_time (Vec6 m);
 	Vec6 mom_space ( ) const;
 	void mom_space (Vec6 m);
-};
-
-
-class DiscMultiSyst
-{
-protected:
-	std::vector<MultiSyst> m_node;
-	size_t m_size[2];
-
-public:
-	DiscMultiSyst ( )
-	{
-		m_size[0] = 0;
-		m_size[1] = 0;
-		m_node.clear();
-	}
-	~DiscMultiSyst ( ) { }
-
-	void setSize (const size_t i, const size_t j);
-	MultiSyst const& operator[] (size_t index) const;
-	MultiSyst& operator[] (size_t index);
-	size_t size(const size_t dir) const;
-	const size_t getIndex (const size_t i, const size_t j) const;
-	M step_size (const size_t dir) const;
-	M base_time (const size_t& i) const;
-	M base_space (const size_t& j) const;
-	Group pos (const size_t& i, const size_t& j) const;
-	void pos (const size_t& i, const size_t& j, const Group& p);
-	Algebra vel_time (const size_t& i, const size_t& j) const;
-	void vel_time (const size_t& i, const size_t& j, const Algebra& v);
-	Algebra vel_space (const size_t& i, const size_t& j) const;
-	void vel_space (const size_t& i, const size_t& j, const Algebra& v);
-	Vec6 mom_time (const size_t& i, const size_t& j) const;
-	void mom_time (const size_t& i, const size_t& j, const Vec6& m);
-	Vec6 mom_space (const size_t& i, const size_t& j) const;
-	void mom_space (const size_t& i, const size_t& j, const Vec6& m);
-	static const unsigned int dof ( );
-	void baselinstep (M t_inf_lim, M t_step_size, M s_inf_lim, M s_step_size);
 };
 
 class SparseDiscMultiSyst
@@ -165,9 +122,8 @@ public:
 	void Inertia (Eigen::Matrix<double,6,6> val);
 	Eigen::Matrix<double,6,6>& Constraint ();
 	void Constraint (Eigen::Matrix<double,6,6> val);
-	void setInertia (double area, double rho);
-	void setConstraint (double area, double young, double poisson);
-	static double coeffCFL (double young, double poisson, double rho, double alpha=3.0);
+	void setTensors (double area, double rho, double young, double shear);
+	static double coeffCFL (double young, double shear, double rho, double alpha=3.0);
 	void updateCSV (int current_i0, double w_resample = 0.0);
 };
 
@@ -183,7 +139,6 @@ protected:
 	typedef Eigen::Matrix<double,3,1> Vec3;
 	typedef Eigen::Matrix<double,6,1> Vec6;
 	Vec6 m_M; // partie rotation de (h/2)*mu
-	Vec6 m_X0; // (h/2)*om0
 	Algebra m_xsol;
 
 	RigidBody& m_problem;
@@ -212,7 +167,7 @@ public:
 		m_solver = NOX::Solver::buildSolver(m_grp,m_statusTests,m_solverParametersPtr);
 	}
 
-	void setData (double h, Vec6 mu, Vec6 xi);
+	void setData (double h, Vec6 mu);
 	const NOXVector<6> getInitialGuess ();
 	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
 	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
@@ -266,29 +221,6 @@ public:
 	bool computeJacobian (Eigen::Matrix<double,2,2>& J, const NOXVector<2>& X);
 	Algebra getAlgebraSolution ();
 	bool computeSolution ();
-};
-
-class SolveMe : public ::Abstract::NOXStep<NOXVector<6>,1>
-{
-protected:
-	double m_h;
-	typedef Eigen::Matrix<double,3,1> Vec3;
-	typedef Eigen::Matrix<double,6,1> Vec6;
-	Vec6 m_M; // partie rotation de (h/2)*mu
-	Vec6 m_X0; // (h/2)*om0
-
-	RigidBody& m_problem;
-
-public:
-	SolveMe (RigidBody& problem)
-	: m_problem(problem) { }
-
-	void setData (double h, Vec6 mu, Vec6 xi);
-	//double h () const;
-	//Vec6 M () const;
-	const NOXVector<6> getInitialGuess ();
-	bool computeF (NOXVector<6>& f, const NOXVector<6>& X);
-	bool computeJacobian (Eigen::Matrix<double,6,6>& J, const NOXVector<6>& X);
 };
 
 /* Displacement */

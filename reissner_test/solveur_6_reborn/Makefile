@@ -17,12 +17,16 @@ LINK_FLAGS=$(NOX_EXTRA_LD_FLAGS)
 
 DEFINES= -DMYAPP_NOX
 
-solveur: tmp/solveur.o tmp/classes.o tmp/pugixml.o
-	$(CXX) $(CXX_FLAGS) -g tmp/solveur.o tmp/classes.o tmp/pugixml.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
-tmp/solveur.o: solveur.cpp
+solveur: tmp/solveur.o tmp/myproblem.o tmp/legendre.o tmp/io.o tmp/pugixml.o
+	$(CXX) $(CXX_FLAGS) -g tmp/solveur.o tmp/myproblem.o tmp/legendre.o tmp/io.o tmp/pugixml.o -o solveur $(LINK_FLAGS) $(LIBRARY_DIRS) $(LIBRARIES) -lgsl -lgslcblas -lm
+tmp/solveur.o: solveur.cpp header.hpp
 	$(CXX) $(CXX_FLAGS) -c solveur.cpp -o tmp/solveur.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/geomi $(DEFINES)
-tmp/classes.o: classes.cpp classes.hpp
-	$(CXX) $(CXX_FLAGS) -c classes.cpp -o tmp/classes.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/geomi $(DEFINES)
+tmp/myproblem.o: myproblem.cpp header.hpp
+	$(CXX) $(CXX_FLAGS) -c myproblem.cpp -o tmp/myproblem.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/geomi $(DEFINES)
+tmp/legendre.o: legendre.cpp header.hpp
+	$(CXX) $(CXX_FLAGS) -c legendre.cpp -o tmp/legendre.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/geomi $(DEFINES)
+tmp/io.o: io.cpp header.hpp
+	$(CXX) $(CXX_FLAGS) -c io.cpp -o tmp/io.o $(LINK_FLAGS) $(INCLUDE_DIRS) -I/home/ttr2/these/ressources/code/geomi $(DEFINES)
 tmp/pugixml.o: pugixml.cpp
 	g++ -O3 -c pugixml.cpp -o tmp/pugixml.o
 

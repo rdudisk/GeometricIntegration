@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import math, sys
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -93,7 +95,7 @@ def plot_energy(time_list,opath):
     
     ### Plot energy ###
 
-    filename = opath+"/imgEnergy.png".format(i)
+    filename = ''.join([opath,'/energy.png'])
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
     l1,l2,l3 = plt.plot(t,k,t,b,t,e)
@@ -122,7 +124,7 @@ def plot_energy(time_list,opath):
 
     ### Plot momenta ###
 
-    filename = opath+"/imgMomenta.png".format(i)
+    filename = ''.join([opath,'/momenta.png'])
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
     l1,l2,l3,l4,l5,l6 = plt.plot(t,m[0],t,m[1],t,m[2],t,m[3],t,m[4],t,m[5])
@@ -150,6 +152,9 @@ def plot_energy(time_list,opath):
         o.write('{},{},{},{},{},{},{}\n'.format(t_resamp[i],m1[i],m2[i],m3[i],m4[i],m5[i],m6[i]))
     o.close()
 
+# def plot_e1():
+    # filename = ''.join([out,'/e1_boundary.png'])
+    # fig = plt.figure(dpi=100)
 
 def create_plot2D_reissner(l,i,opath):
 
@@ -169,8 +174,8 @@ def create_plot2D_reissner(l,i,opath):
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
 
-def resample_audio(y,Fs=44100.0):
-    current_Fs = y.pop(0)
+def resample_audio(y,current_Fs,Fs=44100.0):
+    # current_Fs = y.pop(0)
 
     # TODO: Fs ou Fs/2 ?
     sos = scipy.signal.butter(8,Fs,'lowpass',fs=current_Fs,output='sos')
@@ -196,30 +201,65 @@ def listen_wave(y,Fs=44100.0):
 def fft(y,Fs=44100.0):
     fft = scipy.fft.rfft(y)
     fft = abs(fft)
+    
+    x_ref = max(fft)
+    dB    = [20*math.log(x/x_ref,10) for x in fft]
 
-    # peaks, _ = scipy.signal.find_peaks(fft,distance=150)
+    peaks, _ = scipy.signal.find_peaks(dB,distance=20,height=-100)
 
-    freq = [float(i) for i in range(len(fft))]
+    freq = [float(i)*Fs/(2.0*len(fft)) for i in range(len(fft))]
 
     filename = "out/fft.png"
     fig = plt.figure(figsize=(4.25,3),dpi=100)
 
-    plt.plot(freq,fft)
-    # plt.plot(peaks,fft[peaks])
-    plt.yscale('log')
+    # plt.plot(freq,fft)
+    # # plt.plot(peaks,fft[peaks])
+    # plt.yscale('log')
+
+    plt.plot(freq,dB)
+    plt.plot([freq[x] for x in peaks],[dB[x] for x in peaks],"x")
+
+    print([freq[x] for x in peaks])
 
     fig.savefig(filename,bbox_inches='tight')
     plt.close(fig)
 
-    n_samples = 500
-    freq_resamp = [float(i)*0.5*Fs/float(n_samples) for i in range(n_samples)]
-    fft = np.interp(freq_resamp,freq,fft)
-    freq = freq_resamp
+    print(len(dB))
+
+    # n_samples = 500
+    # freq_resamp = [float(i)*0.5*Fs/float(n_samples) for i in range(n_samples)]
+    # fft = np.interp(freq_resamp,freq,fft)
+    # dB  = np.interp(freq_resamp,freq,dB)
+    # freq = freq_resamp
+
+    # fft = scipy.fft.rfft(y)
+    # fft = abs(fft)
+    
+    # x_ref = max(fft)
+    # dB    = [20*math.log(x/x_ref,10) for x in fft]
 
     o = open('fft.csv','w')
     o.write('f,fft\n')
     for i in range(len(fft)):
-        o.write('{},{}\n'.format(freq[i],fft[i]))
+        o.write('{},{}\n'.format(freq[i],dB[i]))
+    o.close()
+
+
+def stft(y,Fs=44100.0):
+    f,t,Zxx = scipy.signal.stft(y,Fs,nperseg=1000)
+
+    filename = "out/stft.png"
+    fig = plt.figure(figsize=(4.25,3),dpi=200)
+
+    plt.pcolormesh(t,f,np.abs(Zxx),shading='gouraud')
+    plt.ylabel('Frequency (Hz)')
+    plt.xlabel('Time (s)')
+    
+    fig.savefig(filename,bbox_inches='tight')
+    plt.close(fig)
+
+    o = open('stft.csv','w')
+
     o.close()
 
 def old_listen_wave(time_list):
@@ -261,9 +301,10 @@ def old_listen_wave(time_list):
 
 
 def main():
-    #usage: plot-reissner.py ../results.csv out
-    fname = sys.argv[1]
-    opath = sys.argv[2]
+    #usage: plot-reissner.py ../results.csv ../displacement.csv out
+    time_list_fname = sys.argv[1]
+    displacement_fname = sys.argv[2]
+    opath = sys.argv[3]
     # f = open(sys.argv[1],'r')
     # f.readline() # suppression de la ligne de commentaires
 
@@ -284,9 +325,8 @@ def main():
     #  'U'          (tuplet) three elements tuplet, 3D vector E2
     #  'V'          (tuplet) three elements tuplet, 3D vector E3
 
-    with open(fname,newline='') as f:
+    with open(time_list_fname,newline='') as f:
         time_list  = []
-        space_list = []
         reader = csv.DictReader(f)
         # le fichier csv peut etre deja reechantillonne, les indices i ne sont donc pas
         # necessairement consecutifs, on utilise donc cette variable pour garder le dernier
@@ -327,16 +367,19 @@ def main():
 
     ### Sound ##################################################################
 
-    with open('../displacement.csv',newline='') as f:
+    with open(displacement_fname,newline='') as f:
         listen_list = []
         reader = csv.DictReader(f)
         listen_list = [float(e['y']) for e in reader]
         # for e in reader:
             # listen_list.append(e[0])
 
-    listen_list = resample_audio(listen_list)
-    listen_wave(listen_list)
-    fft(listen_list)
+    current_Fs = listen_list.pop(0)
+
+    listen_wave(resample_audio(listen_list,current_Fs))
+    listen_list = resample_audio(listen_list,current_Fs,Fs=2000)
+    fft(listen_list,Fs=2000)
+    stft(listen_list,Fs=2000)
 
     ### Plotting ###############################################################
 
